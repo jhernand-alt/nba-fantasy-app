@@ -238,7 +238,7 @@
         </section>
         
         <div class="credit-text-main">
-            Hecho por Julián Hernández el 27/11/2025
+            Hecho por Julián Hernández el <span id="currentDatePlaceholder"></span>
         </div>
 
     </main>
@@ -881,7 +881,30 @@
             resetDisplay();
             renderChart([], 'daily'); 
         };
+        
+        // --- FUNCIÓN PARA MOSTRAR LA FECHA ACTUAL ---
+        function updateCreditDate() {
+            const now = new Date();
+            // Formato: DD/MM/AAAA (ejemplo: 27/11/2025)
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('es-ES', options);
+    
+            const dateElement = document.getElementById('currentDatePlaceholder');
+            if (dateElement) {
+                dateElement.textContent = formattedDate;
+            }
+        }
 
+        // --- INICIALIZACIÓN AL CARGAR LA PÁGINA ---
+        window.onload = function() {
+            // 1. Inicializa la fecha dinámica
+            updateCreditDate(); 
+            
+            // 2. Restablece el estado de la aplicación
+            resetDisplay();
+            renderChart([], 'daily'); 
+        };
     </script>
 </body>
+
 </html>
