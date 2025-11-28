@@ -101,7 +101,7 @@
         .player-table { 
             width: 100%; 
             border-collapse: collapse; 
-            min-width: 900px; /* Incremento el min-width por la nueva columna */
+            min-width: 900px; 
             font-size: 0.9em; 
         }
         .player-table th, .player-table td { 
@@ -119,6 +119,11 @@
         .player-table th:not([onclick]) { 
             cursor: default;
         }
+        /* Alineación vertical centrada para los encabezados de dos líneas */
+        .player-table th {
+            vertical-align: middle;
+        }
+
         .player-table tr:nth-child(even) { 
             background-color: #f4f7fd; 
         }
@@ -150,17 +155,17 @@
         .credit-text-main {
             text-align: right;
             font-size: 0.8em;
-            color: #64748b; /* Gris oscuro para el texto de crédito */
+            color: #64748b; 
             margin-top: 30px; 
             padding-top: 10px;
-            border-top: 1px dashed #ddd; /* Separador sutil */
+            border-top: 1px dashed #ddd; 
         }
         
         /* MEDIA QUERY PARA MÓVILES */
         @media (max-width: 768px) {
             .player-table { 
                 font-size: 0.8em; 
-                min-width: 600px; /* Ajuste por la nueva columna */
+                min-width: 600px; 
             }
             .chart-controls {
                 flex-direction: column;
@@ -175,7 +180,7 @@
                 margin-top: 5px;
             }
             .controls-row span {
-                display: none !important; /* Ocultar el separador vertical en móvil */
+                display: none !important; 
             }
         }
     </style>
@@ -200,7 +205,7 @@
 
                     <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
                         <option value="all">TODOS LOS EQUIPOS FANTASY</option>
-                        </select>
+                    </select>
                     
                     <div id="positionFilters" role="group" aria-label="Filtros por Posición de Jugador">
                         <button onclick="filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true">TODOS</button>
@@ -222,7 +227,7 @@
                 <table class="player-table" role="grid" aria-label="Tabla de datos de jugadores, ordenable y seleccionable">
                     <thead id="playerTableHeader">
                         <tr>
-                            <th onclick="sortTable('fantasyTeam', this)">Equipo Fantasy</th> <th onclick="sortTable('name', this)">Nombre</th>
+                            <th>Equipo Fantasy</th> <th onclick="sortTable('name', this)">Nombre</th>
                             <th onclick="sortTable('team', this)">Equipo NBA</th>
                             <th>Posición(es)</th> 
                             <th onclick="sortTable('gamesPlayed', this)">Partidos Jugados</th>
@@ -232,7 +237,8 @@
                         </tr>
                     </thead>
                     <tbody id="playerTableBody">
-                        <tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr> </tbody>
+                        <tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr> 
+                    </tbody>
                 </table>
             </div>
         </section>
@@ -260,14 +266,14 @@
     <script>
         // --- VARIABLES GLOBALES DEL ESTADO DE LA APLICACIÓN ---
         let allPlayerData = []; 
-        let activePlayers = []; // Lista CLAVE: Contiene a los jugadores actualmente filtrados y ordenados.
+        let activePlayers = []; 
         let chartInstance = null; 
         let dateLabels = []; 
         let weeklyLabels = []; 
         let currentSortKey = 'totalPoints'; 
         let sortDirection = 'desc'; 
-        let currentPositionFilter = 'all'; // Filtro de Posición actual ('all', 'PG', 'C', etc.).
-        let currentTeamFilter = 'all'; // Filtro de Equipo Fantasy actual ('all' o nombre del equipo).
+        let currentPositionFilter = 'all'; 
+        let currentTeamFilter = 'all'; 
         
         // Definición de las semanas de fantasía
         const fantasyWeeks = [
@@ -341,7 +347,7 @@
 
         /**
          * Parsea el texto CSV en un array de objetos de jugador.
-         * Se espera que la estructura de las primeras 3 columnas sea:
+         * Se espera que la estructura de las primeras 4 columnas sea:
          * EquipoFantasy;Nombre;EquipoNBA;Posición;...puntos diarios
          * @param {string} csvText - Contenido del archivo CSV.
          * @returns {Object[]} Array de objetos de jugadores.
@@ -379,10 +385,10 @@
                     const marginOfErrorPct = averagePoints > 0 ? (marginOfErrorPts / averagePoints) * 100 : 0;
 
                     const player = {
-                        fantasyTeam: values[0].trim(), // NUEVO CAMPO 1
-                        name: values[1].trim(),       // CAMPO 2
-                        team: values[2].trim(),       // CAMPO 3
-                        position: values[3].trim().toUpperCase(), // CAMPO 4
+                        fantasyTeam: values[0].trim(), 
+                        name: values[1].trim(),       
+                        team: values[2].trim(),       
+                        position: values[3].trim().toUpperCase(), 
                         gamesPlayed: gamesPlayed, 
                         dailyPoints: dailyPoints,
                         weeklyPoints: weeklyPoints, 
@@ -456,7 +462,7 @@
                     currentSortKey = validKeys.includes(state.sortKey) ? state.sortKey : 'totalPoints';
                     sortDirection = validDirs.includes(state.sortDir) ? state.sortDir : 'desc';
                     currentPositionFilter = state.posFilter || 'all';
-                    currentTeamFilter = state.teamFilter || 'all'; // Carga el nuevo filtro
+                    currentTeamFilter = state.teamFilter || 'all'; 
                     
                     return { pos: currentPositionFilter, team: currentTeamFilter };
                 } catch (e) {
@@ -492,7 +498,6 @@
         
         /**
          * Punto de entrada después de cargar los datos.
-         * Aplica el estado guardado o los valores por defecto.
          */
         function initializeApplication(data) {
             if (data.length === 0) {
@@ -509,7 +514,7 @@
             currentSortKey = 'totalPoints';
             sortDirection = 'desc';
             
-            populateFantasyTeamSelector(); // Rellena el selector antes de filtrar
+            populateFantasyTeamSelector(); 
             
             // Simula el clic en el botón de posición guardado
             const initialPositionButton = document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('${currentPositionFilter}')"]`);
@@ -612,7 +617,7 @@
                 const valueA = a[key];
                 const valueB = b[key];
                 
-                if (['fantasyTeam', 'name', 'team'].includes(key)) { 
+                if (['name', 'team'].includes(key)) { // Ya no incluye 'fantasyTeam'
                     const comparison = String(valueA).localeCompare(String(valueB));
                     return sortDirection === 'asc' ? comparison : -comparison;
                 } else { 
@@ -632,10 +637,8 @@
                 currentSortKey = key;
             }
 
-            // Ordenamos la lista filtrada actualmente (activePlayers)
             applySort(activePlayers);
             
-            // SINCRONIZAR LA VISTA: Redibujamos la tabla y el gráfico
             updatePlayerTable(activePlayers);
             updateChartDisplay(); 
             
@@ -648,28 +651,31 @@
             const tableBody = document.getElementById('playerTableBody');
             tableBody.innerHTML = ''; 
             
+            // Definición de encabezados con formato de dos líneas
             const headers = [
-                { key: 'fantasyTeam', label: 'Equipo Fantasy', sortable: true }, // NUEVO ENCABEZADO
-                { key: 'name', label: 'Nombre', sortable: true },
-                { key: 'team', label: 'Equipo NBA', sortable: true },
-                { key: 'position', label: 'Posición(es)', sortable: false }, 
-                { key: 'gamesPlayed', label: 'Partidos Jugados', sortable: true },
-                { key: 'totalPoints', label: 'Puntos Totales', sortable: true },
-                { key: 'averagePoints', label: 'Puntos Promedio', sortable: true },
-                { key: 'margin', label: 'MARGEN DE ERROR', sortable: false }, 
+                // Columna NO ORDENABLE
+                { key: 'fantasyTeam', label: 'Equipo Fantasy', sortable: false, labelHtml: 'Equipo<br>Fantasy' }, 
+                // Columna ORDENABLE
+                { key: 'name', label: 'Nombre', sortable: true, labelHtml: 'Nombre' },
+                { key: 'team', label: 'Equipo NBA', sortable: true, labelHtml: 'Equipo<br>NBA' },
+                { key: 'position', label: 'Posición(es)', sortable: false, labelHtml: 'Posición(es)' }, 
+                { key: 'gamesPlayed', label: 'Partidos Jugados', sortable: true, labelHtml: 'Partidos<br>Jugados' },
+                { key: 'totalPoints', label: 'Puntos Totales', sortable: true, labelHtml: 'Puntos<br>Totales' },
+                { key: 'averagePoints', label: 'Puntos Promedio', sortable: true, labelHtml: 'Puntos<br>Promedio' },
+                { key: 'margin', label: 'MARGEN DE ERROR', sortable: false, labelHtml: 'MARGEN<br>DE ERROR' }, 
             ];
             
             const headerRow = document.createElement('tr');
             headers.forEach(header => {
                 const th = document.createElement('th');
-                th.textContent = header.label;
+                th.innerHTML = header.labelHtml; // Usar el HTML para el formato de dos líneas
                 th.setAttribute('aria-sort', 'none');
                 
                 if (header.sortable) { 
                     th.setAttribute('onclick', `sortTable('${header.key}', this)`);
                     if (header.key === currentSortKey) {
                         const icon = sortDirection === 'asc' ? ' ▲' : ' ▼';
-                        th.textContent += icon;
+                        th.innerHTML = header.labelHtml + icon; // Mantener HTML y añadir icono
                         th.setAttribute('aria-sort', sortDirection === 'asc' ? 'ascending' : 'descending');
                     }
                 } else {
@@ -691,7 +697,7 @@
             data.forEach(player => {
                 const row = tableBody.insertRow();
                 
-                row.insertCell().textContent = player.fantasyTeam; // NUEVA CELDAS
+                row.insertCell().textContent = player.fantasyTeam; 
                 row.insertCell().textContent = player.name;
                 row.insertCell().textContent = player.team; 
                 row.insertCell().textContent = player.position; 
@@ -723,7 +729,7 @@
             const dataKey = isDaily ? 'dailyPoints' : 'weeklyPoints';
             const yAxisLabel = isDaily ? 'Puntos Anotados (Diario)' : 'Puntos Anotados (Semanal)';
 
-            const datasets = players.map((player, index) => {
+            const playerDatasets = players.map((player, index) => {
                 const color = chartColors[index % chartColors.length];
                 
                 const dataSlice = player[dataKey] ? player[dataKey].slice(0, labels.length) : [];
@@ -741,9 +747,41 @@
                 };
             });
             
-            if (datasets.length === 0 && labels.length === 0) {
+            if (playerDatasets.length === 0) {
                  return;
             }
+            
+            // --- CÁLCULO DE LA LÍNEA DE PROMEDIO DE LOS FILTRADOS ---
+            const numLabels = labels.length;
+            const averageData = new Array(numLabels).fill(0).map((_, dayIndex) => {
+                let sum = 0;
+                let count = 0;
+                
+                playerDatasets.forEach(dataset => {
+                    const points = dataset.data[dayIndex];
+                    if (points !== null && points !== undefined) {
+                        sum += points;
+                        count++;
+                    }
+                });
+                return count > 0 ? sum / count : null;
+            });
+
+            const averageDataset = {
+                label: 'PROMEDIO DEL FILTRO',
+                data: averageData,
+                borderColor: 'rgba(0, 0, 0, 0.8)', 
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                borderWidth: 3,
+                borderDash: [5, 5], 
+                tension: 0, 
+                fill: false,
+                pointRadius: 0, 
+                order: 0, // Asegura que se dibuje primero para no tapar los datos
+            };
+            
+            const datasets = [averageDataset, ...playerDatasets];
+
 
             chartInstance = new Chart(ctx, {
                 type: 'line', 
@@ -786,66 +824,28 @@
             });
         }
         
-        function resetDisplay() {
-             localStorage.removeItem('fantasyAppState');
-             allPlayerData = []; 
-             activePlayers = []; 
-             
-             // Encabezados predeterminados con 8 columnas
-             const headerRow = `<tr>
-                <th onclick="sortTable('fantasyTeam', this)">Equipo Fantasy</th>
-                <th onclick="sortTable('name', this)">Nombre</th>
-                <th onclick="sortTable('team', this)">Equipo NBA</th>
-                <th>Posición(es)</th>
-                <th onclick="sortTable('gamesPlayed', this)">Partidos Jugados</th>
-                <th onclick="sortTable('totalPoints', this)" aria-sort="descending">Puntos Totales</th>
-                <th onclick="sortTable('averagePoints', this)" aria-sort="none">Puntos Promedio</th>
-                <th>MARGEN DE ERROR</th>
-             </tr>`;
-             document.getElementById('playerTableHeader').innerHTML = headerRow;
-
-             document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr>'; // colspan 8
-             
-             if (chartInstance) {
-                chartInstance.destroy(); 
-             }
-             document.getElementById('downloadCSV').disabled = true;
-             document.getElementById('downloadChart').disabled = true; 
-             document.getElementById('fantasyTeamSelector').disabled = true;
-             document.getElementById('fantasyTeamSelector').innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
-
-             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.setAttribute('aria-pressed', 'false');
-             });
-             
-             currentSortKey = 'totalPoints';
-             sortDirection = 'desc';
-             currentPositionFilter = 'all';
-             currentTeamFilter = 'all';
-             
-             const allButton = document.querySelector('.filter-btn[onclick*="filterPlayersByPosition(\'all\')"]');
-             if (allButton) {
-                 allButton.classList.add('active');
-                 allButton.setAttribute('aria-pressed', 'true');
-             }
-             
-             document.getElementById('chartTypeSelector').value = 'daily';
-
-             dateLabels = [];
-        }
-
-        // --- LÓGICA DE DESCARGA (CSV y Gráfico) ---
-        document.getElementById('downloadCSV').addEventListener('click', downloadCSV);
-        document.getElementById('downloadChart').addEventListener('click', downloadChartImage); 
-        
-        function downloadChartImage() {
+        window.downloadChartImage = function() {
             if (!chartInstance) {
                 alert("No hay un gráfico para descargar.");
                 return;
             }
             const canvas = document.getElementById('pointsChart');
-            const image = canvas.toDataURL('image/png');
+            
+            // 1. Crear un nuevo canvas temporal para el fondo blanco
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            // 2. Dibujar el fondo blanco
+            tempCtx.fillStyle = '#FFFFFF';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+            // 3. Dibujar el contenido del gráfico encima
+            tempCtx.drawImage(canvas, 0, 0);
+
+            // 4. Descargar la imagen del canvas temporal
+            const image = tempCanvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.href = image;
             link.download = 'grafico_puntos_fantasy.png';
@@ -880,7 +880,55 @@
             link.click();
             document.body.removeChild(link);
         }
+        
+        function resetDisplay() {
+             localStorage.removeItem('fantasyAppState');
+             allPlayerData = []; 
+             activePlayers = []; 
+             
+             // Encabezados predeterminados con 8 columnas
+             const headerRow = `<tr>
+                <th>Equipo<br>Fantasy</th>
+                <th onclick="sortTable('name', this)">Nombre</th>
+                <th onclick="sortTable('team', this)">Equipo<br>NBA</th>
+                <th>Posición(es)</th>
+                <th onclick="sortTable('gamesPlayed', this)">Partidos<br>Jugados</th>
+                <th onclick="sortTable('totalPoints', this)" aria-sort="descending">Puntos<br>Totales</th>
+                <th onclick="sortTable('averagePoints', this)" aria-sort="none">Puntos<br>Promedio</th>
+                <th>MARGEN<br>DE ERROR</th>
+             </tr>`;
+             document.getElementById('playerTableHeader').innerHTML = headerRow;
 
+             document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr>'; 
+             
+             if (chartInstance) {
+                chartInstance.destroy(); 
+             }
+             document.getElementById('downloadCSV').disabled = true;
+             document.getElementById('downloadChart').disabled = true; 
+             document.getElementById('fantasyTeamSelector').disabled = true;
+             document.getElementById('fantasyTeamSelector').innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
+
+             document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
+             });
+             
+             currentSortKey = 'totalPoints';
+             sortDirection = 'desc';
+             currentPositionFilter = 'all';
+             currentTeamFilter = 'all';
+             
+             const allButton = document.querySelector('.filter-btn[onclick*="filterPlayersByPosition(\'all\')"]');
+             if (allButton) {
+                 allButton.classList.add('active');
+                 allButton.setAttribute('aria-pressed', 'true');
+             }
+             
+             document.getElementById('chartTypeSelector').value = 'daily';
+
+             dateLabels = [];
+        }
 
         // --- FUNCIÓN PARA MOSTRAR LA FECHA ACTUAL ---
         function updateCreditDate() {
@@ -894,7 +942,7 @@
             }
         }
 
-        // --- INICIALIZACIÓN AL CARGAR LA PÁGINA (CORREGIDO: FUSIONANDO LOS WINDOW.ONLOAD) ---
+        // --- INICIALIZACIÓN AL CARGAR LA PÁGINA ---
         window.onload = function() {
             // 1. Inicializa la fecha dinámica
             updateCreditDate(); 
