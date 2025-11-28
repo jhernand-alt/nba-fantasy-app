@@ -1,44 +1,93 @@
-# README -- Fantasy NBA Dashboard "GO LAKERS!!!!"
+# Fantasy NBA Dashboard – GO LAKERS!!!!
 
-Este proyecto es una aplicación web interactiva diseñada para
-visualizar, analizar y gestionar estadísticas de jugadores en una liga
-**Fantasy NBA**. Permite cargar archivos CSV personalizados, filtrar
-jugadores, ordenar estadísticas y visualizar puntos diarios o semanales
-mediante gráficos dinámicos.
+Este proyecto es una **aplicación web interactiva** diseñada para analizar, visualizar y gestionar datos de una liga *Fantasy NBA*.  
+Permite cargar archivos CSV personalizados, filtrar jugadores por posición o equipo fantasy, ordenar estadísticas y generar gráficos dinámicos.
 
-## Características principales
+---
 
--   Carga de datos mediante CSV.
--   Filtros avanzados por posición y equipo fantasy.
--   Ordenación interactiva de columnas.
--   Visualización gráfica mediante Chart.js.
--   Descarga de gráfico en PNG.
--   Descarga de datos CSV generados.
--   Persistencia de estado mediante LocalStorage.
+## 🚀 Funcionalidades Principales
 
-## Formato CSV esperado
+### 📂 Carga y Exportación de Datos
+- Carga de archivos **CSV** (separados por `;`).
+- Exportación de datos procesados a un nuevo archivo CSV.
+- Procesamiento automático de:
+  - Puntos diarios.
+  - Puntos semanales.
+  - Partidos jugados.
+  - Estadísticas agregadas por jugador.
 
-Separado por punto y coma `;`:
+---
 
-    EquipoFantasy;Nombre;EquipoNBA;Posición;Día1;Día2;...
-    EquipoFantasy;Nombre;EquipoNBA;Posición;Etiqueta1;Etiqueta2;...
-    Lakers;LeBron James;LAL;SF/PF;45;38;41;...
+### 🎯 Filtros Inteligentes
+- Filtrado por **equipo fantasy** mediante selector dinámico.
+- Filtrado por **posición**:
+  - PG, SG, SF, PF, C, G, F o *Todos*.
+- Ambos filtros se combinan para mostrar resultados precisos.
 
-## Cómo usar la aplicación
+---
 
-1.  Abrir `index.html` en un navegador.
-2.  Cargar CSV desde el botón correspondiente.
-3.  Usar filtros y controles para explorar datos.
-4.  Cambiar entre gráfico diario/semanal.
-5.  Descargar CSV o imagen del gráfico.
+### 📊 Visualizaciones Interactivas
+- Gráficos generados con **Chart.js**.
+- Modo **Puntos Diarios** y **Puntos Semanales**.
+- Línea adicional de **Promedio Global** calculada dinámicamente.
+- Opción para **descargar gráfico** en PNG.
 
-## Tecnologías utilizadas
+---
 
--   HTML5, CSS3, JavaScript Vanilla
--   Chart.js (CDN)
--   FileReader API
--   LocalStorage
+### 📋 Tabla Completa de Estadísticas
+Incluye los siguientes datos:
+- Equipo Fantasy  
+- Nombre del Jugador  
+- Equipo NBA  
+- Posición  
+- Partidos Jugados  
+- Puntos Totales  
+- Promedio de Puntos  
+- Margen de Error (cálculo con desviación estándar y Z=1.96)
 
-## Autor
+Permite **ordenar por columnas** haciendo clic en los encabezados.
 
-Julián Hernández
+---
+
+## 🧮 Cálculos Estadísticos
+Cada jugador obtiene:
+- **Desviación estándar**
+- **Margen de error en puntos**
+- **Margen de error porcentual**
+
+Además, las semanas se generan siguiendo el calendario definido en el código.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+- **HTML5 + CSS3** (responsive y optimizado para móvil)
+- **JavaScript** (toda la lógica interna)
+- **Chart.js** para gráficos
+- **LocalStorage** para recordar filtros del usuario
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+/
+├── index.html   # Archivo principal
+└── README.md    # Este archivo
+```
+
+---
+
+## 🧑‍💻 Autor
+
+Proyecto desarrollado por **Julián Hernández**.  
+La fecha de la versión se muestra dinámicamente en la propia web.
+
+---
+
+## 📜 Licencia
+
+Este proyecto puede ser modificado y adaptado libremente para uso personal o educativo.
+
+---
+
+¡Disfruta analizando tus datos de la Fantasy NBA! 🏀🔥
