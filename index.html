@@ -68,7 +68,7 @@
         .btn-download:hover { background-color: #4338ca; }
         
         /* Estilo para Select y botones de Filtro/Ordenación */
-        .chart-selector, .filter-btn {
+        .chart-selector, .filter-btn, .fantasy-team-selector {
             padding: 8px 15px; 
             border: 1px solid #ccc; 
             border-radius: 5px; 
@@ -101,7 +101,7 @@
         .player-table { 
             width: 100%; 
             border-collapse: collapse; 
-            min-width: 700px; 
+            min-width: 900px; /* Incremento el min-width por la nueva columna */
             font-size: 0.9em; 
         }
         .player-table th, .player-table td { 
@@ -160,11 +160,22 @@
         @media (max-width: 768px) {
             .player-table { 
                 font-size: 0.8em; 
-                min-width: 500px; 
+                min-width: 600px; /* Ajuste por la nueva columna */
             }
             .chart-controls {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+            .controls-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .controls-row > * {
+                width: 100%; 
+                margin-top: 5px;
+            }
+            .controls-row span {
+                display: none !important; /* Ocultar el separador vertical en móvil */
             }
         }
     </style>
@@ -187,15 +198,19 @@
                     
                     <span style="border-left: 1px solid #ccc; height: 30px; margin: 0 5px;"></span>
 
+                    <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
+                        <option value="all">TODOS LOS EQUIPOS FANTASY</option>
+                        </select>
+                    
                     <div id="positionFilters" role="group" aria-label="Filtros por Posición de Jugador">
-                        <button onclick="filterPlayers('all', this)" class="filter-btn active" aria-pressed="true">TODOS</button>
-                        <button onclick="filterPlayers('PG', this)" class="filter-btn" aria-pressed="false">PG</button>
-                        <button onclick="filterPlayers('SG', this)" class="filter-btn" aria-pressed="false">SG</button>
-                        <button onclick="filterPlayers('SF', this)" class="filter-btn" aria-pressed="false">SF</button>
-                        <button onclick="filterPlayers('PF', this)" class="filter-btn" aria-pressed="false">PF</button>
-                        <button onclick="filterPlayers('C', this)" class="filter-btn" aria-pressed="false">C</button>
-                        <button onclick="filterPlayers('G', this)" class="filter-btn" aria-pressed="false">G</button>
-                        <button onclick="filterPlayers('F', this)" class="filter-btn" aria-pressed="false">F</button>
+                        <button onclick="filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true">TODOS</button>
+                        <button onclick="filterPlayersByPosition('PG', this)" class="filter-btn" aria-pressed="false">PG</button>
+                        <button onclick="filterPlayersByPosition('SG', this)" class="filter-btn" aria-pressed="false">SG</button>
+                        <button onclick="filterPlayersByPosition('SF', this)" class="filter-btn" aria-pressed="false">SF</button>
+                        <button onclick="filterPlayersByPosition('PF', this)" class="filter-btn" aria-pressed="false">PF</button>
+                        <button onclick="filterPlayersByPosition('C', this)" class="filter-btn" aria-pressed="false">C</button>
+                        <button onclick="filterPlayersByPosition('G', this)" class="filter-btn" aria-pressed="false">G</button>
+                        <button onclick="filterPlayersByPosition('F', this)" class="filter-btn" aria-pressed="false">F</button>
                     </div>
                 </div>
             </div>
@@ -207,7 +222,7 @@
                 <table class="player-table" role="grid" aria-label="Tabla de datos de jugadores, ordenable y seleccionable">
                     <thead id="playerTableHeader">
                         <tr>
-                            <th onclick="sortTable('name', this)">Nombre</th>
+                            <th onclick="sortTable('fantasyTeam', this)">Equipo Fantasy</th> <th onclick="sortTable('name', this)">Nombre</th>
                             <th onclick="sortTable('team', this)">Equipo NBA</th>
                             <th>Posición(es)</th> 
                             <th onclick="sortTable('gamesPlayed', this)">Partidos Jugados</th>
@@ -217,8 +232,7 @@
                         </tr>
                     </thead>
                     <tbody id="playerTableBody">
-                        <tr><td colspan="7">Cargue un archivo CSV para ver los datos.</td></tr> 
-                    </tbody>
+                        <tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr> </tbody>
                 </table>
             </div>
         </section>
@@ -238,23 +252,24 @@
         </section>
         
         <div class="credit-text-main">
-            Hecho por Julián Hernández (Última versión 28/11/2025)
+            Hecho por Julián Hernández (Última versión <span id="currentDatePlaceholder"></span>)
         </div>
 
     </main>
     
     <script>
         // --- VARIABLES GLOBALES DEL ESTADO DE LA APLICACIÓN ---
-        let allPlayerData = []; // Almacena todos los datos crudos del CSV (inmutable por filtros)
-        let activePlayers = []; // **Lista CLAVE:** Contiene a los jugadores actualmente filtrados y ordenados.
-        let chartInstance = null; // Referencia al objeto Chart.js para destruirlo y recrearlo.
-        let dateLabels = []; // Etiquetas de fecha para el eje X del gráfico diario.
-        let weeklyLabels = []; // Etiquetas para el eje X del gráfico semanal.
-        let currentSortKey = 'totalPoints'; // Columna por la que se está ordenando ('totalPoints', 'name', etc.).
-        let sortDirection = 'desc'; // Dirección de la ordenación ('asc' o 'desc').
-        let currentFilterKey = 'all'; // Posición o filtro actual ('all', 'PG', 'C', 'G', etc.).
+        let allPlayerData = []; 
+        let activePlayers = []; // Lista CLAVE: Contiene a los jugadores actualmente filtrados y ordenados.
+        let chartInstance = null; 
+        let dateLabels = []; 
+        let weeklyLabels = []; 
+        let currentSortKey = 'totalPoints'; 
+        let sortDirection = 'desc'; 
+        let currentPositionFilter = 'all'; // Filtro de Posición actual ('all', 'PG', 'C', etc.).
+        let currentTeamFilter = 'all'; // Filtro de Equipo Fantasy actual ('all' o nombre del equipo).
         
-        // Definición de las semanas de fantasía (Usada para el cálculo semanal)
+        // Definición de las semanas de fantasía
         const fantasyWeeks = [
             { start: '21/10', end: '27/10', label: 'S1 (21/10 - 27/10)', startDay: 0, endDay: 5 }, 
             { start: '28/10', end: '03/11', label: 'S2 (28/10 - 03/11)', startDay: 6, endDay: 12 },
@@ -276,13 +291,6 @@
 
         // --- FUNCIONES DE CÁLCULO ESTADÍSTICO ---
         
-        /**
-         * Calcula la desviación estándar de una lista de puntos.
-         * Se utiliza n-1 para la varianza muestral.
-         * @param {number[]} arr - Lista de puntos diarios (puede incluir null).
-         * @param {number} mean - Promedio de puntos (ya calculado).
-         * @returns {number} Desviación estándar.
-         */
         function calculateStdDev(arr, mean) {
             const validData = arr.filter(p => p !== null);
             if (validData.length <= 1) return 0;
@@ -291,12 +299,6 @@
             return Math.sqrt(variance);
         }
 
-        /**
-         * Calcula el margen de error al 95% de confianza.
-         * @param {number} stdDev - Desviación estándar.
-         * @param {number} n - Número de observaciones (Partidos Jugados).
-         * @returns {number} Margen de error en puntos.
-         */
         function calculateMarginOfError(stdDev, n) {
             if (n < 2) return 0; 
             const Z_95 = 1.96; // Valor Z para el 95% de confianza
@@ -307,9 +309,6 @@
         
         document.getElementById('csvFile').addEventListener('change', handleFileUpload);
         
-        /**
-         * Maneja la carga del archivo, lee el texto y llama al parseo.
-         */
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -342,12 +341,12 @@
 
         /**
          * Parsea el texto CSV en un array de objetos de jugador.
-         * Aquí se realizan todos los cálculos estadísticos iniciales.
+         * Se espera que la estructura de las primeras 3 columnas sea:
+         * EquipoFantasy;Nombre;EquipoNBA;Posición;...puntos diarios
          * @param {string} csvText - Contenido del archivo CSV.
          * @returns {Object[]} Array de objetos de jugadores.
          */
         function parseCSV(csvText) {
-            // [Código de parseo omitido por brevedad, no contiene cambios]
             const lines = csvText.trim().split('\n');
             if (lines.length <= 2) return []; 
             
@@ -356,9 +355,11 @@
             for (let i = 2; i < lines.length; i++) { 
                 const values = lines[i].split(';'); 
                 
-                if (values.length >= 3) {
+                // Mínimo 4 columnas de información + 1 día de puntos
+                if (values.length >= 5) { 
                     
-                    const dailyPoints = values.slice(3).map(p => {
+                    // Los puntos empiezan en el índice 4 (0:FantasyTeam, 1:Name, 2:Team, 3:Position)
+                    const dailyPoints = values.slice(4).map(p => {
                         const trimmed = p.trim();
                         if (trimmed === '') return null;
                         const num = parseFloat(trimmed);
@@ -378,9 +379,10 @@
                     const marginOfErrorPct = averagePoints > 0 ? (marginOfErrorPts / averagePoints) * 100 : 0;
 
                     const player = {
-                        name: values[0].trim(),
-                        team: values[1].trim(),
-                        position: values[2].trim().toUpperCase(), 
+                        fantasyTeam: values[0].trim(), // NUEVO CAMPO 1
+                        name: values[1].trim(),       // CAMPO 2
+                        team: values[2].trim(),       // CAMPO 3
+                        position: values[3].trim().toUpperCase(), // CAMPO 4
                         gamesPlayed: gamesPlayed, 
                         dailyPoints: dailyPoints,
                         weeklyPoints: weeklyPoints, 
@@ -395,7 +397,6 @@
             return data;
         }
 
-        // [Código de calculateWeeklyPoints y generateDateLabels omitido por brevedad, no contiene cambios]
         function calculateWeeklyPoints(dailyPoints) {
             const weeklyTotals = [];
             const maxDays = dailyPoints.length;
@@ -434,53 +435,66 @@
 
         // --- GESTIÓN DE ESTADO (LOCAL STORAGE) ---
         
-        /**
-         * Guarda el estado actual de ordenación y filtrado en el navegador.
-         */
         function saveState(options = {}) {
             const state = {
                 sortKey: currentSortKey,
                 sortDir: sortDirection,
-                filterKey: options.filterKey || currentFilterKey
+                posFilter: options.posFilter || currentPositionFilter,
+                teamFilter: options.teamFilter || currentTeamFilter 
             };
             localStorage.setItem('fantasyAppState', JSON.stringify(state));
         }
 
-        /**
-         * Carga el estado anterior desde el navegador al inicio.
-         * @returns {string} Clave del filtro guardado.
-         */
         function loadState() {
-            // [Código de loadState omitido por brevedad, no contiene cambios]
             const savedState = localStorage.getItem('fantasyAppState');
             if (savedState) {
                 try {
                     const state = JSON.parse(savedState);
-                    const validKeys = ['name', 'team', 'gamesPlayed', 'totalPoints', 'averagePoints'];
+                    const validKeys = ['fantasyTeam', 'name', 'team', 'gamesPlayed', 'totalPoints', 'averagePoints'];
                     const validDirs = ['asc', 'desc'];
                     
                     currentSortKey = validKeys.includes(state.sortKey) ? state.sortKey : 'totalPoints';
                     sortDirection = validDirs.includes(state.sortDir) ? state.sortDir : 'desc';
-                    currentFilterKey = state.filterKey || 'all';
+                    currentPositionFilter = state.posFilter || 'all';
+                    currentTeamFilter = state.teamFilter || 'all'; // Carga el nuevo filtro
                     
-                    return currentFilterKey;
+                    return { pos: currentPositionFilter, team: currentTeamFilter };
                 } catch (e) {
                     console.error("Error al parsear el estado guardado:", e);
-                    return 'all';
+                    return { pos: 'all', team: 'all' };
                 }
             }
-            return 'all';
+            return { pos: 'all', team: 'all' };
         }
 
 
         // --- FUNCIONES DE CONTROL PRINCIPALES ---
+
+        /**
+         * Rellena el selector de equipo fantasy y lo habilita.
+         */
+        function populateFantasyTeamSelector() {
+            const selector = document.getElementById('fantasyTeamSelector');
+            selector.innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
+            
+            const teams = [...new Set(allPlayerData.map(p => p.fantasyTeam))].sort();
+            
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team;
+                option.textContent = team;
+                selector.appendChild(option);
+            });
+            
+            selector.value = currentTeamFilter;
+            selector.disabled = false;
+        }
         
         /**
          * Punto de entrada después de cargar los datos.
          * Aplica el estado guardado o los valores por defecto.
          */
         function initializeApplication(data) {
-            // [Código de initializeApplication omitido por brevedad, no contiene cambios]
             if (data.length === 0) {
                 resetDisplay();
                 return;
@@ -488,68 +502,80 @@
             document.getElementById('downloadChart').disabled = false;
             document.getElementById('downloadCSV').disabled = false;
 
-            const initialFilterKey = loadState(); 
+            const initialFilters = loadState(); 
+            currentPositionFilter = initialFilters.pos;
+            currentTeamFilter = initialFilters.team;
             
             currentSortKey = 'totalPoints';
             sortDirection = 'desc';
-
-            const initialFilterButton = document.querySelector(`.filter-btn[onclick*="filterPlayers('${initialFilterKey.toLowerCase()}')"]`);
             
-            if (initialFilterButton) {
-                filterPlayers(initialFilterKey, initialFilterButton);
+            populateFantasyTeamSelector(); // Rellena el selector antes de filtrar
+            
+            // Simula el clic en el botón de posición guardado
+            const initialPositionButton = document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('${currentPositionFilter}')"]`);
+            
+            if (initialPositionButton) {
+                filterPlayersByPosition(currentPositionFilter, initialPositionButton);
             } else {
-                filterPlayers('all', document.querySelector('.filter-btn[onclick*="filterPlayers(\'all\')"]'));
+                filterPlayersByPosition('all', document.querySelector('.filter-btn[onclick*="filterPlayersByPosition(\'all\')"]'));
             }
         }
         
+        /**
+         * Función clave de Filtrado: Combina ambos filtros (Equipo y Posición).
+         */
+        function applyFilters() {
+            // 1. Aplicar filtro de Equipo Fantasy
+            let filteredByTeam = (currentTeamFilter === 'all' || !currentTeamFilter)
+                ? [...allPlayerData]
+                : allPlayerData.filter(p => p.fantasyTeam === currentTeamFilter);
+
+            // 2. Aplicar filtro de Posición sobre el resultado del filtro de Equipo
+            activePlayers = getPlayersFilteredByPosition(currentPositionFilter, filteredByTeam);
+            
+            // 3. Ordenar la lista activa y Renderizar la TABLA
+            applySort(activePlayers);
+            updatePlayerTable(activePlayers);
+
+            // 4. Renderizar el GRÁFICO
+            updateChartDisplay(); 
+
+            // 5. Guardar el estado
+            saveState();
+        }
 
         /**
-         * Función clave para el Filtrado.
-         * 1. Filtra 'allPlayerData' según la posición.
-         * 2. **Sincroniza activePlayers (Tabla y Gráfico) con el resultado del filtro.**
-         * 3. Re-ordena y re-dibuja ambas vistas.
-         * @param {string} filterKey - Posición a filtrar ('PG', 'C', 'F', 'all', etc.).
-         * @param {HTMLElement} clickedButton - El botón que fue pulsado para aplicar el estilo 'active'.
+         * Establece el filtro de Equipo Fantasy y llama a applyFilters.
          */
-        window.filterPlayers = function(filterKey, clickedButton) {
-            
-            const newFilterKey = filterKey.toLowerCase() === 'todos' ? 'all' : filterKey.toLowerCase();
-            currentFilterKey = newFilterKey;
-            
-            // 1. Obtener la lista de jugadores que cumplen el filtro
-            const playersMatchingFilter = getPlayersFilteredByPosition(currentFilterKey);
-            
-            // 2. SINCRONIZACIÓN: activePlayers ahora solo tiene los jugadores que pasan el filtro.
-            activePlayers = playersMatchingFilter;
-            
-            // 3. Aplicar estilos de botón
+        window.filterPlayersByFantasyTeam = function(teamKey) {
+            currentTeamFilter = teamKey;
+            applyFilters();
+            saveState({ teamFilter: teamKey });
+        };
+        
+        /**
+         * Establece el filtro de Posición y llama a applyFilters.
+         */
+        window.filterPlayersByPosition = function(positionKey, clickedButton) {
+            currentPositionFilter = positionKey.toLowerCase() === 'todos' ? 'all' : positionKey;
+
+            // Aplicar estilos de botón
             document.querySelectorAll('#positionFilters .filter-btn').forEach(btn => {
                 btn.classList.remove('active');
                 btn.setAttribute('aria-pressed', 'false');
             });
 
-            const targetButton = clickedButton || document.querySelector(`.filter-btn[onclick*="filterPlayers('${currentFilterKey}')"]`);
+            const targetButton = clickedButton || document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('${currentPositionFilter}')"]`);
             if(targetButton) {
                 targetButton.classList.add('active');
                 targetButton.setAttribute('aria-pressed', 'true');
             }
             
-            // 4. Ordenar la lista activa y Renderizar la TABLA
-            applySort(activePlayers);
-            updatePlayerTable(activePlayers);
-
-            // 5. Renderizar el GRÁFICO
-            updateChartDisplay(); 
-
-            // 6. Guardar el estado
-            saveState();
+            applyFilters();
+            saveState({ posFilter: currentPositionFilter });
         };
 
-        /**
-         * Función auxiliar que devuelve las claves de posición correctas.
-         * @param {string} key - 'G', 'F', o una posición simple ('PG', 'C').
-         * @returns {string[]} Array de posiciones válidas para el filtro.
-         */
+
         function getPositionKeys(key) {
             switch (key.toUpperCase()) {
                 case 'G': return ['PG', 'SG'];
@@ -559,17 +585,34 @@
         }
         
         /**
-         * Función que aplica el algoritmo de ordenación (alfabética o numérica).
-         * @param {Object[]} data - La lista de jugadores a ordenar (típicamente activePlayers).
+         * Devuelve los jugadores de la lista base (normalmente ya filtrados por Equipo) 
+         * que coinciden con el filtro de posición.
          */
+        function getPlayersFilteredByPosition(filterKey, baseData = allPlayerData) {
+             let filteredByPosition = [];
+             const normalizedKey = filterKey.toLowerCase();
+
+             if (normalizedKey === 'all' || normalizedKey === 'todos') {
+                filteredByPosition = [...baseData];
+            } else {
+                const positionKeys = getPositionKeys(filterKey);
+                
+                filteredByPosition = baseData.filter(player => {
+                    const playerPositions = player.position.split(/[\/,]/).map(p => p.trim());
+                    
+                    return playerPositions.some(pos => positionKeys.includes(pos));
+                });
+            }
+            return filteredByPosition;
+        }
+
         function applySort(data) {
             data.sort((a, b) => {
-                // [Código de applySort omitido por brevedad, no contiene cambios]
                 const key = currentSortKey;
                 const valueA = a[key];
                 const valueB = b[key];
                 
-                if (['name', 'team'].includes(key)) { 
+                if (['fantasyTeam', 'name', 'team'].includes(key)) { 
                     const comparison = String(valueA).localeCompare(String(valueB));
                     return sortDirection === 'asc' ? comparison : -comparison;
                 } else { 
@@ -580,17 +623,8 @@
             });
         }
         
-        /**
-         * Función clave para la Ordenación.
-         * 1. Determina la nueva dirección de ordenación.
-         * 2. Llama a applySort sobre `activePlayers`.
-         * 3. Re-dibuja la tabla y el gráfico (porque activePlayers ya está ordenado/filtrado).
-         * @param {string} key - Clave de la columna a ordenar.
-         * @param {HTMLElement} clickedElement - Elemento de cabecera pulsado.
-         */
         window.sortTable = function(key, clickedElement) {
             
-            // 1. DETERMINAR DIRECCIÓN Y CLAVE
             if (currentSortKey === key) {
                 sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
             } else {
@@ -598,51 +632,24 @@
                 currentSortKey = key;
             }
 
-            // 2. Ordenamos la lista filtrada actualmente (activePlayers)
+            // Ordenamos la lista filtrada actualmente (activePlayers)
             applySort(activePlayers);
             
-            // 3. SINCRONIZAR LA VISTA: Redibujamos la tabla y el gráfico
+            // SINCRONIZAR LA VISTA: Redibujamos la tabla y el gráfico
             updatePlayerTable(activePlayers);
             updateChartDisplay(); 
             
             saveState();
         }
 
-        /**
-         * Devuelve los jugadores de allPlayerData que coinciden con el filtro de posición.
-         */
-        function getPlayersFilteredByPosition(filterKey) {
-             // [Código de getPlayersFilteredByPosition omitido por brevedad, no contiene cambios]
-             let filteredByPosition = [];
-             const normalizedKey = filterKey.toLowerCase();
-
-             if (normalizedKey === 'all' || normalizedKey === 'todos') {
-                filteredByPosition = [...allPlayerData];
-            } else {
-                const positionKeys = getPositionKeys(filterKey);
-                
-                filteredByPosition = allPlayerData.filter(player => {
-                    const playerPositions = player.position.split(/[\/,]/).map(p => p.trim());
-                    
-                    return playerPositions.some(pos => positionKeys.includes(pos));
-                });
-            }
-            return filteredByPosition;
-        }
-
         // --- FUNCIONES DE RENDERIZADO (VISTAS) ---
         
-        /**
-         * Genera la tabla HTML usando los datos de `activePlayers`.
-         * Se encarga de mostrar los iconos de ordenación.
-         * @param {Object[]} data - La lista de jugadores a mostrar (activePlayers).
-         */
         function updatePlayerTable(data) {
             const tableBody = document.getElementById('playerTableBody');
             tableBody.innerHTML = ''; 
             
-            // [Código de updatePlayerTable omitido por brevedad, no contiene cambios]
             const headers = [
+                { key: 'fantasyTeam', label: 'Equipo Fantasy', sortable: true }, // NUEVO ENCABEZADO
                 { key: 'name', label: 'Nombre', sortable: true },
                 { key: 'team', label: 'Equipo NBA', sortable: true },
                 { key: 'position', label: 'Posición(es)', sortable: false }, 
@@ -665,6 +672,8 @@
                         th.textContent += icon;
                         th.setAttribute('aria-sort', sortDirection === 'asc' ? 'ascending' : 'descending');
                     }
+                } else {
+                    th.style.cursor = 'default';
                 }
                 
                 headerRow.appendChild(th);
@@ -674,9 +683,15 @@
             document.getElementById('playerTableHeader').appendChild(headerRow);
             
             // GENERAR FILAS DE DATOS
+            if (data.length === 0) {
+                 tableBody.innerHTML = '<tr><td colspan="8">No hay jugadores que coincidan con los filtros aplicados.</td></tr>';
+                 return;
+            }
+            
             data.forEach(player => {
                 const row = tableBody.insertRow();
                 
+                row.insertCell().textContent = player.fantasyTeam; // NUEVA CELDAS
                 row.insertCell().textContent = player.name;
                 row.insertCell().textContent = player.team; 
                 row.insertCell().textContent = player.position; 
@@ -691,23 +706,12 @@
             });
         }
         
-        /**
-         * Determina el tipo de gráfico a mostrar (Diario o Semanal) y llama a renderChart.
-         */
         window.updateChartDisplay = function() {
             const chartType = document.getElementById('chartTypeSelector').value;
-            // Pasa activePlayers, que ya contiene solo a los jugadores filtrados y ordenados
             renderChart(activePlayers, chartType); 
         }
 
-        /**
-         * Crea o actualiza el gráfico Chart.js.
-         * Utiliza los datos de `activePlayers` para dibujar las líneas.
-         * @param {Object[]} players - La lista de jugadores a graficar (activePlayers).
-         * @param {string} chartType - 'daily' o 'weekly'.
-         */
         function renderChart(players, chartType) {
-            // [Código de renderChart omitido por brevedad, no contiene cambios]
              if (chartInstance) {
                 chartInstance.destroy();
             }
@@ -782,15 +786,14 @@
             });
         }
         
-        /**
-         * Restablece la interfaz y las variables globales al estado inicial.
-         */
         function resetDisplay() {
-             // [Código de resetDisplay omitido por brevedad, no contiene cambios]
              localStorage.removeItem('fantasyAppState');
+             allPlayerData = []; 
              activePlayers = []; 
-
+             
+             // Encabezados predeterminados con 8 columnas
              const headerRow = `<tr>
+                <th onclick="sortTable('fantasyTeam', this)">Equipo Fantasy</th>
                 <th onclick="sortTable('name', this)">Nombre</th>
                 <th onclick="sortTable('team', this)">Equipo NBA</th>
                 <th>Posición(es)</th>
@@ -801,13 +804,15 @@
              </tr>`;
              document.getElementById('playerTableHeader').innerHTML = headerRow;
 
-             document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="7">Cargue un archivo CSV para ver los datos.</td></tr>';
+             document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr>'; // colspan 8
              
              if (chartInstance) {
                 chartInstance.destroy(); 
              }
              document.getElementById('downloadCSV').disabled = true;
              document.getElementById('downloadChart').disabled = true; 
+             document.getElementById('fantasyTeamSelector').disabled = true;
+             document.getElementById('fantasyTeamSelector').innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
 
              document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -816,9 +821,10 @@
              
              currentSortKey = 'totalPoints';
              sortDirection = 'desc';
-             currentFilterKey = 'all';
+             currentPositionFilter = 'all';
+             currentTeamFilter = 'all';
              
-             const allButton = document.querySelector('.filter-btn[onclick*="filterPlayers(\'all\')"]');
+             const allButton = document.querySelector('.filter-btn[onclick*="filterPlayersByPosition(\'all\')"]');
              if (allButton) {
                  allButton.classList.add('active');
                  allButton.setAttribute('aria-pressed', 'true');
@@ -833,7 +839,6 @@
         document.getElementById('downloadCSV').addEventListener('click', downloadCSV);
         document.getElementById('downloadChart').addEventListener('click', downloadChartImage); 
         
-        // [Código de downloadChartImage y downloadCSV omitido por brevedad, no contiene cambios]
         function downloadChartImage() {
             if (!chartInstance) {
                 alert("No hay un gráfico para descargar.");
@@ -849,7 +854,6 @@
             document.body.removeChild(link);
         }
 
-
         function downloadCSV() {
             if (allPlayerData.length === 0) {
                 alert("No hay datos para descargar. Por favor, carga un archivo primero.");
@@ -857,35 +861,30 @@
             }
 
             const maxDays = dateLabels.length;
-            let csvContent = "Column1;Column2;Column3;" + Array.from({length: maxDays}, (_, i) => `Column${i + 4}`).join(';') + "\n";
-            csvContent += "Nombre;Equipo;Posicion;" + dateLabels.join(';') + "\n";
+            // Encabezados con el nuevo campo
+            let csvContent = "Equipo Fantasy;Nombre;Equipo NBA;Posicion;" + Array.from({length: maxDays}, (_, i) => `Día ${i + 1}`).join(';') + "\n";
+            csvContent += "Equipo Fantasy;Nombre;Equipo NBA;Posicion;" + dateLabels.join(';') + "\n";
             
             allPlayerData.forEach(player => {
                 const points = player.dailyPoints.map(p => p === null ? '' : p).join(';');
-                csvContent += `${player.name};${player.team};${player.position};${points}\n`;
+                // Incluye el nuevo campo
+                csvContent += `${player.fantasyTeam};${player.name};${player.team};${player.position};${points}\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", "datos_nba_export.csv");
+            link.setAttribute("download", "datos_nba_export_v2.csv"); // Nuevo nombre para diferenciar
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
 
-        // --- INICIALIZACIÓN AL CARGAR LA PÁGINA ---
-        window.onload = function() {
-            resetDisplay();
-            renderChart([], 'daily'); 
-        };
-        
         // --- FUNCIÓN PARA MOSTRAR LA FECHA ACTUAL ---
         function updateCreditDate() {
             const now = new Date();
-            // Formato: DD/MM/AAAA (ejemplo: 27/11/2025)
             const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
             const formattedDate = now.toLocaleDateString('es-ES', options);
     
@@ -895,7 +894,7 @@
             }
         }
 
-        // --- INICIALIZACIÓN AL CARGAR LA PÁGINA ---
+        // --- INICIALIZACIÓN AL CARGAR LA PÁGINA (CORREGIDO: FUSIONANDO LOS WINDOW.ONLOAD) ---
         window.onload = function() {
             // 1. Inicializa la fecha dinámica
             updateCreditDate(); 
@@ -908,4 +907,3 @@
 </body>
 
 </html>
-
