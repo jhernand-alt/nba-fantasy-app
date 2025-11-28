@@ -224,14 +224,14 @@
                 <table class="player-table" role="grid" aria-label="Tabla de datos de jugadores, ordenable y seleccionable">
                     <thead id="playerTableHeader">
                         <tr>
-                            <th>Equipo Fantasy</th>
+                            <th>Equipo<br>Fantasy</th>
                             <th onclick="sortTable('name', this)">Nombre</th>
-                            <th onclick="sortTable('team', this)">Equipo NBA</th>
+                            <th onclick="sortTable('team', this)">Equipo<br>NBA</th>
                             <th>Posición(es)</th> 
-                            <th onclick="sortTable('gamesPlayed', this)">Partidos Jugados</th>
-                            <th onclick="sortTable('totalPoints', this)">Puntos Totales</th>
-                            <th onclick="sortTable('averagePoints', this)">Puntos Promedio</th>
-                            <th>MARGEN DE ERROR</th>
+                            <th onclick="sortTable('gamesPlayed', this)">Partidos<br>Jugados</th>
+                            <th onclick="sortTable('totalPoints', this)">Puntos<br>Totales</th>
+                            <th onclick="sortTable('averagePoints', this)">Puntos<br>Promedio</th>
+                            <th>MARGEN<br>DE ERROR</th>
                         </tr>
                     </thead>
                     <tbody id="playerTableBody">
@@ -814,12 +814,17 @@
             });
         }
         
+        /**
+         * Función de descarga del gráfico con fondo blanco forzado.
+         */
         window.downloadChartImage = function() {
             if (!chartInstance) {
                 alert("No hay un gráfico para descargar.");
                 return;
             }
-            const canvas = document.getElementById('pointsChart');
+            
+            // Usamos el canvas del chartInstance para mayor fiabilidad
+            const canvas = chartInstance.canvas; 
             
             // 1. Crear un nuevo canvas temporal para el fondo blanco
             const tempCanvas = document.createElement('canvas');
@@ -831,7 +836,7 @@
             tempCtx.fillStyle = '#FFFFFF';
             tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-            // 3. Dibujar el contenido del gráfico encima
+            // 3. Dibujar el contenido del gráfico encima (incluyendo las líneas y puntos)
             tempCtx.drawImage(canvas, 0, 0);
 
             // 4. Descargar la imagen del canvas temporal
@@ -940,6 +945,9 @@
             // 2. Restablece el estado de la aplicación
             resetDisplay();
             renderChart([], 'daily'); 
+            
+            // 3. ¡FIX! Asigna la función de descarga al botón.
+            document.getElementById('downloadChart').addEventListener('click', downloadChartImage);
         };
     </script>
 </body>
