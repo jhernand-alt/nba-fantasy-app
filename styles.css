@@ -1,0 +1,172 @@
+/* Estilos Base para Escritorio */
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 20px; 
+    background-color: #f0f2f5; 
+    color: #333; 
+}
+.container { 
+    max-width: 1400px; 
+    margin: auto; 
+    padding: 25px; 
+    background-color: white; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+h1 { 
+    color: #1e40af; 
+    border-bottom: 3px solid #1e40af; 
+    padding-bottom: 10px; 
+    margin-bottom: 25px; 
+}
+h2 { 
+    color: #333; 
+    margin-top: 30px; 
+    margin-bottom: 15px; 
+}
+
+/* Contenedor Único para Controles y Filtros */
+.controls-and-filters {
+    margin-bottom: 20px; 
+    padding: 15px; 
+    background-color: #f1f5f9; 
+    border-radius: 8px; 
+}
+
+/* Estilos de la fila de botones/controles (flex-wrap ya permite adaptación) */
+.controls-row {
+    display: flex;
+    flex-wrap: wrap; 
+    align-items: center;
+    gap: 10px;
+}
+
+/* Botones de Carga, Descarga CSV */
+.controls-row button.btn-download, 
+.controls-row label.btn-download,
+.chart-controls button.btn-download { 
+    padding: 12px 22px; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 1em; 
+    transition: background-color 0.3s;
+}
+
+.btn-download { background-color: #4f46e5; color: white; } 
+.btn-download:hover { background-color: #4338ca; }
+
+/* Estilo para Select y botones de Filtro/Ordenación */
+.chart-selector, .filter-btn, .fantasy-team-selector {
+    padding: 8px 15px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    background-color: white; 
+    transition: all 0.2s; 
+    font-weight: 500;
+}
+.filter-btn:hover { background-color: #e2e8f0; }
+
+/* ESTILO PARA EL BOTÓN ACTIVO/PULSADO */
+.filter-btn.active { 
+    background-color: #1e40af; 
+    color: white; 
+    border-color: #1e40af;
+}
+/* ARIA Pressed para botones */
+.filter-btn[aria-pressed="true"] { 
+    background-color: #1e40af; 
+    color: white; 
+    border-color: #1e40af;
+}
+
+
+/* TABLA Y SU WRAPPER RESPONSIVO */
+.table-wrapper {
+    overflow-x: auto; 
+    margin-top: 20px;
+}
+.player-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    min-width: 900px; 
+    font-size: 0.9em; 
+}
+.player-table th, .player-table td { 
+    border: 1px solid #ddd; 
+    padding: 8px; 
+    text-align: center; 
+} 
+.player-table th { 
+    background-color: #1e40af; 
+    color: white; 
+    text-transform: uppercase; 
+    cursor: pointer; 
+    vertical-align: middle;
+}
+/* Las columnas no ordenables no tienen cursor pointer */
+.player-table th:not([onclick]) { 
+    cursor: default;
+}
+
+.player-table tr:nth-child(even) { 
+    background-color: #f4f7fd; 
+}
+
+/* GRÁFICO */
+.chart-container { 
+    margin-top: 20px; 
+    padding: 20px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    background-color: #fff; 
+    height: 400px; 
+    position: relative;
+}
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Controles de Gráfico */
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+/* NUEVO ESTILO: Para la frase de crédito dentro del contenedor */
+.credit-text-main {
+    text-align: right;
+    font-size: 0.8em;
+    color: #64748b; 
+    margin-top: 30px; 
+    padding-top: 10px;
+    border-top: 1px dashed #ddd; 
+}
+
+/* MEDIA QUERY PARA MÓVILES */
+@media (max-width: 768px) {
+    .player-table { 
+        font-size: 0.8em; 
+        min-width: 600px; 
+    }
+    .chart-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .controls-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .controls-row > * {
+        width: 100%; 
+        margin-top: 5px;
+    }
+    .controls-row span {
+        display: none !important; 
+    }
+}
