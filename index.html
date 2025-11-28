@@ -114,14 +114,11 @@
             color: white; 
             text-transform: uppercase; 
             cursor: pointer; 
+            vertical-align: middle;
         }
         /* Las columnas no ordenables no tienen cursor pointer */
         .player-table th:not([onclick]) { 
             cursor: default;
-        }
-        /* Alineación vertical centrada para los encabezados de dos líneas */
-        .player-table th {
-            vertical-align: middle;
         }
 
         .player-table tr:nth-child(even) { 
@@ -227,7 +224,8 @@
                 <table class="player-table" role="grid" aria-label="Tabla de datos de jugadores, ordenable y seleccionable">
                     <thead id="playerTableHeader">
                         <tr>
-                            <th>Equipo Fantasy</th> <th onclick="sortTable('name', this)">Nombre</th>
+                            <th>Equipo Fantasy</th>
+                            <th onclick="sortTable('name', this)">Nombre</th>
                             <th onclick="sortTable('team', this)">Equipo NBA</th>
                             <th>Posición(es)</th> 
                             <th onclick="sortTable('gamesPlayed', this)">Partidos Jugados</th>
@@ -323,7 +321,7 @@
             reader.onload = function(e) {
                 const csvText = e.target.result;
                 try {
-                    allPlayerData = parseCSV(csvText); // Carga los datos base
+                    allPlayerData = parseCSV(csvText); 
                 } catch (error) {
                     alert("Error al procesar el archivo CSV. Asegúrate de que el formato es correcto (separado por ';'). Detalle: " + error.message);
                     resetDisplay();
@@ -347,10 +345,6 @@
 
         /**
          * Parsea el texto CSV en un array de objetos de jugador.
-         * Se espera que la estructura de las primeras 4 columnas sea:
-         * EquipoFantasy;Nombre;EquipoNBA;Posición;...puntos diarios
-         * @param {string} csvText - Contenido del archivo CSV.
-         * @returns {Object[]} Array de objetos de jugadores.
          */
         function parseCSV(csvText) {
             const lines = csvText.trim().split('\n');
@@ -364,7 +358,7 @@
                 // Mínimo 4 columnas de información + 1 día de puntos
                 if (values.length >= 5) { 
                     
-                    // Los puntos empiezan en el índice 4 (0:FantasyTeam, 1:Name, 2:Team, 3:Position)
+                    // Los puntos empiezan en el índice 4 
                     const dailyPoints = values.slice(4).map(p => {
                         const trimmed = p.trim();
                         if (trimmed === '') return null;
@@ -456,7 +450,7 @@
             if (savedState) {
                 try {
                     const state = JSON.parse(savedState);
-                    const validKeys = ['fantasyTeam', 'name', 'team', 'gamesPlayed', 'totalPoints', 'averagePoints'];
+                    const validKeys = ['name', 'team', 'gamesPlayed', 'totalPoints', 'averagePoints'];
                     const validDirs = ['asc', 'desc'];
                     
                     currentSortKey = validKeys.includes(state.sortKey) ? state.sortKey : 'totalPoints';
@@ -617,7 +611,7 @@
                 const valueA = a[key];
                 const valueB = b[key];
                 
-                if (['name', 'team'].includes(key)) { // Ya no incluye 'fantasyTeam'
+                if (['name', 'team'].includes(key)) { 
                     const comparison = String(valueA).localeCompare(String(valueB));
                     return sortDirection === 'asc' ? comparison : -comparison;
                 } else { 
@@ -653,9 +647,7 @@
             
             // Definición de encabezados con formato de dos líneas
             const headers = [
-                // Columna NO ORDENABLE
                 { key: 'fantasyTeam', label: 'Equipo Fantasy', sortable: false, labelHtml: 'Equipo<br>Fantasy' }, 
-                // Columna ORDENABLE
                 { key: 'name', label: 'Nombre', sortable: true, labelHtml: 'Nombre' },
                 { key: 'team', label: 'Equipo NBA', sortable: true, labelHtml: 'Equipo<br>NBA' },
                 { key: 'position', label: 'Posición(es)', sortable: false, labelHtml: 'Posición(es)' }, 
@@ -668,14 +660,14 @@
             const headerRow = document.createElement('tr');
             headers.forEach(header => {
                 const th = document.createElement('th');
-                th.innerHTML = header.labelHtml; // Usar el HTML para el formato de dos líneas
+                th.innerHTML = header.labelHtml; 
                 th.setAttribute('aria-sort', 'none');
                 
                 if (header.sortable) { 
                     th.setAttribute('onclick', `sortTable('${header.key}', this)`);
                     if (header.key === currentSortKey) {
                         const icon = sortDirection === 'asc' ? ' ▲' : ' ▼';
-                        th.innerHTML = header.labelHtml + icon; // Mantener HTML y añadir icono
+                        th.innerHTML = header.labelHtml + icon; 
                         th.setAttribute('aria-sort', sortDirection === 'asc' ? 'ascending' : 'descending');
                     }
                 } else {
@@ -751,33 +743,31 @@
                  return;
             }
             
-            // --- CÁLCULO DE LA LÍNEA DE PROMEDIO DE LOS FILTRADOS ---
+            // --- CÁLCULO DE LA LÍNEA DE PROMEDIO GLOBAL (RECTA) ---
+            
+            // 1. Sumamos el Puntos Promedio (Puntos/Partidos Jugados) de todos los jugadores filtrados
+            const totalAvgPoints = players.reduce((sum, p) => sum + p.averagePoints, 0);
+            
+            // 2. Calculamos el promedio global de esos promedios
+            const overallAverage = players.length > 0 ? totalAvgPoints / players.length : 0;
+
+            // 3. Creamos un array de datos que repite ese promedio fijo para cada punto del eje X (línea recta)
             const numLabels = labels.length;
-            const averageData = new Array(numLabels).fill(0).map((_, dayIndex) => {
-                let sum = 0;
-                let count = 0;
-                
-                playerDatasets.forEach(dataset => {
-                    const points = dataset.data[dayIndex];
-                    if (points !== null && points !== undefined) {
-                        sum += points;
-                        count++;
-                    }
-                });
-                return count > 0 ? sum / count : null;
-            });
+            const fixedAverageData = new Array(numLabels).fill(overallAverage.toFixed(2));
+            
 
             const averageDataset = {
-                label: 'PROMEDIO DEL FILTRO',
-                data: averageData,
+                label: `PROMEDIO GLOBAL (${overallAverage.toFixed(2)} pts)`,
+                data: fixedAverageData,
                 borderColor: 'rgba(0, 0, 0, 0.8)', 
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 borderWidth: 3,
-                borderDash: [5, 5], 
-                tension: 0, 
+                borderDash: [5, 5], // Línea punteada para diferenciar
+                tension: 0, // Fuerza la línea recta
                 fill: false,
                 pointRadius: 0, 
-                order: 0, // Asegura que se dibuje primero para no tapar los datos
+                order: 0, 
+                spanGaps: false, // Importante para la línea recta
             };
             
             const datasets = [averageDataset, ...playerDatasets];
@@ -875,7 +865,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", "datos_nba_export_v2.csv"); // Nuevo nombre para diferenciar
+            link.setAttribute("download", "datos_nba_export_v2.csv"); 
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
