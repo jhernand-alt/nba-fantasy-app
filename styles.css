@@ -1,233 +1,284 @@
 /* ---------------------------------------------------- */
-/* --- ESTILOS CSS (Tema Moderno Lakers) --- */
+/* --- ESTILOS CSS (Tema Moderno, Limpio y Responsivo) --- */
 /* ---------------------------------------------------- */
 
-/* Base */
+/* 1. Base y Tipografía */
 body { 
     font-family: 'Inter', sans-serif; 
     margin: 0; 
-    background-color: #f4f6f9; /* Fondo muy claro */
-    color: #1a1a1a; 
+    background-color: #f7f9fc; /* Fondo muy suave y moderno */
+    color: #1c2732; 
+    line-height: 1.6;
 }
-.container { 
+.app-container { 
     max-width: 1400px; 
-    margin: 25px auto; 
-    padding: 30px; 
-    background-color: white; 
-    border-radius: 12px; 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); 
-    min-height: calc(100vh - 50px);
+    margin: 20px auto; 
+    padding: 0 20px; 
 }
 h1 { 
-    /* Colores primarios Lakers: Azul (1e40af) y Amarillo/Dorado (fdb927) */
-    color: #1e40af; 
-    border-bottom: 4px solid #fdb927; 
-    padding-bottom: 12px; 
-    margin-bottom: 30px; 
-    font-weight: 900;
-    letter-spacing: -0.5px;
+    color: #007bff; /* Azul primario neutro */
+    font-weight: 800;
+    font-size: 2.2rem;
+    margin: 0;
 }
 h2 { 
-    color: #333; 
-    margin-top: 30px;
-    font-size: 1.6rem;
-    font-weight: 700;
-    border-left: 5px solid #fdb927;
-    padding-left: 10px;
+    color: #334455; 
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    border-bottom: 2px solid #ebeff3;
+    padding-bottom: 10px;
 }
 
-/* Controles y Filtros */
-.controls { 
-    display: flex; 
-    flex-wrap: wrap;
-    gap: 25px; 
-    margin-bottom: 25px; 
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #e6f0ff; /* Azul muy suave */
-    border: 1px solid #cce0ff;
+/* 2. Modularidad (Card y Tags) */
+.card { 
+    background-color: white; 
+    padding: 25px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+    margin-bottom: 25px;
+    transition: transform 0.2s;
+}
+.card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+.tag {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+.tag-default {
+    background-color: #e0e6f1;
+    color: #445566;
+}
+.tag-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+.text-center {
+    text-align: center;
+}
+
+/* 3. Header y Controles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+.control-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
 }
 .control-group {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-}
-.control-group.download-buttons {
-    flex-direction: row;
-    align-self: flex-end; 
-    gap: 15px;
 }
 .control-group label {
-    display: block;
-    margin-bottom: 7px;
-    font-weight: 700;
-    color: #1e40af; 
-    font-size: 0.95em;
-}
-.control-group select, .control-group input[type="file"] {
-    padding: 10px 15px;
-    border: 1px solid #a8b0c0;
-    border-radius: 8px;
-    min-width: 220px;
-    background-color: white;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.3s;
-    cursor: pointer;
-}
-.control-group select:focus, .control-group input[type="file"]:focus-within {
-    border-color: #fdb927;
-    outline: none;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #445566;
+    font-size: 0.9rem;
 }
 
-/* Botones Generales */
+/* 4. Inputs y Selects */
+.input-select, .input-file {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.input-select:focus, .input-file:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+.input-file::-webkit-file-upload-button {
+    background-color: #e9ecef;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* 5. Botones Generales */
 .btn {
-    padding: 10px 20px;
+    padding: 10px 15px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
     font-weight: 600;
-    white-space: nowrap;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, box-shadow 0.2s;
+    width: 100%; /* Ocupar todo el ancho en la cuadrícula */
+    margin-top: 5px; /* Pequeño margen para separación */
+}
+.download-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
 }
 .btn-primary {
-    background-color: #5d6cf0; /* Azul más brillante para botones */
+    background-color: #007bff; /* Azul */
     color: white;
 }
-.btn-primary:hover:not(:disabled) {
-    background-color: #4354e0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-2px);
+.btn-secondary {
+    background-color: #6c757d; /* Gris oscuro */
+    color: white;
+}
+.btn:hover:not(:disabled) {
+    opacity: 0.9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .btn:disabled {
-    background-color: #d1d5db;
-    color: #6b7280;
+    background-color: #e9ecef;
+    color: #a0a0a0;
     cursor: not-allowed;
-    box-shadow: none;
 }
 
-/* Filtros de Posición */
-#positionFilters {
+/* 6. Filtros de Posición */
+.position-filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 15px;
-    margin-bottom: 25px;
+    gap: 10px;
 }
 .filter-btn {
-    padding: 10px 15px;
-    border: 2px solid #a8b0c0;
-    background-color: #fff;
-    color: #4a4a4a;
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    color: #555;
     border-radius: 6px;
     transition: all 0.2s;
-    font-size: 0.9em;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 45px; /* Asegurar un tamaño mínimo */
 }
 .filter-btn:hover:not(.active) {
-    border-color: #1e40af;
-    color: #1e40af;
+    background-color: #f0f0f0;
+    border-color: #aaa;
 }
 .filter-btn.active {
-    background-color: #fdb927; /* Dorado Lakers */
-    color: #1e40af;
-    border-color: #1e40af;
-    box-shadow: 0 3px 6px rgba(253, 185, 39, 0.5);
+    background-color: #007bff; 
+    color: white;
+    border-color: #007bff;
     font-weight: 700;
 }
 
-/* Área de Gráfico */
-.chart-container { 
+/* 7. Área de Gráfico */
+.chart-section {
     position: relative; 
-    height: 550px; 
+}
+.chart-container { 
+    height: 500px; 
     width: 100%; 
-    margin-top: 25px;
-    margin-bottom: 40px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
-/* Estilos de la Tabla */
+/* 8. Tabla */
+.table-section {
+    overflow: hidden; /* Ocultar el scroll X en la tarjeta */
+}
 .table-container {
-    overflow-x: auto;
-    margin-top: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    background-color: white;
+    overflow-x: auto; /* Permitir scroll X solo dentro de la tabla */
+    max-width: 100%;
 }
 table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    text-align: left;
-    font-size: 0.9em;
+    border-collapse: collapse;
+    min-width: 700px; /* Asegurar que no se comprima demasiado */
 }
 th, td {
-    padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    vertical-align: middle;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    white-space: nowrap; /* Evitar que el contenido de la tabla salte de línea */
 }
 th {
-    background-color: #f8f8f8;
-    color: #1e40af;
-    font-weight: 800;
-    text-transform: uppercase;
+    background-color: #f0f5ff; /* Fondo sutil para encabezados */
+    color: #007bff;
+    font-weight: 700;
     cursor: pointer;
     position: sticky;
     top: 0;
     z-index: 10;
+    user-select: none;
 }
-th:first-child { border-top-left-radius: 10px; }
-th:last-child { border-top-right-radius: 10px; }
-
 tr:nth-child(even) {
     background-color: #fcfdff;
 }
 tr:hover {
-    background-color: #e0f7fa; /* Un azul muy claro al pasar el ratón */
+    background-color: #eef5ff;
+}
+.table-container::-webkit-scrollbar {
+    height: 8px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
 }
 
-/* Pie de página */
+/* 9. Pie de página */
 .footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #ccc;
+    margin-top: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #e0e0e0;
     text-align: center;
-    font-size: 0.9em;
-    color: #666;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+.small-info {
+    font-size: 0.8rem;
+    margin-top: 5px;
 }
 
-/* Responsividad Móvil */
+/* 10. Responsividad Móvil */
 @media (max-width: 768px) {
-    .container {
-        padding: 15px;
+    .app-container {
         margin: 10px auto;
+        padding: 0 10px;
     }
-    .controls {
+    .header {
         flex-direction: column;
-        gap: 15px;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+    h2 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    .card {
         padding: 15px;
+        margin-bottom: 15px;
     }
-    .control-group select, .control-group input[type="file"] {
-        min-width: 100%;
+    .control-grid {
+        /* Desactiva la cuadrícula compleja para apilamiento simple */
+        grid-template-columns: 1fr; 
     }
-    .chart-container {
-        height: 350px;
+    .control-group.download-actions {
+        flex-direction: column; 
+        gap: 8px;
     }
-    th, td {
-        padding: 10px;
-        white-space: nowrap; 
+    .btn {
+        padding: 12px;
+    }
+    .position-filters {
+        gap: 8px;
     }
     .filter-btn {
-        font-size: 0.8em;
-        padding: 8px 12px;
+        padding: 6px 10px;
+        font-size: 0.8rem;
     }
-    .control-group.download-buttons {
-        flex-direction: column;
-        width: 100%;
-        gap: 10px;
+    .chart-container {
+        height: 300px; /* Reducir altura del gráfico en móvil */
     }
 }

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>GO LAKERS!!!! Análisis de Datos Fantasy</title>
+    <title>Análisis Modular de Datos Fantasy</title>
     
-    <!-- Enlace a los estilos -->
+    <!-- Enlace a los estilos modernos -->
     <link rel="stylesheet" href="styles.css">
     
     <!-- Librería de gráficos Chart.js -->
@@ -13,41 +13,55 @@
     
 </head>
 <body>
-    <div class="container">
-        <h1>GO LAKERS!!!! 🏀 Análisis de Datos Fantasy</h1>
+    <div class="app-container">
+        <!-- Encabezado -->
+        <header class="header">
+            <h1>🏀 Análisis de Datos Fantasy</h1>
+            <div class="header-status">
+                <span id="fileStatus" class="tag tag-default">SIN DATOS CARGADOS</span>
+            </div>
+        </header>
         
-        <!-- Controles y filtros -->
-        <div class="controls">
-            <div class="control-group">
-                <label for="csvFile">Cargar Archivo CSV:</label>
-                <input type="file" id="csvFile" accept=".csv">
-            </div>
-
-            <div class="control-group">
-                <label for="fantasyTeamSelector">Filtrar por Equipo Fantasy:</label>
-                <select id="fantasyTeamSelector" disabled onchange="filterPlayersByFantasyTeam(this.value)">
-                    <option value="all">TODOS LOS EQUIPOS FANTASY</option>
-                </select>
-            </div>
+        <!-- Sección de Controles (Carga de Archivos y Filtros Globales) -->
+        <section class="controls-section card">
+            <h2>Controles y Filtros Globales</h2>
             
-            <div class="control-group">
-                <label for="chartTypeSelector">Tipo de Visualización:</label>
-                <select id="chartTypeSelector" onchange="updateChartDisplay()">
-                    <option value="daily">Puntos Diarios</option>
-                    <option value="weekly">Puntos Semanales</option>
-                </select>
-            </div>
+            <div class="control-grid">
+                <!-- Carga de Archivo -->
+                <div class="control-group">
+                    <label for="csvFile">Cargar Archivo CSV:</label>
+                    <input type="file" id="csvFile" accept=".csv" class="input-file">
+                </div>
 
-            <div class="control-group download-buttons">
-                <button id="downloadChart" class="btn btn-primary" disabled>Descargar Gráfico</button>
-                <button id="downloadCSV" class="btn btn-primary" disabled>Exportar CSV</button>
-            </div>
-        </div>
+                <!-- Selector de Equipo Fantasy -->
+                <div class="control-group">
+                    <label for="fantasyTeamSelector">Filtrar por Equipo Fantasy:</label>
+                    <select id="fantasyTeamSelector" disabled class="input-select" onchange="filterPlayersByFantasyTeam(this.value)">
+                        <option value="all">TODOS LOS EQUIPOS FANTASY</option>
+                    </select>
+                </div>
+                
+                <!-- Selector de Tipo de Visualización -->
+                <div class="control-group">
+                    <label for="chartTypeSelector">Visualización de Gráfico:</label>
+                    <select id="chartTypeSelector" class="input-select" onchange="updateChartDisplay()">
+                        <option value="daily">Puntos Diarios</option>
+                        <option value="weekly">Puntos Semanales</option>
+                    </select>
+                </div>
 
-        <!-- Filtros de Posición (Orden de botones actualizado y nombres simplificados) -->
-        <div class="filter-controls">
-            <h2>Filtro Rápido por Posición:</h2>
-            <div id="positionFilters">
+                <!-- Botones de Descarga -->
+                <div class="control-group download-actions">
+                    <button id="downloadChart" class="btn btn-secondary" disabled>Descargar Gráfico</button>
+                    <button id="downloadCSV" class="btn btn-primary" disabled>Exportar CSV</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filtros de Posición -->
+        <section class="filter-position-section card">
+            <h2>Filtro Rápido por Posición</h2>
+            <div id="positionFilters" class="position-filters">
                 <button class="filter-btn active" onclick="filterPlayersByPosition('all', this)" aria-pressed="true">TODOS</button>
                 <button class="filter-btn" onclick="filterPlayersByPosition('PG', this)">PG</button>
                 <button class="filter-btn" onclick="filterPlayersByPosition('SG', this)">SG</button>
@@ -57,30 +71,36 @@
                 <button class="filter-btn" onclick="filterPlayersByPosition('G', this)">G</button>
                 <button class="filter-btn" onclick="filterPlayersByPosition('F', this)">F</button>
             </div>
-        </div>
+        </section>
 
         <!-- Área de Gráfico -->
-        <div class="chart-container">
-            <canvas id="pointsChart"></canvas>
-        </div>
+        <section class="chart-section card">
+            <h2>Visualización de Rendimiento</h2>
+            <div class="chart-container">
+                <canvas id="pointsChart"></canvas>
+            </div>
+        </section>
 
         <!-- Tabla de Jugadores -->
-        <h2>Tabla de Jugadores (Ordenable):</h2>
-        <div class="table-container">
-            <table>
-                <thead id="playerTableHeader">
-                    <!-- Los encabezados se insertan aquí mediante JavaScript -->
-                </thead>
-                <tbody id="playerTableBody">
-                    <tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <section class="table-section card">
+            <h2>Tabla de Jugadores (Ordenable)</h2>
+            <div class="table-container">
+                <table>
+                    <thead id="playerTableHeader">
+                        <!-- Los encabezados se insertan aquí mediante JavaScript -->
+                    </thead>
+                    <tbody id="playerTableBody">
+                        <tr><td colspan="8" class="text-center">Cargue un archivo CSV para ver los datos.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        <!-- Pie de página con fecha dinámica -->
-        <div class="footer">
-            <p>Análisis generado el <span id="currentDatePlaceholder"></span>. Utilice un archivo CSV con formato (Equipo Fantasy;Nombre;Equipo NBA;Posición;Día1;Día2;...)</p>
-        </div>
+        <!-- Pie de página -->
+        <footer class="footer">
+            <p>Análisis de datos generado el <span id="currentDatePlaceholder"></span>.</p>
+            <p class="small-info">Formato CSV requerido: Equipo Fantasy;Nombre;Equipo NBA;Posición;Día1;Día2;...</p>
+        </footer>
     </div>
 
     <!-- Enlace al script principal -->

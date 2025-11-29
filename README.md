@@ -1,93 +1,86 @@
-# Fantasy NBA Dashboard – GO LAKERS!!!!
+🏀 Análisis de Datos NBA: GO LAKERS!!!!
 
-Este proyecto es una **aplicación web interactiva** diseñada para analizar, visualizar y gestionar datos de una liga *Fantasy NBA*.  
-Permite cargar archivos CSV personalizados, filtrar jugadores por posición o equipo fantasy, ordenar estadísticas y generar gráficos dinámicos.
 
----
 
-## 🚀 Funcionalidades Principales
+Este es un proyecto de demostración que simula la carga, visualización y exportación de datos estadísticos de la NBA, enfocándose en un análisis hipotético del rendimiento de los Los Angeles Lakers.
 
-### 📂 Carga y Exportación de Datos
-- Carga de archivos **CSV** (separados por `;`).
-- Exportación de datos procesados a un nuevo archivo CSV.
-- Procesamiento automático de:
-  - Puntos diarios.
-  - Puntos semanales.
-  - Partidos jugados.
-  - Estadísticas agregadas por jugador.
 
----
 
-### 🎯 Filtros Inteligentes
-- Filtrado por **equipo fantasy** mediante selector dinámico.
-- Filtrado por **posición**:
-  - PG, SG, SF, PF, C, G, F o *Todos*.
-- Ambos filtros se combinan para mostrar resultados precisos.
+La aplicación está completamente contenida en un solo archivo HTML, utilizando JavaScript para la lógica y la biblioteca Chart.js para la visualización gráfica de los datos.
 
----
 
-### 📊 Visualizaciones Interactivas
-- Gráficos generados con **Chart.js**.
-- Modo **Puntos Diarios** y **Puntos Semanales**.
-- Línea adicional de **Promedio Global** calculada dinámicamente.
-- Opción para **descargar gráfico** en PNG.
 
----
+🌟 Características
 
-### 📋 Tabla Completa de Estadísticas
-Incluye los siguientes datos:
-- Equipo Fantasy  
-- Nombre del Jugador  
-- Equipo NBA  
-- Posición  
-- Partidos Jugados  
-- Puntos Totales  
-- Promedio de Puntos  
-- Margen de Error (cálculo con desviación estándar y Z=1.96)
 
-Permite **ordenar por columnas** haciendo clic en los encabezados.
 
----
+Simulación de Carga de Datos: Carga de datos estadísticos ficticios mediante una función asíncrona simulada.
 
-## 🧮 Cálculos Estadísticos
-Cada jugador obtiene:
-- **Desviación estándar**
-- **Margen de error en puntos**
-- **Margen de error porcentual**
 
-Además, las semanas se generan siguiendo el calendario definido en el código.
 
----
+Filtro de Visualización: Permite cambiar la vista del gráfico entre diferentes granularidades temporales (Diario, Mensual, Anual).
 
-## 🛠️ Tecnologías Utilizadas
-- **HTML5 + CSS3** (responsive y optimizado para móvil)
-- **JavaScript** (toda la lógica interna)
-- **Chart.js** para gráficos
-- **LocalStorage** para recordar filtros del usuario
 
----
 
-## 📁 Estructura del Proyecto
+Gráfico Interactivo: Muestra el rendimiento o métricas clave utilizando un gráfico de líneas generado con Chart.js.
 
-```
-/
-├── index.html   # Archivo principal
-└── README.md    # Este archivo
-```
 
----
 
-## 🧑‍💻 Autor
+Exportación a CSV: Funcionalidad para exportar los datos mostrados actualmente a un archivo CSV.
 
-Proyecto desarrollado por **Julián Hernández**.  
-La fecha de la versión se muestra dinámicamente en la propia web.
 
----
 
-## 📜 Licencia
+Diseño Responsivo: Interfaz de usuario diseñada para ser funcional en dispositivos móviles y de escritorio.
 
-Este proyecto puede ser modificado y adaptado libremente para uso personal o educativo.
 
----
 
-¡Disfruta analizando tus datos de la Fantasy NBA! 🏀🔥
+🛠️ Tecnología Utilizada
+
+
+
+HTML5: Estructura de la aplicación.
+
+
+
+JavaScript (ES6+): Lógica principal, manejo de la API simulada, filtros y exportación de datos.
+
+
+
+CSS: Estilos personalizados para una experiencia moderna.
+
+
+
+Chart.js: Biblioteca para la generación de gráficos de datos.
+
+
+
+🚀 Cómo Ejecutar la Aplicación
+
+
+
+Dado que la aplicación es un único archivo index.html que contiene todo el HTML, CSS y JavaScript, no requiere configuración de servidor.
+
+
+
+Descarga o guarda el archivo index.html.
+
+
+
+Abre el archivo index.html directamente en tu navegador web preferido (Chrome, Firefox, Edge, etc.).
+
+
+
+¡Empieza a interactuar con los datos simulados!
+
+
+
+⚠️ Nota Importante (Disclaimer)
+
+
+
+Todos los datos presentados en esta aplicación (puntos, asistencias, rebotes, etc.) son datos simulados con fines de demostración de la funcionalidad de visualización y exportación. No representan estadísticas reales ni oficiales de la NBA ni del equipo Los Angeles Lakers.
+
+
+
+Desarrollado con pasión por el baloncesto.
+
