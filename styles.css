@@ -1,230 +1,210 @@
-/* Variables de color */
-:root {
-    --color-primary: #1e40af; /* Azul oscuro (similar a Lakers) */
-    --color-secondary: #fcd34d; /* Amarillo dorado */
-    --color-bg: #f8fafc; /* Fondo muy claro */
-    --color-text: #1f2937; /* Texto oscuro */
-    --color-border: #e5e7eb;
-    --color-success: #10b981;
-}
+/* ---------------------------------------------------- */
+/* --- ESTILOS CSS --- */
+/* ---------------------------------------------------- */
 
 /* Estilos Base para Escritorio */
 body { 
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    font-family: 'Inter', sans-serif; 
     margin: 0; 
-    background-color: var(--color-bg); 
-    color: var(--color-text); 
-    padding: 20px;
+    background-color: #f0f2f5; 
+    color: #333; 
 }
 .container { 
     max-width: 1400px; 
-    margin: 20px auto; 
+    margin: auto; 
     padding: 25px; 
     background-color: white; 
-    border-radius: 12px; 
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+    border-radius: 10px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    min-height: 100vh;
 }
-
-/* Encabezados */
 h1 { 
-    color: var(--color-primary); 
-    border-bottom: 3px solid var(--color-secondary); 
+    color: #1e40af; /* Azul oscuro (Lakers) */
+    border-bottom: 3px solid #1e40af; 
     padding-bottom: 10px; 
     margin-bottom: 25px; 
-    font-size: 2.2rem;
     font-weight: 800;
 }
 h2 { 
-    color: var(--color-primary); 
-    margin-top: 30px;
-    margin-bottom: 15px;
+    color: #333; 
+    margin-top: 20px;
     font-size: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 5px;
 }
 
 /* Controles y Filtros */
-.controls-and-filters {
-    margin-bottom: 25px;
-    padding: 15px;
-    background-color: #f3f4f6;
-    border-radius: 8px;
-}
-.controls-row {
-    display: flex;
+.controls { 
+    display: flex; 
     flex-wrap: wrap;
-    align-items: center;
+    gap: 20px; 
+    margin-bottom: 20px; 
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #e8eaf6; /* Fondo de controles más suave */
+}
+.control-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.control-group.download-buttons {
+    flex-direction: row;
+    align-self: flex-end; 
     gap: 10px;
 }
-
-/* Botones de Carga y Descarga */
-.btn-download,
-.filter-btn {
-    padding: 10px 15px;
-    border-radius: 6px;
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #3f51b5; 
+    font-size: 0.9em;
+}
+.control-group select, .control-group input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-width: 200px;
+    background-color: white;
     cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
-    border: 1px solid var(--color-border);
+}
+.chart-container { 
+    position: relative; 
+    height: 500px; 
+    width: 100%; 
+    margin-top: 25px;
+    margin-bottom: 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
 }
 
-.btn-download {
-    background-color: var(--color-primary);
-    color: white;
+/* Botones Generales */
+.btn {
+    padding: 10px 15px;
     border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    font-weight: 600;
+    white-space: nowrap;
 }
-.btn-download:hover:not(:disabled) {
-    background-color: #1e3a8a;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.btn-primary {
+    background-color: #3f51b5;
+    color: white;
 }
-.btn-download:disabled {
-    background-color: #9ca3af;
+.btn-primary:hover:not(:disabled) {
+    background-color: #303f9f;
+    transform: translateY(-1px);
+}
+.btn:disabled {
+    background-color: #bbbbbb;
     cursor: not-allowed;
 }
 
-/* Selectores */
-.fantasy-team-selector,
-.chart-selector {
-    padding: 10px 15px;
-    border-radius: 6px;
-    border: 1px solid var(--color-border);
-    background-color: white;
-    font-weight: 500;
-}
-
-/* Filtros de Posición (Botones pequeños) */
+/* Botones de Posición */
 #positionFilters {
     display: flex;
+    flex-wrap: wrap;
     gap: 5px;
-    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 .filter-btn {
-    background-color: white;
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    font-size: 0.9rem;
     padding: 8px 12px;
-}
-.filter-btn.active {
-    background-color: var(--color-secondary);
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 5px rgba(30, 64, 175, 0.3);
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #333;
+    border-radius: 6px;
+    transition: all 0.2s;
+    font-size: 0.9em;
 }
 .filter-btn:hover {
-    border-color: var(--color-primary);
+    border-color: #3f51b5;
+}
+.filter-btn.active {
+    background-color: #3f51b5;
+    color: white;
+    border-color: #3f51b5;
+    box-shadow: 0 2px 4px rgba(63, 81, 181, 0.3);
 }
 
-/* Tabla de Jugadores */
-.table-wrapper {
+/* Estilos de la Tabla */
+.table-container {
     overflow-x: auto;
+    margin-top: 20px;
     border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-.player-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px; /* Asegura que la tabla no sea demasiado estrecha en escritorio */
-}
-.player-table th, .player-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--color-border);
-    font-size: 0.95rem;
-}
-.player-table th {
-    background-color: #eff6ff; /* Fondo azul muy claro */
-    color: var(--color-primary);
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    line-height: 1.2;
-}
-.player-table th:hover {
-    background-color: #e0e7ff;
-}
-.player-table tbody tr:hover {
-    background-color: #f7f9fc;
-}
-.player-table tbody tr:last-child td {
-    border-bottom: none;
-}
-.player-table td:nth-child(6), /* Puntos Totales */
-.player-table td:nth-child(7), /* Puntos Promedio */
-.player-table td:nth-child(8) { /* Margen de Error */
-    text-align: right;
-    font-weight: 600;
-}
-/* Columna de Checkbox para la nueva funcionalidad */
-.player-table th:nth-child(1), 
-.player-table td:nth-child(1) {
-    width: 40px; /* Ancho fijo para el checkbox */
-    padding: 8px;
-    text-align: center;
-}
-
-/* Gráfico */
-.chart-container {
-    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    height: 500px; /* Altura fija para el gráfico */
-    margin: 0;
 }
-.chart-controls {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 15px;
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    font-size: 0.9em;
+}
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+th {
+    background-color: #f4f7f8;
+    color: #3f51b5;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+th:first-child { border-top-left-radius: 8px; }
+th:last-child { border-top-right-radius: 8px; }
+
+tr:nth-child(even) {
+    background-color: #fcfdff;
+}
+tr:hover {
+    background-color: #e3f2fd;
 }
 
-/* Créditos */
-.credit-text-main {
-    text-align: center;
+/* Pie de página */
+.footer {
     margin-top: 30px;
     padding-top: 15px;
-    border-top: 1px solid var(--color-border);
-    font-size: 0.85rem;
-    color: #6b7280;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
 }
 
-/* Media Queries para Responsive Design (Mobile) */
+/* Responsividad Móvil */
 @media (max-width: 768px) {
-    body {
+    .container {
         padding: 10px;
     }
-    .container {
-        padding: 15px;
-        margin: 10px auto;
-    }
-    h1 {
-        font-size: 1.8rem;
-        text-align: center;
-    }
-    .controls-row {
+    .controls {
         flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
+        gap: 10px;
+        padding: 10px;
     }
-    .btn-download,
-    .fantasy-team-selector,
-    .chart-selector {
-        width: 100%;
-        text-align: center;
+    .control-group select, .control-group input[type="file"] {
+        min-width: 100%;
     }
-    #positionFilters {
-        margin-left: 0;
-        justify-content: center;
-        overflow-x: auto; /* Permite scroll horizontal en los botones de posición */
-        flex-wrap: nowrap;
-        padding-bottom: 5px;
+    .chart-container {
+        height: 350px;
+    }
+    th, td {
+        padding: 8px 10px;
+        white-space: nowrap; 
     }
     .filter-btn {
-        flex-shrink: 0; /* Evita que los botones se encojan */
+        font-size: 0.8em;
         padding: 6px 10px;
     }
-    .player-table {
-        min-width: 600px; /* Asegura un mínimo en mobile para el scroll */
+    .control-group.download-buttons {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
     }
 }

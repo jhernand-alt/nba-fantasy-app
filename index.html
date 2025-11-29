@@ -3,99 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>GO LAKERS!!!!</title>
+    <title>GO LAKERS!!!! Análisis de Datos Fantasy</title>
     
-    <!-- Librería de Chart.js -->
+    <!-- Enlace a los estilos -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Librería de gráficos Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     
-    <!-- Carga los estilos desde el archivo externo -->
-    <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
-
-    <main class="container"> 
+    <div class="container">
+        <h1>GO LAKERS!!!! 🏀 Análisis de Datos Fantasy</h1>
         
-        <header>
-            <h1>Liga Fantasy NBA "GO LAKERS!!!!"</h1>
-
-            <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
-                <div id="unifiedControls" class="controls-row"> 
-                    
-                    <label for="csvFile" class="btn-download">
-                        Cargar Datos CSV ⬆️
-                        <input type="file" id="csvFile" accept=".csv" style="display: none;">
-                    </label>
-                    <button id="downloadCSV" class="btn-download" disabled>Descargar Datos CSV ⬇️</button>
-                    
-                    <span style="border-left: 1px solid #ccc; height: 30px; margin: 0 5px;"></span>
-
-                    <!-- SELECTOR DE EQUIPO FANTASY -->
-                    <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
-                        <option value="all">TODOS LOS EQUIPOS FANTASY</option>
-                    </select>
-                    
-                    <div id="positionFilters" role="group" aria-label="Filtros por Posición de Jugador">
-                        <button onclick="filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true">TODOS</button>
-                        <button onclick="filterPlayersByPosition('PG', this)" class="filter-btn" aria-pressed="false">PG</button>
-                        <button onclick="filterPlayersByPosition('SG', this)" class="filter-btn" aria-pressed="false">SG</button>
-                        <button onclick="filterPlayersByPosition('SF', this)" class="filter-btn" aria-pressed="false">SF</button>
-                        <button onclick="filterPlayersByPosition('PF', this)" class="filter-btn" aria-pressed="false">PF</button>
-                        <button onclick="filterPlayersByPosition('C', this)" class="filter-btn" aria-pressed="false">C</button>
-                        <button onclick="filterPlayersByPosition('G', this)" class="filter-btn" aria-pressed="false">G</button>
-                        <button onclick="filterPlayersByPosition('F', this)" class="filter-btn" aria-pressed="false">F</button>
-                    </div>
-                </div>
+        <!-- Controles y filtros -->
+        <div class="controls">
+            <div class="control-group">
+                <label for="csvFile">Cargar Archivo CSV:</label>
+                <input type="file" id="csvFile" accept=".csv">
             </div>
-        </header>
 
-        <section aria-labelledby="tablaJugadoresHeader">
-            <h2 id="tablaJugadoresHeader">Estadísticas Detalladas por Jugador</h2>
-            <div class="table-wrapper">
-                <table class="player-table" role="grid" aria-label="Tabla de datos de jugadores, ordenable y seleccionable">
-                    <thead id="playerTableHeader">
-                        <tr>
-                            <!-- NUEVA COLUMNA PARA EL CHECKBOX DEL GRÁFICO -->
-                            <th style="cursor: default;">Gráfico</th>
-                            <!-- El resto de las columnas... -->
-                            <th onclick="sortTable('fantasyTeam')">Equipo<br>Fantasy</th>
-                            <th onclick="sortTable('name')">Nombre</th>
-                            <th onclick="sortTable('team')">Equipo<br>NBA</th>
-                            <th style="cursor: default;">Posición(es)</th>
-                            <th onclick="sortTable('gamesPlayed')">Partidos<br>Jugados</th>
-                            <th onclick="sortTable('totalPoints')" aria-sort="descending">Puntos<br>Totales</th>
-                            <th onclick="sortTable('averagePoints')">Puntos<br>Promedio</th>
-                            <th style="cursor: default;">MARGEN<br>DE ERROR</th>
-                        </tr>
-                    </thead>
-                    <tbody id="playerTableBody">
-                        <tr><td colspan="9">Cargue un archivo CSV para ver los datos.</td></tr> 
-                    </tbody>
-                </table>
+            <div class="control-group">
+                <label for="fantasyTeamSelector">Filtrar por Equipo Fantasy:</label>
+                <select id="fantasyTeamSelector" disabled onchange="filterPlayersByFantasyTeam(this.value)">
+                    <option value="all">TODOS LOS EQUIPOS FANTASY</option>
+                </select>
             </div>
-        </section>
+            
+            <div class="control-group">
+                <label for="chartTypeSelector">Tipo de Visualización:</label>
+                <select id="chartTypeSelector" onchange="updateChartDisplay()">
+                    <option value="daily">Puntos Diarios</option>
+                    <option value="weekly">Puntos Semanales</option>
+                </select>
+            </div>
 
-        <section aria-labelledby="graficoHeader">
-            <h2 id="graficoHeader">Visualización de Puntos Diarios/Semanales (Jugadores Seleccionados)</h2>
-            <figure class="chart-container" role="img" aria-label="Gráfico de línea comparando los puntos de los jugadores filtrados">
-                <div class="chart-controls">
-                    <select id="chartTypeSelector" class="chart-selector" onchange="updateChartDisplay()">
-                        <option value="daily">Puntos Diarios</option>
-                        <option value="weekly">Puntos Semanales</option>
-                    </select>
-                    <button id="downloadChart" class="btn-download" disabled>Descargar Gráfico 🖼️</button>
-                </div>
-                <canvas id="pointsChart"></canvas>
-            </figure>
-        </section>
-        
-        <div class="credit-text-main">
-            Hecho por Julián Hernández (Última versión <span id="currentDatePlaceholder"></span>)
+            <div class="control-group download-buttons">
+                <button id="downloadChart" class="btn btn-primary" disabled>Descargar Gráfico</button>
+                <button id="downloadCSV" class="btn btn-primary" disabled>Exportar CSV</button>
+            </div>
         </div>
 
-    </main>
-    
-    <!-- Carga del JavaScript refactorizado -->
-    <script src="app.js" defer></script>
-</body>
+        <!-- Filtros de Posición (Orden de botones actualizado) -->
+        <div class="filter-controls">
+            <h2>Filtro Rápido por Posición:</h2>
+            <div id="positionFilters">
+                <button class="filter-btn active" onclick="filterPlayersByPosition('all', this)" aria-pressed="true">TODOS</button>
+                <button class="filter-btn" onclick="filterPlayersByPosition('PG', this)">PG</button>
+                <button class="filter-btn" onclick="filterPlayersByPosition('SG', this)">SG</button>
+                <button class="filter-btn" onclick="filterPlayersByPosition('SF', this)">SF</button>
+                <button class="filter-btn" onclick="filterPlayersByPosition('PF', this)">PF</button>
+                <button class="filter-btn" onclick="filterPlayersByPosition('C', this)">C</button>
+                <button class="filter-btn" onclick="filterPlayersByPosition('G', this)">G (PG/SG)</button>
+                <button class="filter-btn" onclick="filterPlayersByPosition('F', this)">F (SF/PF)</button>
+            </div>
+        </div>
 
+        <!-- Área de Gráfico -->
+        <div class="chart-container">
+            <canvas id="pointsChart"></canvas>
+        </div>
+
+        <!-- Tabla de Jugadores -->
+        <h2>Tabla de Jugadores (Ordenable):</h2>
+        <div class="table-container">
+            <table>
+                <thead id="playerTableHeader">
+                    <!-- Los encabezados se insertan aquí mediante JavaScript -->
+                </thead>
+                <tbody id="playerTableBody">
+                    <tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pie de página con fecha dinámica -->
+        <div class="footer">
+            <p>Análisis generado el <span id="currentDatePlaceholder"></span>. Utilice un archivo CSV con formato (Equipo Fantasy;Nombre;Equipo NBA;Posición;Día1;Día2;...)</p>
+        </div>
+    </div>
+
+    <!-- Enlace al script principal -->
+    <script src="app.js"></script>
+</body>
 </html>
