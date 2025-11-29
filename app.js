@@ -23,11 +23,17 @@ const fantasyWeeks = [
 ];
 weeklyLabels = fantasyWeeks.map(w => w.label);
 
-// Colores cíclicos para las líneas del gráfico
+// Colores cíclicos para las líneas del gráfico (Optimizados para el tema Lakers)
 const chartColors = [
-    'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)', 
-    'rgb(75, 192, 192)', 'rgb(153, 102, 255)', 'rgb(255, 159, 64)',
-    'rgb(199, 199, 199)', 'rgb(83, 102, 255)', 'rgb(10, 200, 100)'
+    'rgb(255, 185, 39)', // Dorado/Amarillo
+    'rgb(89, 107, 240)', // Azul (más brillante)
+    'rgb(255, 99, 132)', 
+    'rgb(75, 192, 192)', 
+    'rgb(153, 102, 255)', 
+    'rgb(255, 159, 64)',
+    'rgb(199, 199, 199)', 
+    'rgb(54, 162, 235)',
+    'rgb(10, 200, 100)'
 ];
 
 // --- FUNCIONES DE CÁLCULO ESTADÍSTICO ---
@@ -341,6 +347,7 @@ function applyFilters() {
         // Filtrado por posición: soporta G (PG/SG) y F (SF/PF)
         const matchesPosition = currentPositionFilter === 'all' || 
                                 player.position.includes(currentPositionFilter) ||
+                                // Lógica de G y F sin la descripción en el botón:
                                 (currentPositionFilter === 'G' && (player.position === 'PG' || player.position === 'SG')) ||
                                 (currentPositionFilter === 'F' && (player.position === 'SF' || player.position === 'PF'));
 
@@ -372,8 +379,8 @@ function renderTableHeader() {
             <th data-sort-key="gamesPlayed">Partidos</th>
             <th data-sort-key="totalPoints">Pts Totales</th>
             <th data-sort-key="averagePoints">Media Diaria</th>
-            <!-- Columna única para Margen de Error. Se usará 'averagePoints' como sortKey por defecto para no introducir una nueva clave. -->
-            <th data-sort-key="averagePoints" title="Margen de error al 95% de confianza (Pts y %)">Margen Error</th> 
+            <!-- Columna única para Margen de Error. La clave de ordenamiento es 'marginOfErrorPts' -->
+            <th data-sort-key="marginOfErrorPts" title="Margen de error al 95% de confianza (Pts y %)">Margen Error</th> 
         </tr>
     `;
     
@@ -381,8 +388,7 @@ function renderTableHeader() {
     header.querySelectorAll('th').forEach(th => {
         th.addEventListener('click', () => {
             const sortKey = th.getAttribute('data-sort-key');
-            // Si hacen clic en Margen Error, ordenamos por Pts Absolutos por consistencia
-            handleTableSort(sortKey === 'marginOfError' ? 'marginOfErrorPts' : sortKey); 
+            handleTableSort(sortKey); 
         });
     });
     
@@ -390,17 +396,17 @@ function renderTableHeader() {
     header.querySelectorAll('th').forEach(th => {
         const key = th.getAttribute('data-sort-key');
         let indicator = '';
-        if (key === currentSortKey || (key === 'averagePoints' && (currentSortKey === 'marginOfErrorPts' || currentSortKey === 'marginOfErrorPct'))) {
-             // Indicador especial para el Margen de Error, usa la clave que esté activa
-             const actualKey = (currentSortKey === 'marginOfErrorPts' || currentSortKey === 'marginOfErrorPct') ? currentSortKey : key;
-
-             if (key === 'averagePoints' && (actualKey === 'marginOfErrorPts' || actualKey === 'marginOfErrorPct')) {
-                // Si la columna es "Margen Error" (que usa sortKey 'averagePoints' en el HTML) y la ordenación es por margen
-                indicator = sortDirection === 'asc' ? ' ▲' : ' ▼';
-             } else if (key === currentSortKey) {
-                 indicator = sortDirection === 'asc' ? ' ▲' : ' ▼';
-             }
+        
+        // El indicador se pone si la clave actual de ordenamiento coincide
+        if (key === currentSortKey) {
+            indicator = sortDirection === 'asc' ? ' ▲' : ' ▼';
         }
+
+        // Si la columna es Margen Error, el indicador se pone si la clave de ordenamiento es 'marginOfErrorPts'
+        if (key === 'marginOfErrorPts' && currentSortKey === 'marginOfErrorPts') {
+            indicator = sortDirection === 'asc' ? ' ▲' : ' ▼';
+        }
+        
         th.textContent += indicator;
     });
 }
@@ -525,7 +531,7 @@ function renderChart(players, type) {
         const colorIndex = index % chartColors.length;
         const dataPoints = isDaily ? player.dailyPoints : player.weeklyPoints;
         
-        // Aplicar tensión (curva) al gráfico de puntos semanales también
+        // Aplicar tensión (curva) al gráfico para ambos, como se solicitó
         const tensionValue = 0.3; 
         
         return {
@@ -533,13 +539,13 @@ function renderChart(players, type) {
             label: player.name, 
             data: dataPoints,
             borderColor: chartColors[colorIndex],
-            backgroundColor: isDaily ? chartColors[colorIndex].replace('rgb', 'rgba').replace(')', ', 0.2)') : chartColors[colorIndex].replace('rgb', 'rgba').replace(')', ', 0.5)'),
+            backgroundColor: chartColors[colorIndex].replace('rgb', 'rgba').replace(')', ', 0.2)'),
             tension: tensionValue, // Aplicado a ambos (diario y semanal)
             fill: false,
             pointRadius: isDaily ? 3 : 5, 
             pointHoverRadius: isDaily ? 5 : 7,
             spanGaps: true, // Conecta puntos a través de valores 'null' (juegos perdidos)
-            type: 'line' // Usamos línea para ambos casos (diario y semanal)
+            type: 'line' 
         };
     });
 
