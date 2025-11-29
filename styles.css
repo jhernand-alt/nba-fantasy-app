@@ -1,172 +1,230 @@
+/* Variables de color */
+:root {
+    --color-primary: #1e40af; /* Azul oscuro (similar a Lakers) */
+    --color-secondary: #fcd34d; /* Amarillo dorado */
+    --color-bg: #f8fafc; /* Fondo muy claro */
+    --color-text: #1f2937; /* Texto oscuro */
+    --color-border: #e5e7eb;
+    --color-success: #10b981;
+}
+
 /* Estilos Base para Escritorio */
 body { 
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    margin: 20px; 
-    background-color: #f0f2f5; 
-    color: #333; 
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 0; 
+    background-color: var(--color-bg); 
+    color: var(--color-text); 
+    padding: 20px;
 }
 .container { 
     max-width: 1400px; 
-    margin: auto; 
+    margin: 20px auto; 
     padding: 25px; 
     background-color: white; 
-    border-radius: 10px; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    border-radius: 12px; 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
 }
+
+/* Encabezados */
 h1 { 
-    color: #1e40af; 
-    border-bottom: 3px solid #1e40af; 
+    color: var(--color-primary); 
+    border-bottom: 3px solid var(--color-secondary); 
     padding-bottom: 10px; 
     margin-bottom: 25px; 
+    font-size: 2.2rem;
+    font-weight: 800;
 }
 h2 { 
-    color: #333; 
-    margin-top: 30px; 
-    margin-bottom: 15px; 
+    color: var(--color-primary); 
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 5px;
 }
 
-/* Contenedor Único para Controles y Filtros */
+/* Controles y Filtros */
 .controls-and-filters {
-    margin-bottom: 20px; 
-    padding: 15px; 
-    background-color: #f1f5f9; 
-    border-radius: 8px; 
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #f3f4f6;
+    border-radius: 8px;
 }
-
-/* Estilos de la fila de botones/controles (flex-wrap ya permite adaptación) */
 .controls-row {
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
 }
 
-/* Botones de Carga, Descarga CSV */
-.controls-row button.btn-download, 
-.controls-row label.btn-download,
-.chart-controls button.btn-download { 
-    padding: 12px 22px; 
-    border: none; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    font-size: 1em; 
-    transition: background-color 0.3s;
+/* Botones de Carga y Descarga */
+.btn-download,
+.filter-btn {
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+    border: 1px solid var(--color-border);
 }
 
-.btn-download { background-color: #4f46e5; color: white; } 
-.btn-download:hover { background-color: #4338ca; }
+.btn-download {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+}
+.btn-download:hover:not(:disabled) {
+    background-color: #1e3a8a;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.btn-download:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
 
-/* Estilo para Select y botones de Filtro/Ordenación */
-.chart-selector, .filter-btn, .fantasy-team-selector {
-    padding: 8px 15px; 
-    border: 1px solid #ccc; 
-    border-radius: 5px; 
-    cursor: pointer; 
-    background-color: white; 
-    transition: all 0.2s; 
+/* Selectores */
+.fantasy-team-selector,
+.chart-selector {
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background-color: white;
     font-weight: 500;
 }
-.filter-btn:hover { background-color: #e2e8f0; }
 
-/* ESTILO PARA EL BOTÓN ACTIVO/PULSADO */
-.filter-btn.active { 
-    background-color: #1e40af; 
-    color: white; 
-    border-color: #1e40af;
+/* Filtros de Posición (Botones pequeños) */
+#positionFilters {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
 }
-/* ARIA Pressed para botones */
-.filter-btn[aria-pressed="true"] { 
-    background-color: #1e40af; 
-    color: white; 
-    border-color: #1e40af;
+.filter-btn {
+    background-color: white;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    font-size: 0.9rem;
+    padding: 8px 12px;
+}
+.filter-btn.active {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 5px rgba(30, 64, 175, 0.3);
+}
+.filter-btn:hover {
+    border-color: var(--color-primary);
 }
 
-
-/* TABLA Y SU WRAPPER RESPONSIVO */
+/* Tabla de Jugadores */
 .table-wrapper {
-    overflow-x: auto; 
-    margin-top: 20px;
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
-.player-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    min-width: 900px; 
-    font-size: 0.9em; 
+.player-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* Asegura que la tabla no sea demasiado estrecha en escritorio */
 }
-.player-table th, .player-table td { 
-    border: 1px solid #ddd; 
-    padding: 8px; 
-    text-align: center; 
-} 
-.player-table th { 
-    background-color: #1e40af; 
-    color: white; 
-    text-transform: uppercase; 
-    cursor: pointer; 
-    vertical-align: middle;
+.player-table th, .player-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.95rem;
 }
-/* Las columnas no ordenables no tienen cursor pointer */
-.player-table th:not([onclick]) { 
-    cursor: default;
+.player-table th {
+    background-color: #eff6ff; /* Fondo azul muy claro */
+    color: var(--color-primary);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    line-height: 1.2;
+}
+.player-table th:hover {
+    background-color: #e0e7ff;
+}
+.player-table tbody tr:hover {
+    background-color: #f7f9fc;
+}
+.player-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.player-table td:nth-child(6), /* Puntos Totales */
+.player-table td:nth-child(7), /* Puntos Promedio */
+.player-table td:nth-child(8) { /* Margen de Error */
+    text-align: right;
+    font-weight: 600;
+}
+/* Columna de Checkbox para la nueva funcionalidad */
+.player-table th:nth-child(1), 
+.player-table td:nth-child(1) {
+    width: 40px; /* Ancho fijo para el checkbox */
+    padding: 8px;
+    text-align: center;
 }
 
-.player-table tr:nth-child(even) { 
-    background-color: #f4f7fd; 
+/* Gráfico */
+.chart-container {
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    height: 500px; /* Altura fija para el gráfico */
+    margin: 0;
 }
-
-/* GRÁFICO */
-.chart-container { 
-    margin-top: 20px; 
-    padding: 20px; 
-    border: 1px solid #ddd; 
-    border-radius: 8px; 
-    background-color: #fff; 
-    height: 400px; 
-    position: relative;
-}
-.chart-container canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-/* Controles de Gráfico */
 .chart-controls {
     display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 10px;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
-/* NUEVO ESTILO: Para la frase de crédito dentro del contenedor */
+/* Créditos */
 .credit-text-main {
-    text-align: right;
-    font-size: 0.8em;
-    color: #64748b; 
-    margin-top: 30px; 
-    padding-top: 10px;
-    border-top: 1px dashed #ddd; 
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.85rem;
+    color: #6b7280;
 }
 
-/* MEDIA QUERY PARA MÓVILES */
+/* Media Queries para Responsive Design (Mobile) */
 @media (max-width: 768px) {
-    .player-table { 
-        font-size: 0.8em; 
-        min-width: 600px; 
+    body {
+        padding: 10px;
     }
-    .chart-controls {
-        flex-direction: column;
-        align-items: flex-start;
+    .container {
+        padding: 15px;
+        margin: 10px auto;
+    }
+    h1 {
+        font-size: 1.8rem;
+        text-align: center;
     }
     .controls-row {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 15px;
     }
-    .controls-row > * {
-        width: 100%; 
-        margin-top: 5px;
+    .btn-download,
+    .fantasy-team-selector,
+    .chart-selector {
+        width: 100%;
+        text-align: center;
     }
-    .controls-row span {
-        display: none !important; 
+    #positionFilters {
+        margin-left: 0;
+        justify-content: center;
+        overflow-x: auto; /* Permite scroll horizontal en los botones de posición */
+        flex-wrap: nowrap;
+        padding-bottom: 5px;
+    }
+    .filter-btn {
+        flex-shrink: 0; /* Evita que los botones se encojan */
+        padding: 6px 10px;
+    }
+    .player-table {
+        min-width: 600px; /* Asegura un mínimo en mobile para el scroll */
     }
 }
