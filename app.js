@@ -1,6 +1,6 @@
 // --- VARIABLES GLOBALES DEL ESTADO DE LA APLICACIÓN ---
 let allPlayerData = []; 
-let activePlayers = []; // Jugadores filtrados por Posición/Equipo
+let activePlayers = []; 
 let chartInstance = null; 
 let dateLabels = []; 
 let weeklyLabels = []; 
@@ -9,41 +9,32 @@ let sortDirection = 'desc';
 let currentPositionFilter = 'all'; 
 let currentTeamFilter = 'all'; 
 
-// Definición de las semanas de fantasía (Ajuste las fechas según su liga)
-// Nota: La fecha de inicio asumida es '2023-10-22' (índice 0).
-const fantasyWeeks = [
-    { start: '21/10', end: '27/10', label: 'S1 (21/10 - 27/10)', startDay: 0, endDay: 6 }, 
-    { start: '28/10', end: '03/11', label: 'S2 (28/10 - 03/11)', startDay: 7, endDay: 13 },
-    { start: '04/11', end: '10/11', label: 'S3 (04/11 - 10/11)', startDay: 14, endDay: 20 },
-    { start: '11/11', end: '17/11', label: 'S4 (11/11 - 17/11)', startDay: 21, endDay: 27 },
-    { start: '18/11', end: '24/11', label: 'S5 (18/11 - 24/11)', startDay: 28, endDay: 34 }, 
-    { start: '25/11', end: '01/12', label: 'S6 (25/11 - 01/12)', startDay: 35, endDay: 41 }, 
-    { start: '02/12', end: '08/12', label: 'S7 (02/12 - 08/12)', startDay: 42, endDay: 48 },
-    { start: '09/12', end: '15/12', label: 'S8 (09/12 - 15/12)', startDay: 49, endDay: 55 },
+// ** CORRECCIÓN CLAVE 1: Definición de las semanas de fantasía **
+// Comienzan en el índice 0 (21/10) y cada semana tiene un ancho de 7 días.
+// startDay: índice de inicio de día en el array dailyPoints
+// endDay: índice de fin de día (exclusivo)
+const fantasyWeeksDefinition = [
+    // La primera semana (S1) comienza en el índice 0, que corresponde al 21-oct
+    { start: '21/10', end: '27/10', label: 'S1 (21/10 - 27/10)', startDay: 0, endDay: 7 }, 
+    { start: '28/10', end: '03/11', label: 'S2 (28/10 - 03/11)', startDay: 7, endDay: 14 },
+    { start: '04/11', end: '10/11', label: 'S3 (04/11 - 10/11)', startDay: 14, endDay: 21 },
+    { start: '11/11', end: '17/11', label: 'S4 (11/11 - 17/11)', startDay: 21, endDay: 28 },
+    { start: '18/11', end: '24/11', label: 'S5 (18/11 - 24/11)', startDay: 28, endDay: 35 }, 
+    { start: '25/11', end: '01/12', label: 'S6 (25/11 - 01/12)', startDay: 35, endDay: 42 }, 
+    { start: '02/12', end: '08/12', label: 'S7 (02/12 - 08/12)', startDay: 42, endDay: 49 },
+    { start: '09/12', end: '15/12', label: 'S8 (09/12 - 15/12)', startDay: 49, endDay: 56 },
 ];
-weeklyLabels = fantasyWeeks.map(w => w.label);
+weeklyLabels = fantasyWeeksDefinition.map(w => w.label);
 
-// Colores cíclicos para las líneas del gráfico (Paleta moderna y neutral)
+// Colores cíclicos para las líneas del gráfico
 const chartColors = [
-    'rgb(0, 123, 255)',  // Azul Primario
-    'rgb(255, 99, 132)', // Rojo Rosado
-    'rgb(75, 192, 192)', // Verde Azulado
-    'rgb(255, 159, 64)', // Naranja
-    'rgb(153, 102, 255)',// Violeta
-    'rgb(201, 203, 207)',// Gris Claro
-    'rgb(255, 205, 86)', // Amarillo
-    'rgb(54, 162, 235)', // Azul Claro
-    'rgb(10, 200, 100)' // Verde Esmeralda
+    'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)', 
+    'rgb(75, 192, 192)', 'rgb(153, 102, 255)', 'rgb(255, 159, 64)',
+    'rgb(199, 199, 199)', 'rgb(83, 102, 255)', 'rgb(10, 200, 100)'
 ];
 
 // --- FUNCIONES DE CÁLCULO ESTADÍSTICO ---
 
-/**
- * Calcula la Desviación Estándar de una muestra (usando la fórmula de la muestra, n-1).
- * @param {number[]} arr - Array de puntos de fantasía.
- * @param {number} mean - Media de los puntos.
- * @returns {number} - Desviación Estándar.
- */
 function calculateStdDev(arr, mean) {
     const validData = arr.filter(p => p !== null);
     if (validData.length <= 1) return 0;
@@ -52,90 +43,70 @@ function calculateStdDev(arr, mean) {
     return Math.sqrt(variance);
 }
 
-/**
- * Calcula el Margen de Error (95% CI).
- * @param {number} stdDev - Desviación Estándar.
- * @param {number} n - Número de juegos jugados.
- * @returns {number} - Margen de Error.
- */
 function calculateMarginOfError(stdDev, n) {
     if (n < 2) return 0; 
-    const Z_95 = 1.96; // Valor Z para el 95% de confianza (aproximado)
+    const Z_95 = 1.96; 
     return Z_95 * (stdDev / Math.sqrt(n));
 }
 
-/**
- * Agrupa los puntos diarios en totales semanales según las semanas predefinidas.
- * @param {number[]} dailyPoints - Array de puntos diarios.
- * @returns {number[]} - Array de puntos semanales.
- */
-function calculateWeeklyPoints(dailyPoints) {
-    const weeklyTotals = [];
-    const maxDays = dailyPoints.length;
-    fantasyWeeks.forEach(week => {
-        let weekSum = 0;
-        const end = Math.min(week.endDay + 1, maxDays); 
-        
-        if (week.startDay < maxDays) {
-            for (let i = week.startDay; i < end; i++) {
-                const points = dailyPoints[i];
-                if (points !== null) {
-                    weekSum += points;
-                }
-            }
-            weeklyTotals.push(weekSum);
+// --- FUNCIÓN DE PARSEO Y PROCESAMIENTO DE DATOS ---
+
+document.getElementById('csvFile').addEventListener('change', handleFileUpload);
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const csvText = e.target.result;
+        try {
+            allPlayerData = parseCSV(csvText); 
+        } catch (error) {
+            alert("Error al procesar el archivo CSV. Asegúrate de que el formato es correcto (separado por ';'). Detalle: " + error.message);
+            resetDisplay();
+            return;
         }
-    });
-    return weeklyTotals;
+
+        if (allPlayerData.length === 0) {
+            alert("El archivo CSV no contiene datos de jugadores válidos.");
+            resetDisplay();
+            return;
+        }
+        
+        // Genera las etiquetas de fechas para el eje X
+        const maxDays = Math.max(0, ...allPlayerData.map(p => p.dailyPoints.length));
+        dateLabels = generateDateLabels(maxDays); 
+        
+        initializeApplication(allPlayerData);
+    };
+    reader.readAsText(file);
 }
-
-/**
- * Genera las etiquetas de fecha (Día-Mes) a partir de una fecha de inicio fija.
- * @param {number} numDays - Número de días a generar.
- * @returns {string[]} - Array de etiquetas de fecha.
- */
-function generateDateLabels(numDays) {
-    const startDate = new Date('2023-10-22T00:00:00'); // Fecha de inicio de ejemplo (ajustar si es necesario)
-    const labels = [];
-    for (let i = 0; i < numDays; i++) {
-        const currentDate = new Date(startDate);
-        currentDate.setDate(startDate.getDate() + i);
-        const day = currentDate.getDate();
-        // Usar formato corto de mes sin el punto (ej. oct, nov)
-        const month = currentDate.toLocaleString('es-ES', { month: 'short' }).replace('.', '');
-        labels.push(`${day}-${month}`);
-    }
-    return labels;
-}
-
-
-// --- GESTIÓN DE ARCHIVOS Y PARSEO ---
 
 /**
  * Parsea el texto CSV en un array de objetos de jugador.
+ * Se espera que la estructura de las primeras 4 columnas sea:
+ * EquipoFantasy;Nombre;EquipoNBA;Posición;...puntos diarios
  * @param {string} csvText - Contenido del archivo CSV.
- * @returns {object[]} - Array de objetos de jugador.
+ * @returns {Object[]} Array de objetos de jugadores.
  */
 function parseCSV(csvText) {
     const lines = csvText.trim().split('\n');
-    // Mínimo 2 líneas de datos (asumiendo que las primeras 2 son encabezados/descripción)
     if (lines.length <= 2) return []; 
     
     const data = [];
-    let playerIdCounter = 1; 
-
+    
     for (let i = 2; i < lines.length; i++) { 
         const values = lines[i].split(';'); 
         
         // Mínimo 4 columnas de información + 1 día de puntos
         if (values.length >= 5) { 
             
-            // Los puntos empiezan en el índice 4 
+            // Los puntos empiezan en el índice 4 (0:FantasyTeam, 1:Name, 2:Team, 3:Position)
             const dailyPoints = values.slice(4).map(p => {
                 const trimmed = p.trim();
-                if (trimmed === '') return null; // Tratar celdas vacías como null
-                // Reemplazar la coma por punto si es necesario para el parseFloat
-                const num = parseFloat(trimmed.replace(',', '.')); 
+                if (trimmed === '') return null;
+                const num = parseFloat(trimmed);
                 return isNaN(num) ? null : num;
             });
             
@@ -152,7 +123,6 @@ function parseCSV(csvText) {
             const marginOfErrorPct = averagePoints > 0 ? (marginOfErrorPts / averagePoints) * 100 : 0;
 
             const player = {
-                id: playerIdCounter++, 
                 fantasyTeam: values[0].trim(), 
                 name: values[1].trim(),       
                 team: values[2].trim(),       
@@ -163,7 +133,7 @@ function parseCSV(csvText) {
                 totalPoints: totalPoints,
                 averagePoints: averagePoints,
                 marginOfErrorPts: marginOfErrorPts,
-                marginOfErrorPct: marginOfErrorPct,
+                marginOfErrorPct: marginOfErrorPct 
             };
             data.push(player);
         }
@@ -171,92 +141,83 @@ function parseCSV(csvText) {
     return data;
 }
 
+function calculateWeeklyPoints(dailyPoints) {
+    const weeklyTotals = [];
+    const maxDays = dailyPoints.length;
+    
+    // Usamos la definición ajustada
+    fantasyWeeksDefinition.forEach(week => {
+        let weekSum = 0;
+        
+        // La semana termina en el índice endDay (no incluido), o al final de los datos
+        const end = Math.min(week.endDay, maxDays); 
+        
+        // Solo calculamos si la semana tiene al menos un día cubierto por los datos
+        if (week.startDay < maxDays) {
+            // Sumamos los puntos desde startDay hasta end - 1
+            for (let i = week.startDay; i < end; i++) {
+                const points = dailyPoints[i];
+                if (points !== null) {
+                    weekSum += points;
+                }
+            }
+            weeklyTotals.push(weekSum);
+        } else {
+            // Si el inicio de la semana está fuera de los datos, rellenamos con null
+            weeklyTotals.push(null);
+        }
+    });
+    
+    // Recortamos los nulls al final
+    const firstNullIndex = weeklyTotals.findIndex(p => p === null);
+    const sliceEnd = firstNullIndex !== -1 ? firstNullIndex : weeklyTotals.length;
+    return weeklyTotals.slice(0, sliceEnd);
+}
+
 /**
- * Maneja la carga y el procesamiento del archivo CSV.
- * @param {Event} event - Evento de cambio de archivo.
+ * Genera las etiquetas de fechas de forma dinámica.
+ * CORRECCIÓN CLAVE 2: Inicia en '2023-10-21' para coincidir con la columna 5 del CSV.
  */
-function handleFileUpload(event) {
-    const file = event.target.files[0];
-    const statusTag = document.getElementById('fileStatus');
-
-    if (!file) {
-        statusTag.textContent = 'SIN DATOS CARGADOS';
-        statusTag.className = 'tag tag-default';
-        resetDisplay();
-        return;
+function generateDateLabels(numDays) {
+    const startDate = new Date('2023-10-21'); 
+    const labels = [];
+    for (let i = 0; i < numDays; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + i);
+        const day = currentDate.getDate();
+        const month = currentDate.toLocaleString('es-ES', { month: 'short' }).replace('.', '');
+        labels.push(`${day}-${month}`);
     }
-
-    statusTag.textContent = 'PROCESANDO...';
-    statusTag.className = 'tag tag-default';
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const csvText = e.target.result;
-        try {
-            allPlayerData = parseCSV(csvText); 
-        } catch (error) {
-            console.error("Error al procesar el archivo CSV.", error);
-            statusTag.textContent = 'ERROR EN CSV';
-            statusTag.className = 'tag tag-error';
-            resetDisplay();
-            return;
-        }
-
-        if (allPlayerData.length === 0) {
-            console.warn("El archivo CSV no contiene datos de jugadores válidos.");
-            statusTag.textContent = 'CSV VACÍO';
-            statusTag.className = 'tag tag-default';
-            resetDisplay();
-            return;
-        }
-        
-        const maxDays = Math.max(0, ...allPlayerData.map(p => p.dailyPoints.length));
-        dateLabels = generateDateLabels(maxDays); 
-        
-        initializeApplication(allPlayerData);
-        statusTag.textContent = `DATOS CARGADOS (${allPlayerData.length} Jugadores)`;
-        statusTag.className = 'tag tag-success';
-    };
-    reader.readAsText(file);
+    return labels;
 }
 
 // --- GESTIÓN DE ESTADO (LOCAL STORAGE) ---
 
-/**
- * Guarda el estado actual de filtros y ordenamiento en localStorage.
- * @param {object} options - Opciones para sobrescribir el estado.
- */
 function saveState(options = {}) {
     const state = {
-        sortKey: options.sortKey !== undefined ? options.sortKey : currentSortKey,
-        sortDir: options.sortDir !== undefined ? options.sortDir : sortDirection,
-        posFilter: options.posFilter !== undefined ? options.posFilter : currentPositionFilter,
-        teamFilter: options.teamFilter !== undefined ? options.teamFilter : currentTeamFilter,
+        sortKey: currentSortKey,
+        sortDir: sortDirection,
+        posFilter: options.posFilter || currentPositionFilter,
+        teamFilter: options.teamFilter || currentTeamFilter 
     };
     localStorage.setItem('fantasyAppState', JSON.stringify(state));
 }
 
-/**
- * Carga el estado guardado de localStorage si existe.
- * @returns {object} - Objeto con el estado de filtros.
- */
 function loadState() {
     const savedState = localStorage.getItem('fantasyAppState');
     if (savedState) {
         try {
             const state = JSON.parse(savedState);
-            const validKeys = ['name', 'team', 'gamesPlayed', 'totalPoints', 'averagePoints', 'fantasyTeam', 'marginOfErrorPts']; 
+            const validKeys = ['name', 'team', 'gamesPlayed', 'totalPoints', 'averagePoints', 'fantasyTeam'];
             const validDirs = ['asc', 'desc'];
             
             currentSortKey = validKeys.includes(state.sortKey) ? state.sortKey : 'totalPoints';
             sortDirection = validDirs.includes(state.sortDir) ? state.sortDir : 'desc';
             currentPositionFilter = state.posFilter || 'all';
             currentTeamFilter = state.teamFilter || 'all'; 
-
+            
             return { pos: currentPositionFilter, team: currentTeamFilter };
         } catch (e) {
-            console.error("Error al parsear el estado guardado:", e);
-            localStorage.removeItem('fantasyAppState');
             return { pos: 'all', team: 'all' };
         }
     }
@@ -264,18 +225,13 @@ function loadState() {
 }
 
 
-// --- FUNCIONES DE CONTROL PRINCIPALES ---
+// --- FUNCIONES DE CONTROL PRINCIPALES (Expuestas al window) ---
 
-/**
- * Rellena el selector de equipo fantasy y lo habilita.
- */
 function populateFantasyTeamSelector() {
     const selector = document.getElementById('fantasyTeamSelector');
-    const savedTeamFilter = currentTeamFilter; 
-    
     selector.innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
     
-    const teams = [...new Set(allPlayerData.map(p => p.fantasyTeam))].sort((a, b) => a.localeCompare(b));
+    const teams = [...new Set(allPlayerData.map(p => p.fantasyTeam))].sort();
     
     teams.forEach(team => {
         const option = document.createElement('option');
@@ -284,289 +240,295 @@ function populateFantasyTeamSelector() {
         selector.appendChild(option);
     });
     
-    selector.value = teams.includes(savedTeamFilter) ? savedTeamFilter : 'all';
-    currentTeamFilter = selector.value;
+    selector.value = currentTeamFilter;
     selector.disabled = false;
 }
 
-/**
- * Punto de entrada después de cargar los datos.
- * @param {object[]} data - Array de objetos de jugador.
- */
 function initializeApplication(data) {
-    if (data.length === 0) return;
-
+    if (data.length === 0) {
+        resetDisplay();
+        return;
+    }
     document.getElementById('downloadChart').disabled = false;
     document.getElementById('downloadCSV').disabled = false;
 
     const initialFilters = loadState(); 
+    currentPositionFilter = initialFilters.pos;
+    currentTeamFilter = initialFilters.team;
+    
+    currentSortKey = 'totalPoints';
+    sortDirection = 'desc';
     
     populateFantasyTeamSelector(); 
     
-    // Restaurar el filtro de posición en la UI
-    const initialPositionButton = document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('${initialFilters.pos}')"]`);
+    const initialPositionButton = document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('${currentPositionFilter}')"]`);
     
     if (initialPositionButton) {
-        filterPlayersByPosition(initialFilters.pos, initialPositionButton);
+        filterPlayersByPosition(currentPositionFilter, initialPositionButton);
     } else {
         filterPlayersByPosition('all', document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('all')"]`));
     }
-    
-    document.getElementById('fantasyTeamSelector').value = initialFilters.team;
 }
 
-/**
- * Filtra la lista de jugadores por posición.
- * @param {string} position - Posición a filtrar ('PG', 'SF', 'all', 'G', 'F', etc.).
- * @param {HTMLElement} button - Botón del filtro clicado (para activar/desactivar).
- */
-function filterPlayersByPosition(position, button) {
-    currentPositionFilter = position;
-    saveState({ posFilter: position });
+function applyFilters() {
+    // 1. Aplicar filtro de Equipo Fantasy
+    let filteredByTeam = (currentTeamFilter === 'all' || !currentTeamFilter)
+        ? [...allPlayerData]
+        : allPlayerData.filter(p => p.fantasyTeam === currentTeamFilter);
+
+    // 2. Aplicar filtro de Posición sobre el resultado del filtro de Equipo
+    activePlayers = getPlayersFilteredByPosition(currentPositionFilter, filteredByTeam);
     
-    // Actualizar el estado activo de los botones de filtro
+    // 3. Ordenar la lista activa y Renderizar la TABLA
+    applySort(activePlayers);
+    updatePlayerTable(activePlayers);
+
+    // 4. Renderizar el GRÁFICO
+    updateChartDisplay(); 
+
+    // 5. Guardar el estado
+    saveState();
+}
+
+window.filterPlayersByFantasyTeam = function(teamKey) {
+    currentTeamFilter = teamKey;
+    applyFilters();
+    saveState({ teamFilter: teamKey });
+};
+
+window.filterPlayersByPosition = function(positionKey, clickedButton) {
+    currentPositionFilter = positionKey.toLowerCase() === 'todos' ? 'all' : positionKey;
+
     document.querySelectorAll('#positionFilters .filter-btn').forEach(btn => {
         btn.classList.remove('active');
         btn.setAttribute('aria-pressed', 'false');
     });
-    if (button) {
-        button.classList.add('active');
-        button.setAttribute('aria-pressed', 'true');
+
+    const targetButton = clickedButton || document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('${currentPositionFilter}')"]`);
+    if(targetButton) {
+        targetButton.classList.add('active');
+        targetButton.setAttribute('aria-pressed', 'true');
     }
     
     applyFilters();
+    saveState({ posFilter: currentPositionFilter });
+};
+
+
+function getPositionKeys(key) {
+    switch (key.toUpperCase()) {
+        case 'G': return ['PG', 'SG'];
+        case 'F': return ['SF', 'PF'];
+        default: return [key.toUpperCase()];
+    }
 }
 
-/**
- * Filtra la lista de jugadores por equipo fantasy.
- * @param {string} team - Nombre del equipo fantasy.
- */
-function filterPlayersByFantasyTeam(team) {
-    currentTeamFilter = team;
-    saveState({ teamFilter: team });
-    
-    applyFilters();
-}
+function getPlayersFilteredByPosition(filterKey, baseData = allPlayerData) {
+     let filteredByPosition = [];
+     const normalizedKey = filterKey.toLowerCase();
 
-/**
- * Aplica los filtros de posición y equipo fantasy a todos los jugadores.
- */
-function applyFilters() {
-    activePlayers = allPlayerData.filter(player => {
-        // Filtrado por posición: soporta G (PG/SG) y F (SF/PF)
-        const matchesPosition = currentPositionFilter === 'all' || 
-                                player.position.includes(currentPositionFilter) ||
-                                (currentPositionFilter === 'G' && (player.position === 'PG' || player.position === 'SG')) ||
-                                (currentPositionFilter === 'F' && (player.position === 'SF' || player.position === 'PF'));
-
-        // Filtrado por equipo fantasy
-        const matchesTeam = currentTeamFilter === 'all' || player.fantasyTeam === currentTeamFilter;
-        
-        return matchesPosition && matchesTeam;
-    });
-
-    // Re-ordenar y renderizar la tabla y el gráfico
-    sortAndRenderTable();
-    updateChartDisplay(); 
-}
-
-
-// --- MANEJO DE LA TABLA Y ORDENAMIENTO ---
-
-/**
- * Define los encabezados de la tabla con la lógica de ordenamiento.
- */
-function renderTableHeader() {
-    const header = document.getElementById('playerTableHeader');
-    header.innerHTML = `
-        <tr>
-            <th data-sort-key="fantasyTeam">Equipo Fantasy</th>
-            <th data-sort-key="name">Nombre</th>
-            <th data-sort-key="team">Equipo NBA</th>
-            <th data-sort-key="position">Posición</th>
-            <th data-sort-key="gamesPlayed">Partidos</th>
-            <th data-sort-key="totalPoints">Pts Totales</th>
-            <th data-sort-key="averagePoints">Media Diaria</th>
-            <!-- Columna única para Margen de Error. La clave de ordenamiento es 'marginOfErrorPts' -->
-            <th data-sort-key="marginOfErrorPts" title="Margen de error al 95% de confianza (Pts y %)">Margen Error</th> 
-        </tr>
-    `;
-    
-    // Adjuntar listeners de clic para ordenar
-    header.querySelectorAll('th').forEach(th => {
-        th.addEventListener('click', () => {
-            const sortKey = th.getAttribute('data-sort-key');
-            handleTableSort(sortKey); 
-        });
-    });
-    
-    // Añadir indicadores de ordenamiento (flechas)
-    header.querySelectorAll('th').forEach(th => {
-        const key = th.getAttribute('data-sort-key');
-        let indicator = '';
-        
-        if (key === currentSortKey) {
-            indicator = sortDirection === 'asc' ? ' ▲' : ' ▼';
-        }
-        
-        th.textContent += indicator;
-    });
-}
-
-/**
- * Maneja el cambio de columna de ordenamiento.
- * @param {string} sortKey - Clave de la propiedad por la que ordenar.
- */
-function handleTableSort(sortKey) {
-    if (currentSortKey === sortKey) {
-        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+     if (normalizedKey === 'all' || normalizedKey === 'todos') {
+        filteredByPosition = [...baseData];
     } else {
-        currentSortKey = sortKey;
-        // Puntos y porcentajes se ordenan por defecto descendente
-        sortDirection = ['totalPoints', 'averagePoints', 'marginOfErrorPts', 'gamesPlayed'].includes(sortKey) ? 'desc' : 'asc';
+        const positionKeys = getPositionKeys(filterKey);
+        
+        filteredByPosition = baseData.filter(player => {
+            const playerPositions = player.position.split(/[\/,]/).map(p => p.trim());
+            
+            return playerPositions.some(pos => positionKeys.includes(pos));
+        });
     }
-    
-    saveState({ sortKey: currentSortKey, sortDir: sortDirection });
-    sortAndRenderTable();
+    return filteredByPosition;
 }
 
-/**
- * Ordena los jugadores activos y renderiza la tabla.
- */
-function sortAndRenderTable() {
-    const key = currentSortKey;
-    const direction = sortDirection;
-
-    activePlayers.sort((a, b) => {
-        let valA = a[key];
-        let valB = b[key];
+function applySort(data) {
+    data.sort((a, b) => {
+        const key = currentSortKey;
+        const valueA = a[key];
+        const valueB = b[key];
         
-        // Ordenamiento numérico
-        if (typeof valA === 'number' || typeof valB === 'number' || ['gamesPlayed', 'totalPoints', 'averagePoints', 'marginOfErrorPts'].includes(key)) {
-            valA = valA || 0;
-            valB = valB || 0;
-            return direction === 'asc' ? valA - valB : valB - valA;
-        } else {
-            // Ordenamiento alfabético
-            valA = String(valA || '').toLowerCase();
-            valB = String(valB || '').toLowerCase();
-            return direction === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        if (['name', 'team', 'fantasyTeam'].includes(key)) { 
+            const comparison = String(valueA).localeCompare(String(valueB));
+            return sortDirection === 'asc' ? comparison : -comparison;
+        } else { 
+            const valA = valueA || 0;
+            const valB = valueB || 0;
+            return sortDirection === 'asc' ? valA - valB : valB - valA;
         }
     });
-
-    renderPlayerTable(activePlayers);
-    renderTableHeader(); 
 }
 
-/**
- * Renderiza el cuerpo de la tabla.
- * @param {object[]} players - Array de jugadores a mostrar.
- */
-function renderPlayerTable(players) {
-    const body = document.getElementById('playerTableBody');
-    body.innerHTML = ''; // Limpiar la tabla
-
-    if (players.length === 0) {
-        body.innerHTML = '<tr><td colspan="8" class="text-center">No hay jugadores que coincidan con los filtros aplicados.</td></tr>';
-        return;
+window.sortTable = function(key, clickedElement) {
+    
+    if (currentSortKey === key) {
+        sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+    } else {
+        sortDirection = 'desc'; 
+        currentSortKey = key;
     }
 
-    players.forEach(player => {
-        const marginPts = player.marginOfErrorPts.toFixed(2);
-        const marginPct = player.marginOfErrorPct.toFixed(1);
+    applySort(activePlayers);
+    
+    updatePlayerTable(activePlayers);
+    updateChartDisplay(); 
+    
+    saveState();
+}
 
-        const marginText = `±${marginPts} (${marginPct}%)`; // Formato combinado
+// --- FUNCIONES DE RENDERIZADO (VISTAS) ---
 
-        const row = body.insertRow();
-        row.innerHTML = `
-            <td>${player.fantasyTeam}</td>
-            <td>${player.name}</td>
-            <td>${player.team}</td>
-            <td>${player.position}</td>
-            <td>${player.gamesPlayed}</td>
-            <td>${player.totalPoints.toFixed(1)}</td>
-            <td>${player.averagePoints.toFixed(2)}</td>
-            <td>${marginText}</td>
-        `;
+function updatePlayerTable(data) {
+    const tableBody = document.getElementById('playerTableBody');
+    tableBody.innerHTML = ''; 
+    
+    // Definición de encabezados con formato de dos líneas
+    const headers = [
+        { key: 'fantasyTeam', label: 'Equipo Fantasy', sortable: true, labelHtml: 'Equipo<br>Fantasy' }, 
+        { key: 'name', label: 'Nombre', sortable: true, labelHtml: 'Nombre' },
+        { key: 'team', label: 'Equipo NBA', sortable: true, labelHtml: 'Equipo<br>NBA' },
+        { key: 'position', label: 'Posición(es)', sortable: false, labelHtml: 'Posición(es)' }, 
+        { key: 'gamesPlayed', label: 'Partidos Jugados', sortable: true, labelHtml: 'Partidos<br>Jugados' },
+        { key: 'totalPoints', label: 'Puntos Totales', sortable: true, labelHtml: 'Puntos<br>Totales' },
+        { key: 'averagePoints', label: 'Puntos Promedio', sortable: true, labelHtml: 'Puntos<br>Promedio' },
+        { key: 'margin', label: 'MARGEN DE ERROR', sortable: false, labelHtml: 'MARGEN<br>DE ERROR' }, 
+    ];
+    
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.innerHTML = header.labelHtml; 
+        th.setAttribute('aria-sort', 'none');
+        
+        if (header.sortable) { 
+            th.setAttribute('onclick', `sortTable('${header.key}', this)`);
+            if (header.key === currentSortKey) {
+                const icon = sortDirection === 'asc' ? ' ▲' : ' ▼';
+                th.innerHTML = header.labelHtml + icon; 
+                th.setAttribute('aria-sort', sortDirection === 'asc' ? 'ascending' : 'descending');
+            }
+        } else {
+            th.style.cursor = 'default';
+        }
+        
+        headerRow.appendChild(th);
+    });
+
+    document.getElementById('playerTableHeader').innerHTML = '';
+    document.getElementById('playerTableHeader').appendChild(headerRow);
+    
+    // GENERAR FILAS DE DATOS
+    if (data.length === 0) {
+         tableBody.innerHTML = '<tr><td colspan="8">No hay jugadores que coincidan con los filtros aplicados.</td></tr>';
+         return;
+    }
+    
+    data.forEach(player => {
+        const row = tableBody.insertRow();
+        
+        row.insertCell().textContent = player.fantasyTeam; 
+        row.insertCell().textContent = player.name;
+        row.insertCell().textContent = player.team; 
+        row.insertCell().textContent = player.position; 
+        row.insertCell().textContent = player.gamesPlayed; 
+        row.insertCell().textContent = player.totalPoints.toFixed(2); 
+        row.insertCell().textContent = `${player.averagePoints.toFixed(2)}`; 
+        
+        const marginCell = row.insertCell();
+        const pts = player.marginOfErrorPts.toFixed(2);
+        const pct = player.marginOfErrorPct.toFixed(1);
+        marginCell.textContent = `± ${pts} (${pct}%)`;
     });
 }
 
-
-// --- MANEJO DEL GRÁFICO (Chart.js) ---
-
-/**
- * Actualiza el gráfico basándose en el tipo de visualización seleccionado.
- */
-function updateChartDisplay() {
+window.updateChartDisplay = function() {
     const chartType = document.getElementById('chartTypeSelector').value;
-    renderChart(activePlayers, chartType);
+    renderChart(activePlayers, chartType); 
 }
 
-/**
- * Destruye la instancia del gráfico si existe.
- */
-function destroyChart() {
-    if (chartInstance) {
+function renderChart(players, chartType) {
+     if (chartInstance) {
         chartInstance.destroy();
-        chartInstance = null;
     }
-}
-
-/**
- * Renderiza el gráfico de puntos.
- * @param {object[]} players - Array de jugadores a graficar.
- * @param {string} type - Tipo de gráfico ('daily' o 'weekly').
- */
-function renderChart(players, type) {
-    destroyChart();
     
     const ctx = document.getElementById('pointsChart').getContext('2d');
     
-    // Seleccionar datos y etiquetas basados en el tipo
-    const isDaily = type === 'daily';
-    const labels = isDaily ? dateLabels : weeklyLabels.slice(0, players.length > 0 ? players[0].weeklyPoints.length : 0);
-    const title = isDaily ? 'Puntos Diarios por Jugador' : 'Puntos Totales por Semana Fantasy';
-    const yAxisLabel = isDaily ? 'Puntos Diarios' : 'Puntos Semanales';
+    const isDaily = chartType === 'daily';
+    // Obtenemos las etiquetas correctas de la semana
+    const weeklyLabelsSlice = weeklyLabels.slice(0, players.length > 0 ? players[0].weeklyPoints.length : 0);
+    const labels = isDaily ? dateLabels : weeklyLabelsSlice;
+    const dataKey = isDaily ? 'dailyPoints' : 'weeklyPoints';
+    const yAxisLabel = isDaily ? 'Puntos Anotados (Diario)' : 'Puntos Anotados (Semanal)';
 
-    // Construir los datasets para Chart.js
-    const datasets = players.map((player, index) => {
+    const playerDatasets = players.map((player, index) => {
         const colorIndex = index % chartColors.length;
-        const dataPoints = isDaily ? player.dailyPoints : player.weeklyPoints;
+        
+        // Aseguramos que los datos solo tengan la longitud de las etiquetas generadas
+        const dataSlice = player[dataKey] ? player[dataKey].slice(0, labels.length) : []; 
         
         const tensionValue = 0.3; 
         
         return {
-            label: player.name, 
-            data: dataPoints,
+            label: player.name,
+            data: dataSlice, 
             borderColor: chartColors[colorIndex],
-            backgroundColor: chartColors[colorIndex].replace('rgb', 'rgba').replace(')', ', 0.2)'),
+            backgroundColor: isDaily ? chartColors[colorIndex].replace('rgb', 'rgba').replace(')', ', 0.2)') : chartColors[colorIndex],
             tension: tensionValue, 
-            fill: false,
+            borderWidth: 2,
+            fill: false, 
             pointRadius: isDaily ? 3 : 5, 
             pointHoverRadius: isDaily ? 5 : 7,
             spanGaps: true, 
             type: 'line' 
         };
     });
+    
+    if (playerDatasets.length === 0) {
+         return;
+    }
+    
+    // --- CÁLCULO DE LA LÍNEA DE PROMEDIO GLOBAL (RECTA) ---
+    
+    const totalAvgPoints = players.reduce((sum, p) => sum + p.averagePoints, 0);
+    const overallAverage = players.length > 0 ? totalAvgPoints / players.length : 0;
+
+    const numLabels = labels.length;
+    const fixedAverageData = new Array(numLabels).fill(overallAverage.toFixed(2));
+    
+
+    const averageDataset = {
+        label: `PROMEDIO GLOBAL DEL FILTRO (${overallAverage.toFixed(2)} pts)`,
+        data: fixedAverageData,
+        borderColor: 'rgba(0, 0, 0, 0.8)', 
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        borderWidth: 3,
+        borderDash: [5, 5], 
+        tension: 0, 
+        fill: false,
+        pointRadius: 0, 
+        order: 0, 
+        spanGaps: false,
+    };
+    
+    const datasets = [averageDataset, ...playerDatasets];
+
 
     chartInstance = new Chart(ctx, {
         type: 'line', 
         data: {
             labels: labels,
-            datasets: datasets,
+            datasets: datasets
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: false, 
+            layout: {
+                padding: {
+                    bottom: 40 
+                }
+            },
             plugins: {
-                title: {
-                    display: true,
-                    text: title,
-                    font: { size: 18, weight: 'bold' }
-                },
                 legend: {
-                    display: true,
-                    position: 'bottom',
+                    position: 'top',
                     labels: {
                         boxWidth: 20
                     },
@@ -604,125 +566,109 @@ function renderChart(players, type) {
     });
 }
 
-// --- UTILIDADES Y MANEJO DE EVENTOS ---
-
-/**
- * Restablece el estado de la aplicación y la interfaz.
- */
-function resetDisplay() {
-    allPlayerData = [];
-    activePlayers = [];
-    currentPositionFilter = 'all';
-    currentTeamFilter = 'all';
-    
-    destroyChart();
-    
-    // Resetear encabezado y cuerpo de tabla
-    document.getElementById('playerTableHeader').innerHTML = ''; 
-    document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="8" class="text-center">Cargue un archivo CSV para ver los datos.</td></tr>';
-    document.getElementById('fantasyTeamSelector').innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
-    document.getElementById('fantasyTeamSelector').disabled = true;
-    document.getElementById('downloadChart').disabled = true;
-    document.getElementById('downloadCSV').disabled = true;
-
-    // Resetear el filtro de posición activo a 'TODOS'
-    document.querySelectorAll('#positionFilters .filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-pressed', 'false');
-    });
-    const allBtn = document.querySelector(`.filter-btn[onclick*="filterPlayersByPosition('all')"]`);
-    if (allBtn) {
-        allBtn.classList.add('active');
-        allBtn.setAttribute('aria-pressed', 'true');
-    }
-    
-    localStorage.removeItem('fantasyAppState');
-}
-
-/**
- * Descarga el gráfico como una imagen PNG con fondo blanco.
- */
-function downloadChartImage() {
-    if (chartInstance) {
-        const chartTitle = document.getElementById('chartTypeSelector').options[document.getElementById('chartTypeSelector').selectedIndex].text;
-        const filename = `${chartTitle.replace(/ /g, '_')}_${new Date().toISOString().slice(0, 10)}.png`;
-        
-        const dataURL = chartInstance.toBase64Image('image/png', 1.0, {
-            backgroundColor: 'white' 
-        });
-
-        const link = document.createElement('a');
-        link.href = dataURL;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } else {
-        console.warn("No hay gráfico para descargar."); 
-    }
-}
-
-/**
- * Exporta los datos actualmente filtrados/ordenados a un archivo CSV.
- */
-function downloadCSV() {
-    const dataToExport = [...activePlayers]; 
-    
-    if (dataToExport.length === 0) {
-        console.warn("No hay datos para exportar.");
+window.downloadChartImage = function() {
+    if (!chartInstance) {
+        alert("No hay un gráfico para descargar.");
         return;
     }
     
-    generateAndDownloadCSV(dataToExport);
-}
+    const canvas = chartInstance.canvas; 
+    
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
 
-/**
- * Genera el contenido del CSV y fuerza la descarga.
- * @param {object[]} players - Array de jugadores a exportar.
- */
-function generateAndDownloadCSV(players) {
-    const dailyPointsHeaders = dateLabels.map(label => `Ptos ${label}`).join(';');
-    
-    const headers = [
-        "Equipo Fantasy", "Nombre", "Equipo NBA", "Posición", "Partidos", "Pts Totales", "Media Diaria", 
-        "Margen Error (Pts)", "Margen Error (%)", dailyPointsHeaders
-    ].join(';');
+    tempCtx.fillStyle = '#FFFFFF';
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-    const rows = players.map(p => {
-        // Reemplazar el punto decimal por coma para CSV en español
-        const formatNumber = (num, fixed = 2) => (num || 0).toFixed(fixed).replace('.', ',');
-        
-        const pointsString = p.dailyPoints.map(pt => pt === null ? '' : formatNumber(pt, 1)).join(';');
-        
-        return [
-            p.fantasyTeam, 
-            p.name, 
-            p.team, 
-            p.position, 
-            p.gamesPlayed, 
-            formatNumber(p.totalPoints, 1), 
-            formatNumber(p.averagePoints, 2), 
-            formatNumber(p.marginOfErrorPts, 2), 
-            formatNumber(p.marginOfErrorPct, 1),
-            pointsString
-        ].join(';');
-    });
-    
-    const csvContent = [headers, ...rows].join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "datos_nba_export.csv");
+    tempCtx.drawImage(canvas, 0, 0);
+
+    const image = tempCanvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = 'grafico_puntos_fantasy.png';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
 
-/**
- * Muestra la fecha actual en el pie de página.
- */
+window.downloadCSV = function() {
+    if (allPlayerData.length === 0) {
+        alert("No hay datos para descargar. Por favor, carga un archivo primero.");
+        return;
+    }
+
+    const maxDays = dateLabels.length;
+    // Encabezados con el nuevo campo
+    let csvContent = "Equipo Fantasy;Nombre;Equipo NBA;Posicion;" + Array.from({length: maxDays}, (_, i) => `Día ${i + 1}`).join(';') + "\n";
+    csvContent += "Equipo Fantasy;Nombre;Equipo NBA;Posicion;" + dateLabels.join(';') + "\n";
+    
+    allPlayerData.forEach(player => {
+        const points = player.dailyPoints.map(p => p === null ? '' : p).join(';');
+        // Incluye el nuevo campo
+        csvContent += `${player.fantasyTeam};${player.name};${player.team};${player.position};${points}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "datos_nba_export_v2.csv"); 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function resetDisplay() {
+     localStorage.removeItem('fantasyAppState');
+     allPlayerData = []; 
+     activePlayers = []; 
+     
+     const headerRow = `<tr>
+        <th onclick="sortTable('fantasyTeam', this)">Equipo<br>Fantasy</th>
+        <th onclick="sortTable('name', this)">Nombre</th>
+        <th onclick="sortTable('team', this)">Equipo<br>NBA</th>
+        <th>Posición(es)</th>
+        <th onclick="sortTable('gamesPlayed', this)">Partidos<br>Jugados</th>
+        <th onclick="sortTable('totalPoints', this)" aria-sort="descending">Puntos<br>Totales</th>
+        <th onclick="sortTable('averagePoints', this)" aria-sort="none">Puntos<br>Promedio</th>
+        <th>MARGEN<br>DE ERROR</th>
+     </tr>`;
+     document.getElementById('playerTableHeader').innerHTML = headerRow;
+
+     document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr>'; 
+     
+     if (chartInstance) {
+        chartInstance.destroy(); 
+     }
+     document.getElementById('downloadCSV').disabled = true;
+     document.getElementById('downloadChart').disabled = true; 
+     document.getElementById('fantasyTeamSelector').disabled = true;
+     document.getElementById('fantasyTeamSelector').innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
+
+     document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+     });
+     
+     currentSortKey = 'totalPoints';
+     sortDirection = 'desc';
+     currentPositionFilter = 'all';
+     currentTeamFilter = 'all';
+     
+     const allButton = document.querySelector('.filter-btn[onclick*="filterPlayersByPosition(\'all\')"]');
+     if (allButton) {
+         allButton.classList.add('active');
+         allButton.setAttribute('aria-pressed', 'true');
+     }
+     
+     document.getElementById('chartTypeSelector').value = 'daily';
+
+     dateLabels = [];
+}
+
+// --- FUNCIÓN PARA MOSTRAR LA FECHA ACTUAL ---
 function updateCreditDate() {
     const now = new Date();
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -734,24 +680,16 @@ function updateCreditDate() {
     }
 }
 
-// --- INICIALIZACIÓN DE EVENT LISTENERS ---
-document.addEventListener('DOMContentLoaded', () => {
+// --- INICIALIZACIÓN AL CARGAR LA PÁGINA ---
+window.onload = function() {
     // 1. Inicializa la fecha dinámica
     updateCreditDate(); 
-
-    // 2. Escucha el evento de carga de archivo
-    document.getElementById('csvFile').addEventListener('change', handleFileUpload);
     
-    // 3. Escucha los botones de descarga
-    document.getElementById('downloadChart').addEventListener('click', downloadChartImage);
-    document.getElementById('downloadCSV').addEventListener('click', downloadCSV);
-    
-    // 4. Reset y renderizado inicial
+    // 2. Restablece el estado de la aplicación
     resetDisplay();
     renderChart([], 'daily'); 
-});
-
-// Exponer funciones globales necesarias para los eventos en HTML
-window.filterPlayersByFantasyTeam = filterPlayersByFantasyTeam;
-window.filterPlayersByPosition = filterPlayersByPosition;
-window.updateChartDisplay = updateChartDisplay;
+    
+    // 3. Asigna la función de descarga al botón.
+    document.getElementById('downloadChart').addEventListener('click', downloadChartImage);
+    document.getElementById('downloadCSV').addEventListener('click', downloadCSV); 
+};

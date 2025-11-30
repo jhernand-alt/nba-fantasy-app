@@ -1,284 +1,177 @@
-/* ---------------------------------------------------- */
-/* --- ESTILOS CSS (Tema Moderno, Limpio y Responsivo) --- */
-/* ---------------------------------------------------- */
-
-/* 1. Base y Tipografía */
+/* Estilos Base para Escritorio */
 body { 
-    font-family: 'Inter', sans-serif; 
-    margin: 0; 
-    background-color: #f7f9fc; /* Fondo muy suave y moderno */
-    color: #1c2732; 
-    line-height: 1.6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 20px; 
+    background-color: #f0f2f5; 
+    color: #333; 
 }
-.app-container { 
+.container { 
     max-width: 1400px; 
-    margin: 20px auto; 
-    padding: 0 20px; 
+    margin: auto; 
+    padding: 25px; 
+    background-color: white; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
 }
 h1 { 
-    color: #007bff; /* Azul primario neutro */
-    font-weight: 800;
-    font-size: 2.2rem;
-    margin: 0;
+    color: #1e40af; 
+    border-bottom: 3px solid #1e40af; 
+    padding-bottom: 10px; 
+    margin-bottom: 25px; 
 }
 h2 { 
-    color: #334455; 
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.4rem;
-    font-weight: 600;
-    border-bottom: 2px solid #ebeff3;
-    padding-bottom: 10px;
+    color: #333; 
+    margin-top: 30px; 
+    margin-bottom: 15px; 
 }
 
-/* 2. Modularidad (Card y Tags) */
-.card { 
-    background-color: white; 
-    padding: 25px; 
-    border-radius: 12px; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
-    margin-bottom: 25px;
-    transition: transform 0.2s;
-}
-.card:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
-.tag {
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    white-space: nowrap;
-}
-.tag-default {
-    background-color: #e0e6f1;
-    color: #445566;
-}
-.tag-success {
-    background-color: #d4edda;
-    color: #155724;
-}
-.text-center {
-    text-align: center;
+/* Contenedor Único para Controles y Filtros */
+.controls-and-filters {
+    margin-bottom: 20px; 
+    padding: 15px; 
+    background-color: #f1f5f9; 
+    border-radius: 8px; 
 }
 
-/* 3. Header y Controles */
-.header {
+/* Estilos de la fila de botones/controles (flex-wrap ya permite adaptación) */
+.controls-row {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap; 
     align-items: center;
-    margin-bottom: 30px;
-    padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
-}
-.control-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-.control-group {
-    display: flex;
-    flex-direction: column;
-}
-.control-group label {
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #445566;
-    font-size: 0.9rem;
-}
-
-/* 4. Inputs y Selects */
-.input-select, .input-file {
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: white;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-.input-select:focus, .input-file:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-    outline: none;
-}
-.input-file::-webkit-file-upload-button {
-    background-color: #e9ecef;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-/* 5. Botones Generales */
-.btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.2s, box-shadow 0.2s;
-    width: 100%; /* Ocupar todo el ancho en la cuadrícula */
-    margin-top: 5px; /* Pequeño margen para separación */
-}
-.download-actions {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    margin-top: 10px;
-}
-.btn-primary {
-    background-color: #007bff; /* Azul */
-    color: white;
-}
-.btn-secondary {
-    background-color: #6c757d; /* Gris oscuro */
-    color: white;
-}
-.btn:hover:not(:disabled) {
-    opacity: 0.9;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.btn:disabled {
-    background-color: #e9ecef;
-    color: #a0a0a0;
-    cursor: not-allowed;
-}
-
-/* 6. Filtros de Posición */
-.position-filters {
-    display: flex;
-    flex-wrap: wrap;
     gap: 10px;
 }
-.filter-btn {
-    padding: 8px 15px;
-    border: 1px solid #ddd;
-    background-color: #f8f8f8;
-    color: #555;
-    border-radius: 6px;
-    transition: all 0.2s;
-    font-size: 0.9rem;
+
+/* Separador */
+.controls-row span.separator {
+    border-left: 1px solid #ccc; 
+    height: 30px; 
+    margin: 0 5px;
+}
+
+/* Botones de Carga, Descarga CSV */
+.controls-row button.btn-download, 
+.controls-row label.btn-download,
+.chart-controls button.btn-download { 
+    padding: 12px 22px; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 1em; 
+    transition: background-color 0.3s;
+}
+
+.btn-download { background-color: #4f46e5; color: white; } 
+.btn-download:hover { background-color: #4338ca; }
+
+/* Estilo para Select y botones de Filtro/Ordenación */
+.chart-selector, .filter-btn, .fantasy-team-selector {
+    padding: 8px 15px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    background-color: white; 
+    transition: all 0.2s; 
     font-weight: 500;
-    cursor: pointer;
-    min-width: 45px; /* Asegurar un tamaño mínimo */
 }
-.filter-btn:hover:not(.active) {
-    background-color: #f0f0f0;
-    border-color: #aaa;
+.filter-btn:hover { background-color: #e2e8f0; }
+
+/* ESTILO PARA EL BOTÓN ACTIVO/PULSADO */
+.filter-btn.active { 
+    background-color: #1e40af; 
+    color: white; 
+    border-color: #1e40af;
 }
-.filter-btn.active {
-    background-color: #007bff; 
-    color: white;
-    border-color: #007bff;
-    font-weight: 700;
+/* ARIA Pressed para botones */
+.filter-btn[aria-pressed="true"] { 
+    background-color: #1e40af; 
+    color: white; 
+    border-color: #1e40af;
 }
 
-/* 7. Área de Gráfico */
-.chart-section {
-    position: relative; 
-}
-.chart-container { 
-    height: 500px; 
-    width: 100%; 
-}
 
-/* 8. Tabla */
-.table-section {
-    overflow: hidden; /* Ocultar el scroll X en la tarjeta */
-}
-.table-container {
-    overflow-x: auto; /* Permitir scroll X solo dentro de la tabla */
-    max-width: 100%;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 700px; /* Asegurar que no se comprima demasiado */
-}
-th, td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-    white-space: nowrap; /* Evitar que el contenido de la tabla salte de línea */
-}
-th {
-    background-color: #f0f5ff; /* Fondo sutil para encabezados */
-    color: #007bff;
-    font-weight: 700;
-    cursor: pointer;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    user-select: none;
-}
-tr:nth-child(even) {
-    background-color: #fcfdff;
-}
-tr:hover {
-    background-color: #eef5ff;
-}
-.table-container::-webkit-scrollbar {
-    height: 8px;
-}
-.table-container::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-}
-
-/* 9. Pie de página */
-.footer {
+/* TABLA Y SU WRAPPER RESPONSIVO */
+.table-wrapper {
+    overflow-x: auto; 
     margin-top: 20px;
-    padding: 15px 0;
-    border-top: 1px solid #e0e0e0;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #6c757d;
 }
-.small-info {
-    font-size: 0.8rem;
-    margin-top: 5px;
+.player-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    min-width: 900px; 
+    font-size: 0.9em; 
+}
+.player-table th, .player-table td { 
+    border: 1px solid #ddd; 
+    padding: 8px; 
+    text-align: center; 
+} 
+.player-table th { 
+    background-color: #1e40af; 
+    color: white; 
+    text-transform: uppercase; 
+    cursor: pointer; 
+}
+/* Las columnas no ordenables no tienen cursor pointer */
+.player-table th:not([onclick]) { 
+    cursor: default;
+}
+.player-table tr:nth-child(even) { 
+    background-color: #f4f7fd; 
 }
 
-/* 10. Responsividad Móvil */
+/* GRÁFICO */
+.chart-container { 
+    margin-top: 20px; 
+    padding: 20px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    background-color: #fff; 
+    height: 400px; 
+    position: relative;
+}
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Controles de Gráfico */
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+/* NUEVO ESTILO: Para la frase de crédito dentro del contenedor */
+.credit-text-main {
+    text-align: right;
+    font-size: 0.8em;
+    color: #64748b; 
+    margin-top: 30px; 
+    padding-top: 10px;
+    border-top: 1px dashed #ddd; 
+}
+
+/* MEDIA QUERY PARA MÓVILES */
 @media (max-width: 768px) {
-    .app-container {
-        margin: 10px auto;
-        padding: 0 10px;
+    .player-table { 
+        font-size: 0.8em; 
+        min-width: 600px; 
     }
-    .header {
+    .chart-controls {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
     }
-    h1 {
-        font-size: 1.8rem;
+    .controls-row {
+        flex-direction: column;
+        align-items: flex-start;
     }
-    h2 {
-        font-size: 1.2rem;
-        margin-bottom: 15px;
+    .controls-row > * {
+        width: 100%; 
+        margin-top: 5px;
     }
-    .card {
-        padding: 15px;
-        margin-bottom: 15px;
-    }
-    .control-grid {
-        /* Desactiva la cuadrícula compleja para apilamiento simple */
-        grid-template-columns: 1fr; 
-    }
-    .control-group.download-actions {
-        flex-direction: column; 
-        gap: 8px;
-    }
-    .btn {
-        padding: 12px;
-    }
-    .position-filters {
-        gap: 8px;
-    }
-    .filter-btn {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-    .chart-container {
-        height: 300px; /* Reducir altura del gráfico en móvil */
+    .controls-row span.separator {
+        display: none !important; 
     }
 }
