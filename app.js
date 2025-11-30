@@ -614,7 +614,7 @@ window.downloadCSV = function() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "datos_nba_export_v2.csv"); 
+    link.setAttribute("download", "datos_nba_export.csv"); 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -692,4 +692,5 @@ window.onload = function() {
     // 3. Asigna la función de descarga al botón.
     document.getElementById('downloadChart').addEventListener('click', downloadChartImage);
     document.getElementById('downloadCSV').addEventListener('click', downloadCSV); 
+
 };
