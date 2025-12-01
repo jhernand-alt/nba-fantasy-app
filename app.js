@@ -375,17 +375,34 @@ window.sortTable = function(key, clickedElement) {
     saveState();
 }
 
+// --- HELPER: OBTENER URL DEL ICONO DEL EQUIPO NBA ---
+// Se espera que en el repo exista una carpeta con los iconos:
+// assets/team-icons/<team-key>.png
+// Ejemplo: team "LAL" -> assets/team-icons/lal.png
+// La función normaliza el nombre del equipo para generar el nombre de archivo.
+// Si la imagen no existe en runtime, el onerror la ocultará.
+function getTeamIconUrl(teamName) {
+    if (!teamName) return '';
+    // Normalizar: quitar puntos, pasar a minúsculas, reemplazar espacios y '/' por guiones
+    const key = teamName.toString().toLowerCase()
+        .replace(/\./g, '')
+        .replace(/\s+/g, '-')
+        .replace(/\//g, '-')
+        .replace(/[^a-z0-9\-]/g, '');
+    return `assets/team-icons/${key}.png`;
+}
+
 // --- FUNCIONES DE RENDERIZADO (VISTAS) ---
 
 function updatePlayerTable(data) {
     const tableBody = document.getElementById('playerTableBody');
     tableBody.innerHTML = ''; 
     
-    // Definición de encabezados con formato de dos líneas
+    // Definición de encabezados con formato de dos líneas (sin "Equipo NBA")
     const headers = [
         { key: 'fantasyTeam', label: 'Equipo Fantasy', sortable: true, labelHtml: 'Equipo<br>Fantasy' }, 
         { key: 'name', label: 'Nombre', sortable: true, labelHtml: 'Nombre' },
-        { key: 'team', label: 'Equipo NBA', sortable: true, labelHtml: 'Equipo<br>NBA' },
+        // Se elimina la columna 'team' (Equipo NBA) en la vista
         { key: 'position', label: 'Posición(es)', sortable: false, labelHtml: 'Posición(es)' }, 
         { key: 'gamesPlayed', label: 'Partidos Jugados', sortable: true, labelHtml: 'Partidos<br>Jugados' },
         { key: 'totalPoints', label: 'Puntos Totales', sortable: true, labelHtml: 'Puntos<br>Totales' },
@@ -418,7 +435,7 @@ function updatePlayerTable(data) {
     
     // GENERAR FILAS DE DATOS
     if (data.length === 0) {
-         tableBody.innerHTML = '<tr><td colspan="8">No hay jugadores que coincidan con los filtros aplicados.</td></tr>';
+         tableBody.innerHTML = '<tr><td colspan="7">No hay jugadores que coincidan con los filtros aplicados.</td></tr>';
          return;
     }
     
@@ -426,8 +443,36 @@ function updatePlayerTable(data) {
         const row = tableBody.insertRow();
         
         row.insertCell().textContent = player.fantasyTeam; 
-        row.insertCell().textContent = player.name;
-        row.insertCell().textContent = player.team; 
+
+        // Celda con icono del equipo NBA + nombre del jugador (seguimos mostrando el icono aquí)
+        const nameCell = row.insertCell();
+        // contenedor flex para alinear icono y texto
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        
+        const iconUrl = getTeamIconUrl(player.team);
+        const img = document.createElement('img');
+        img.src = iconUrl;
+        img.alt = `${player.team} logo`;
+        img.width = 24;
+        img.height = 24;
+        img.style.objectFit = 'contain';
+        img.style.marginRight = '8px';
+        img.style.borderRadius = '3px';
+        // Si la imagen no existe, ocultarla en vez de mostrar el icono roto
+        img.onerror = function() {
+            this.style.display = 'none';
+        };
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = player.name;
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(nameSpan);
+        nameCell.appendChild(wrapper);
+
+        // Eliminada la celda "Equipo NBA" aquí; ahora pasamos a mostrar posición, partidos, etc.
         row.insertCell().textContent = player.position; 
         row.insertCell().textContent = player.gamesPlayed; 
         row.insertCell().textContent = player.totalPoints.toFixed(2); 
@@ -628,7 +673,7 @@ function resetDisplay() {
      const headerRow = `<tr>
         <th onclick="sortTable('fantasyTeam', this)">Equipo<br>Fantasy</th>
         <th onclick="sortTable('name', this)">Nombre</th>
-        <th onclick="sortTable('team', this)">Equipo<br>NBA</th>
+        <!-- Se elimina el header "Equipo NBA" de la vista -->
         <th>Posición(es)</th>
         <th onclick="sortTable('gamesPlayed', this)">Partidos<br>Jugados</th>
         <th onclick="sortTable('totalPoints', this)" aria-sort="descending">Puntos<br>Totales</th>
@@ -637,7 +682,7 @@ function resetDisplay() {
      </tr>`;
      document.getElementById('playerTableHeader').innerHTML = headerRow;
 
-     document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr>'; 
+     document.getElementById('playerTableBody').innerHTML = '<tr><td colspan="7">Cargue un archivo CSV para ver los datos.</td></tr>'; 
      
      if (chartInstance) {
         chartInstance.destroy(); 
@@ -694,4 +739,3 @@ window.onload = function() {
     document.getElementById('downloadCSV').addEventListener('click', downloadCSV); 
 
 };
-
