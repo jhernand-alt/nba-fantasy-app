@@ -378,18 +378,27 @@ window.sortTable = function(key, clickedElement) {
 // --- HELPER: OBTENER URL DEL ICONO DEL EQUIPO NBA ---
 // Se espera que en el repo exista una carpeta con los iconos:
 // assets/team-icons/<team-key>.png
-// Ejemplo: team "LAL" -> assets/team-icons/lal.png
+// Ejemplo: team "LAL" -> assets/team-icons/LAL.png
 // La función normaliza el nombre del equipo para generar el nombre de archivo.
-// Si la imagen no existe en runtime, el onerror la ocultará.
-function getTeamIconUrl(teamName) {
-    if (!teamName) return '';
-    // Normalizar: quitar puntos, pasar a minúsculas, reemplazar espacios y '/' por guiones
-    const key = teamName.toString().toLowerCase()
+// Si la imagen no existe en runtime, el onerror intentará una alternativa antes de ocultarla.
+function getTeamIconAlternatives(teamName) {
+    if (!teamName) return [];
+    // Normalizar: quitar puntos, convertir separadores a guiones y eliminar caracteres inválidos
+    const raw = teamName.toString()
         .replace(/\./g, '')
         .replace(/\s+/g, '-')
         .replace(/\//g, '-')
-        .replace(/[^a-z0-9\-]/g, '');
-    return `assets/team-icons/${key}.png`;
+        .replace(/[^a-zA-Z0-9\-]/g, '');
+    return [
+        `assets/team-icons/${raw.toUpperCase()}.png`, // coincide con nombres como LAL.png
+        `assets/team-icons/${raw.toLowerCase()}.png`, // alternativa lowercase
+        `assets/team-icons/${raw}.png` // alternativa tal cual
+    ];
+}
+
+function getTeamIconUrl(teamName) {
+    const alts = getTeamIconAlternatives(teamName);
+    return alts.length > 0 ? alts[0] : '';
 }
 
 // --- FUNCIONES DE RENDERIZADO (VISTAS) ---
@@ -460,8 +469,21 @@ function updatePlayerTable(data) {
         img.style.objectFit = 'contain';
         img.style.marginRight = '8px';
         img.style.borderRadius = '3px';
-        // Si la imagen no existe, ocultarla en vez de mostrar el icono roto
+        // Si la imagen no existe, intentamos una alternativa (cambia mayúsculas/minúsculas) antes de ocultarla
         img.onerror = function() {
+            // evitamos bucles infinitos usando dataset
+            if (!this.dataset._triedAlt) {
+                this.dataset._triedAlt = '1';
+                const alts = getTeamIconAlternatives(player.team);
+                // si la primer alternativa fue la actual, probamos la siguiente
+                for (let i = 0; i < alts.length; i++) {
+                    if (alts[i] && alts[i] !== this.src) {
+                        this.src = alts[i];
+                        return; // salimos y dejamos que el navegador intente cargarla
+                    }
+                }
+            }
+            // si ya probamos alternativas o no hay, ocultamos la imagen
             this.style.display = 'none';
         };
 
