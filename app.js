@@ -496,7 +496,7 @@ function renderChart(players, chartType) {
     
 
     const averageDataset = {
-        label: `PROMEDIO GLOBAL DEL FILTRO (${overallAverage.toFixed(2)} pts)`,
+        label: `PROMEDIO DEL FILTRO (${overallAverage.toFixed(2)} pts)`,
         data: fixedAverageData,
         borderColor: 'rgba(0, 0, 0, 0.8)', 
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -694,3 +694,4 @@ window.onload = function() {
     document.getElementById('downloadCSV').addEventListener('click', downloadCSV); 
 
 };
+
