@@ -15,16 +15,16 @@ let currentTeamFilter = 'all';
 // endDay: índice de fin de día (exclusivo)
 const fantasyWeeksDefinition = [
     // La primera semana (S1) comienza en el índice 0, que corresponde al 21-oct
-    { start: '21/10', end: '27/10', label: 'S1 (21/10 - 27/10)', startDay: 0, endDay: 7 }, 
-    { start: '28/10', end: '03/11', label: 'S2 (28/10 - 03/11)', startDay: 7, endDay: 14 },
-    { start: '04/11', end: '10/11', label: 'S3 (04/11 - 10/11)', startDay: 14, endDay: 21 },
-    { start: '11/11', end: '17/11', label: 'S4 (11/11 - 17/11)', startDay: 21, endDay: 28 },
-    { start: '18/11', end: '24/11', label: 'S5 (18/11 - 24/11)', startDay: 28, endDay: 35 }, 
-    { start: '25/11', end: '01/12', label: 'S6 (25/11 - 01/12)', startDay: 35, endDay: 42 }, 
-    { start: '02/12', end: '08/12', label: 'S7 (02/12 - 08/12)', startDay: 42, endDay: 49 },
-    { start: '09/12', end: '15/12', label: 'S8 (09/12 - 15/12)', startDay: 49, endDay: 56 },
-    { start: '16/12', end: '22/12', label: 'S9 (16/12 - 22/12)', startDay: 56, endDay: 63 },
-    { start: '23/12', end: '29/12', label: 'S10 (23/12 - 29/12)', startDay: 63, endDay: 70 },
+    { start: '21/10', end: '27/10', label: 'S1 (21-27/10)', startDay: 0, endDay: 7 }, 
+    { start: '28/10', end: '03/11', label: 'S2 (28/10-03/11)', startDay: 7, endDay: 14 },
+    { start: '04/11', end: '10/11', label: 'S3 (04-10/11)', startDay: 14, endDay: 21 },
+    { start: '11/11', end: '17/11', label: 'S4 (11-17/11)', startDay: 21, endDay: 28 },
+    { start: '18/11', end: '24/11', label: 'S5 (18-24/11)', startDay: 28, endDay: 35 }, 
+    { start: '25/11', end: '01/12', label: 'S6 (25/11-01/12)', startDay: 35, endDay: 42 }, 
+    { start: '02/12', end: '08/12', label: 'S7 (02-08/12)', startDay: 42, endDay: 49 },
+    { start: '09/12', end: '15/12', label: 'S8 (09-15/12)', startDay: 49, endDay: 56 },
+    { start: '16/12', end: '22/12', label: 'S9 (16-22/12)', startDay: 56, endDay: 63 },
+    { start: '23/12', end: '29/12', label: 'S10 (23-29/12)', startDay: 63, endDay: 70 },
 ];
 weeklyLabels = fantasyWeeksDefinition.map(w => w.label);
 
