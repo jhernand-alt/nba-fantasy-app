@@ -23,6 +23,8 @@ const fantasyWeeksDefinition = [
     { start: '25/11', end: '01/12', label: 'S6 (25/11 - 01/12)', startDay: 35, endDay: 42 }, 
     { start: '02/12', end: '08/12', label: 'S7 (02/12 - 08/12)', startDay: 42, endDay: 49 },
     { start: '09/12', end: '15/12', label: 'S8 (09/12 - 15/12)', startDay: 49, endDay: 56 },
+    { start: '16/12', end: '22/12', label: 'S9 (16/12 - 22/12)', startDay: 56, endDay: 63 },
+    { start: '23/12', end: '29/12', label: 'S10 (23/12 - 29/12)', startDay: 63, endDay: 70 },
 ];
 weeklyLabels = fantasyWeeksDefinition.map(w => w.label);
 
