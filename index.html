@@ -19,16 +19,24 @@
             <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
                 <div id="unifiedControls" class="controls-row"> 
                     
-                    <label for="csvFile" class="btn-download">
-                        Cargar Datos CSV ⬆️
-                        <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                    <label for="csvPlayers" class="btn-download">
+                        Cargar Jugadores CSV ⬆️
+                        <input type="file" id="csvPlayers" accept=".csv" style="display: none;">
                     </label>
-                    <button id="downloadCSV" class="btn-download" disabled>Descargar Datos CSV ⬇️</button>
+                    <label for="csvStats" class="btn-download">
+                        Cargar Stats Semanales CSV ⬆️
+                        <input type="file" id="csvStats" accept=".csv" style="display: none;">
+                    </label>
                     
                     <span style="separator"></span>
 
                     <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
                         <option value="all">TODOS LOS EQUIPOS FANTASY</option>
+                        <!-- Opciones cargadas por JS -->
+                    </select>
+                    
+                    <select id="nbaTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByNBATeam(this.value)" disabled>
+                        <option value="all">TODOS LOS EQUIPOS NBA</option>
                         <!-- Opciones cargadas por JS -->
                     </select>
                     
@@ -52,30 +60,29 @@
                 <table class="player-table" role="grid" aria-label="Tabla de datos de jugadores, ordenable y seleccionable">
                     <thead id="playerTableHeader">
                         <tr>
-                            <th onclick="sortTable('fantasyTeam', this)">Equipo Fantasy</th> 
-                            <th onclick="sortTable('name', this)">Nombre</th>
-                            <th onclick="sortTable('team', this)">Equipo NBA</th>
+                            <th onclick="sortTable('name', this)" class="sortable">Nombre ⇅</th>
+                            <th onclick="sortTable('team', this)" class="sortable">Equipo NBA ⇅</th>
+                            <th onclick="sortTable('fantasyTeam', this)" class="sortable">Equipo Fantasy ⇅</th> 
                             <th>Posición(es)</th> 
-                            <th onclick="sortTable('gamesPlayed', this)">Partidos Jugados</th>
-                            <th onclick="sortTable('totalPoints', this)">Puntos Totales</th>
-                            <th onclick="sortTable('averagePoints', this)">Puntos Promedio</th>
-                            <th>MARGEN DE ERROR</th>
+                            <th onclick="sortTable('totalPoints', this)" class="sortable">Puntos Totales ⇅</th>
+                            <th onclick="sortTable('averagePoints', this)" class="sortable">Puntos Promedio ⇅</th>
+                            <th onclick="sortTable('performance', this)" class="sortable">Rating ⇅</th>
                         </tr>
                     </thead>
                     <tbody id="playerTableBody">
-                        <tr><td colspan="8">Cargue un archivo CSV para ver los datos.</td></tr> 
+                        <tr><td colspan="7">Cargue los archivos CSV para ver los datos.</td></tr> 
                     </tbody>
                 </table>
             </div>
         </section>
 
         <section aria-labelledby="graficoHeader">
-            <h2 id="graficoHeader">Visualización de Puntos Diarios/Semanales</h2>
+            <h2 id="graficoHeader">Visualización de Puntos Semanales/Totales</h2>
             <figure class="chart-container" role="img" aria-label="Gráfico de línea comparando los puntos de los jugadores filtrados">
                 <div class="chart-controls">
                     <select id="chartTypeSelector" class="chart-selector" onchange="updateChartDisplay()">
-                        <option value="daily">Puntos Diarios</option>
                         <option value="weekly">Puntos Semanales</option>
+                        <option value="total">Puntos Totales</option>
                     </select>
                     <button id="downloadChart" class="btn-download" disabled>Descargar Gráfico 🖼️</button>
                 </div>
@@ -84,12 +91,11 @@
         </section>
         
         <div class="credit-text-main">
-            Hecho por Julián Hernández (Última versión <span id="currentDatePlaceholder"></span>)
+            Hecho por Julián Hernández (<span id="currentDatePlaceholder"></span>)
         </div>
 
     </main>
     
     <script src="app.js"></script>
 </body>
-
 </html>

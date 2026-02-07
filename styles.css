@@ -94,11 +94,13 @@ h2 {
 .table-wrapper {
     overflow-x: auto; 
     margin-top: 20px;
+    /* Asegurar que el scroll horizontal funcione correctamente */
+    -webkit-overflow-scrolling: touch;
 }
 .player-table { 
     width: 100%; 
     border-collapse: collapse; 
-    min-width: 900px; 
+    min-width: 900px; /* Mantener ancho mínimo para evitar que se comprima */
     font-size: 0.9em; 
 }
 .player-table th, .player-table td { 
@@ -118,6 +120,54 @@ h2 {
 }
 .player-table tr:nth-child(even) { 
     background-color: #f4f7fd; 
+}
+/* Alineación a la izquierda para columnas de texto (headers Y datos) */
+.player-table th:nth-child(1), /* Nombre */
+.player-table th:nth-child(2), /* Equipo NBA */
+.player-table th:nth-child(3), /* Equipo Fantasy */
+.player-table th:nth-child(4), /* Posición */
+.player-table td:nth-child(1), 
+.player-table td:nth-child(2), 
+.player-table td:nth-child(3), 
+.player-table td:nth-child(4)
+{
+    text-align: left;
+}
+/* Columnas numéricas centradas (5: Puntos Totales, 6: Puntos Promedio, 7: Rating) */
+.player-table th:nth-child(5),
+.player-table th:nth-child(6),
+.player-table th:nth-child(7),
+.player-table td:nth-child(5),
+.player-table td:nth-child(6),
+.player-table td:nth-child(7) {
+    text-align: center;
+}
+/* Icono de ESPN dentro de la celda nombre */
+.espn-link {
+    margin-left: 6px;
+    font-size: 0.85em;
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.espn-link:hover {
+    opacity: 1;
+}
+/* Indicadores de tendencia en columna Rating */
+.trend-indicator {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-left: 4px;
+    display: inline-block;
+}
+.trend-up {
+    color: #16a34a; /* Verde */
+}
+.trend-down {
+    color: #dc2626; /* Rojo */
+}
+.trend-stable {
+    color: #6b7280; /* Gris */
 }
 
 /* GRÁFICO */
@@ -157,7 +207,13 @@ h2 {
 @media (max-width: 768px) {
     .player-table { 
         font-size: 0.8em; 
-        min-width: 600px; 
+        min-width: 900px; /* Mantener ancho mínimo para scroll horizontal */
+    }
+    /* El wrapper de la tabla permite scroll horizontal en pantallas pequeñas */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling en iOS */
+        width: 100%;
     }
     .chart-controls {
         flex-direction: column;
