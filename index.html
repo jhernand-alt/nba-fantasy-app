@@ -17,8 +17,8 @@
             <h1>Liga Fantasy NBA "GO LAKERS!!!"</h1>
 
             <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
-                <div id="unifiedControls" class="controls-row"> 
-                    
+                <!-- FILA 1: Botones de carga de archivos CSV -->
+                <div id="fileControls" class="controls-row"> 
                     <label for="csvPlayers" class="btn-download">
                         Cargar Jugadores CSV ⬆️
                         <input type="file" id="csvPlayers" accept=".csv" style="display: none;">
@@ -27,9 +27,10 @@
                         Cargar Stats Semanales CSV ⬆️
                         <input type="file" id="csvStats" accept=".csv" style="display: none;">
                     </label>
-                    
-                    <span style="separator"></span>
-
+                </div>
+                
+                <!-- FILA 2: Selectores de filtros -->
+                <div id="filterControls" class="controls-row"> 
                     <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
                         <option value="all">TODOS LOS EQUIPOS FANTASY</option>
                         <!-- Opciones cargadas por JS -->
@@ -88,6 +89,55 @@
                 </div>
                 <canvas id="pointsChart"></canvas>
             </figure>
+        </section>
+        
+        <!-- Sección explicativa -->
+        <section class="info-section" aria-labelledby="infoHeader">
+            <h2 id="infoHeader">ℹ️ Información de la Aplicación</h2>
+            
+            <div class="info-content">
+                <div class="info-block">
+                    <h3>📊 ¿Qué hace esta aplicación?</h3>
+                    <p>Esta aplicación te permite analizar y visualizar el rendimiento de jugadores NBA en tu liga fantasy. Carga dos archivos CSV con datos de jugadores y sus estadísticas semanales para obtener análisis detallados, gráficos comparativos y ratings de rendimiento.</p>
+                </div>
+                
+                <div class="info-block">
+                    <h3>🎯 Cálculo del Rating (0-100)</h3>
+                    <p>El rating combina tres factores clave:</p>
+                    <ul>
+                        <li><strong>Volumen (50%):</strong> Puntos totales acumulados</li>
+                        <li><strong>Regularidad (30%):</strong> Consistencia semana a semana (menor variación = mejor rating)</li>
+                        <li><strong>Actividad (20%):</strong> Porcentaje de semanas jugadas</li>
+                    </ul>
+                    <p class="info-note"><em>Nota: Puedes modificar estos porcentajes editando las variables RATING_WEIGHTS al inicio del archivo app.js</em></p>
+                </div>
+                
+                <div class="info-block">
+                    <h3>📈 Indicadores de Tendencia</h3>
+                    <ul class="trend-list">
+                        <li><span class="trend-indicator trend-up">↑</span> <strong>Subiendo:</strong> El jugador está mejorando (últimas 3 semanas > 5% mejor que las 3 anteriores)</li>
+                        <li><span class="trend-indicator trend-down">↓</span> <strong>Bajando:</strong> El jugador está decayendo (últimas 3 semanas > 5% peor que las 3 anteriores)</li>
+                        <li><span class="trend-indicator trend-stable">−</span> <strong>Estable:</strong> Rendimiento consistente sin cambios significativos</li>
+                    </ul>
+                </div>
+                
+                <div class="info-block">
+                    <h3>🔧 Cómo usar los filtros</h3>
+                    <ul>
+                        <li><strong>Equipos Fantasy:</strong> Filtra jugadores por su equipo en tu liga</li>
+                        <li><strong>Equipos NBA:</strong> Filtra jugadores por su equipo real de la NBA</li>
+                        <li><strong>Posiciones:</strong> Filtra por posición en la cancha (PG, SG, SF, PF, C, G, F)</li>
+                        <li><strong>Ordenación:</strong> Haz clic en cualquier columna con ⇅ para ordenar ascendente/descendente</li>
+                    </ul>
+                </div>
+                
+                <div class="info-block">
+                    <h3>📁 Formato de archivos CSV</h3>
+                    <p><strong>jugadores.csv:</strong> Código-Nombre; Nombre; Código-Equipo Fantasy; Código-Equipo NBA; Posición; Enlace ESPN</p>
+                    <p><strong>stats_semanales.csv:</strong> ID_NBA; Semana; Puntos_Fantasy</p>
+                    <p class="info-note"><em>Importante: Guarda los archivos como CSV UTF-8 para que los caracteres especiales (ñ, á, etc.) se muestren correctamente</em></p>
+                </div>
+            </div>
         </section>
         
         <div class="credit-text-main">

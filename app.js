@@ -20,7 +20,19 @@ let currentNBATeamFilter = 'all'; // Filtro de equipo NBA activo
 
 // Configuración de formato CSV
 const DECIMAL_SEPARATOR = ','; // Separador decimal en el CSV español
-const COLUMN_DELIMITER = ';'; // Delimitador de columnas en CSV
+const COLUMN_DELIMITER = ';'; // Delimitador de columnas
+
+// ============================================================================
+// CONFIGURACIÓN DE FÓRMULA DE RATING (EDITABLE)
+// ============================================================================
+// Puedes modificar estos valores para ajustar cómo se calcula el rating
+// IMPORTANTE: Los tres valores deben sumar 1.0 (100%)
+const RATING_WEIGHTS = {
+    volume: 0.50,      // 50% - Peso del volumen de puntos totales
+    regularity: 0.30,  // 30% - Peso de la regularidad (inversa del CV)
+    activity: 0.20     // 20% - Peso del porcentaje de semanas jugadas
+};
+// ============================================================================ en CSV
 
 // Colores para las líneas del gráfico (se repiten cíclicamente)
 const chartColors = [
@@ -401,8 +413,10 @@ function calculatePerformance(player, maxTotalPoints) {
     const totalWeeks = player.weeklyPoints.length;
     const activityScore = totalWeeks > 0 ? (player.weeksPlayed / totalWeeks) * 100 : 0;
     
-    // RATING FINAL: Media ponderada
-    const performance = (volumeScore * 0.5) + (regularityScore * 0.3) + (activityScore * 0.2);
+    // RATING FINAL: Media ponderada usando pesos configurables
+    const performance = (volumeScore * RATING_WEIGHTS.volume) + 
+                       (regularityScore * RATING_WEIGHTS.regularity) + 
+                       (activityScore * RATING_WEIGHTS.activity);
     
     return Math.round(performance); // Redondear a entero
 }
