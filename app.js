@@ -355,7 +355,7 @@ function calculateCV(stdDev, mean) {
 
 /**
  * Calcula la tendencia del jugador (subiendo, bajando o estable)
- * Compara el promedio de las últimas 3 semanas con las 3 anteriores
+ * Compara el promedio de las últimas 4 semanas con las 4 anteriores
  * @param {Array} weeklyPoints - Array de puntos semanales
  * @returns {string} '↑' subiendo, '↓' bajando, '−' estable
  */
@@ -363,12 +363,12 @@ function calculateTrend(weeklyPoints) {
     // Filtrar solo puntos válidos (no null)
     const validPoints = weeklyPoints.filter(p => p !== null && !isNaN(p));
     
-    // Necesitamos al menos 4 semanas para calcular tendencia
-    if (validPoints.length < 4) return '−';
+    // Necesitamos al menos 6 semanas para calcular tendencia (4 + 4 anteriores mínimo)
+    if (validPoints.length < 6) return '−';
     
-    // Tomar las últimas 3 semanas y las 3 anteriores
-    const recentWeeks = validPoints.slice(-3);
-    const previousWeeks = validPoints.slice(-6, -3);
+    // Tomar las últimas 4 semanas y las 4 anteriores
+    const recentWeeks = validPoints.slice(-4);
+    const previousWeeks = validPoints.slice(-8, -4);
     
     if (previousWeeks.length === 0) return '−';
     
@@ -1182,7 +1182,7 @@ function resetDisplay() {
         <th onclick="sortTable('name', this)" class="sortable">Nombre ⇅</th>
         <th onclick="sortTable('team', this)" class="sortable">Equipo<br>NBA ⇅</th>
         <th onclick="sortTable('fantasyTeam', this)" class="sortable">Equipo<br>Fantasy ⇅</th>
-        <th>Posición(es)</th>
+        <th>Pos.</th>
         <th onclick="sortTable('totalPoints', this)" class="sortable" aria-sort="descending">Puntos<br>Totales ⇅</th>
         <th onclick="sortTable('averagePoints', this)" class="sortable" aria-sort="none">Puntos<br>Promedio ⇅</th>
         <th onclick="sortTable('performance', this)" class="sortable" aria-sort="none">Rating ⇅</th>
@@ -1263,3 +1263,94 @@ window.onload = function() {
     // 3. Asigna event listener para descarga de gráfico
     document.getElementById('downloadChart').addEventListener('click', downloadChartImage);
 };
+
+// ============================================================================
+// SELECTOR DE TEMAS Y COLORES
+// ============================================================================
+
+/**
+ * Alterna la visibilidad del menú de temas
+ */
+window.toggleThemeMenu = function() {
+    const menu = document.getElementById('themeMenu');
+    menu.classList.toggle('hidden');
+    
+    // Cerrar al hacer clic fuera
+    if (!menu.classList.contains('hidden')) {
+        setTimeout(() => {
+            document.addEventListener('click', closeThemeMenuOnClickOutside);
+        }, 0);
+    }
+}
+
+/**
+ * Cierra el menú de temas al hacer clic fuera
+ */
+function closeThemeMenuOnClickOutside(e) {
+    const menu = document.getElementById('themeMenu');
+    const button = document.getElementById('themeButton');
+    
+    if (!menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.add('hidden');
+        document.removeEventListener('click', closeThemeMenuOnClickOutside);
+    }
+}
+
+/**
+ * Cambia el tema (claro/oscuro/automático)
+ * @param {string} theme - 'light', 'dark', o 'auto'
+ */
+window.changeTheme = function(theme) {
+    const root = document.documentElement;
+    
+    if (theme === 'auto') {
+        // Usar preferencia del sistema
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+        localStorage.setItem('theme', 'auto');
+        
+        // Escuchar cambios en la preferencia del sistema
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (localStorage.getItem('theme') === 'auto') {
+                root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            }
+        });
+    } else {
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }
+    
+    toggleThemeMenu(); // Cerrar menú
+}
+
+/**
+ * Cambia el esquema de colores
+ * @param {string} scheme - 'blue', 'green', 'purple', 'orange', 'red'
+ */
+window.changeColorScheme = function(scheme) {
+    document.documentElement.setAttribute('data-color-scheme', scheme);
+    localStorage.setItem('colorScheme', scheme);
+    toggleThemeMenu(); // Cerrar menú
+}
+
+/**
+ * Aplica tema y esquema guardados al cargar la página
+ */
+function applyStoredTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'auto';
+    const savedScheme = localStorage.getItem('colorScheme') || 'blue';
+    
+    // Aplicar tema
+    if (savedTheme === 'auto') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    
+    // Aplicar esquema de colores
+    document.documentElement.setAttribute('data-color-scheme', savedScheme);
+}
+
+// Aplicar tema guardado antes de que se cargue la página
+applyStoredTheme();

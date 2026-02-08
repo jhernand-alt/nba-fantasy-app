@@ -1,26 +1,228 @@
+/* ============================================================================
+   VARIABLES DE TEMA Y COLORES
+   ============================================================================ */
+
+:root {
+    /* Colores de tema claro (por defecto) */
+    --bg-primary: #f0f2f5;
+    --bg-secondary: white;
+    --bg-tertiary: #f1f5f9;
+    --bg-row-even: #f4f7fd;
+    --text-primary: #333;
+    --text-secondary: #64748b;
+    --border-color: #ddd;
+    --shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Color principal (azul por defecto) */
+    --color-primary: #1e40af;
+    --color-primary-hover: #1e3a8a;
+    --color-primary-light: #3b82f6;
+}
+
+/* Tema oscuro */
+[data-theme="dark"] {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --bg-row-even: #293548;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --border-color: #475569;
+    --shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* Esquemas de color */
+[data-color-scheme="blue"] {
+    --color-primary: #1e40af;
+    --color-primary-hover: #1e3a8a;
+    --color-primary-light: #3b82f6;
+}
+
+[data-color-scheme="green"] {
+    --color-primary: #16a34a;
+    --color-primary-hover: #15803d;
+    --color-primary-light: #22c55e;
+}
+
+[data-color-scheme="purple"] {
+    --color-primary: #9333ea;
+    --color-primary-hover: #7e22ce;
+    --color-primary-light: #a855f7;
+}
+
+[data-color-scheme="orange"] {
+    --color-primary: #ea580c;
+    --color-primary-hover: #c2410c;
+    --color-primary-light: #f97316;
+}
+
+[data-color-scheme="red"] {
+    --color-primary: #dc2626;
+    --color-primary-hover: #b91c1c;
+    --color-primary-light: #ef4444;
+}
+
+/* ============================================================================
+   ESTILOS BASE
+   ============================================================================ */
+
 /* Estilos Base para Escritorio */
 body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    margin: 20px; 
-    background-color: #f0f2f5; 
-    color: #333; 
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary); 
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Header */
+header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    padding: 25px 20px;
+    color: white;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.header-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    color: white;
+    border: none;
+    padding: 0;
+}
+
+/* Selector de Temas */
+.theme-selector {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.theme-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.theme-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.theme-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow);
+    padding: 8px;
+    min-width: 180px;
+    z-index: 1000;
+}
+
+.theme-menu.hidden {
+    display: none;
+}
+
+.theme-section-title {
+    font-size: 0.75em;
+    font-weight: bold;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    padding: 6px 8px 4px;
+    letter-spacing: 0.5px;
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: var(--text-primary);
+    transition: background 0.2s;
+}
+
+.theme-option:hover {
+    background: var(--bg-tertiary);
+}
+
+.theme-icon {
+    font-size: 1.2em;
+}
+
+.theme-divider {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 4px;
+}
+
+.color-option {
+    display: flex;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.color-option:hover {
+    background: var(--bg-tertiary);
+    transform: scale(1.05);
+}
+
+.color-option.active {
+    border-color: var(--color-primary);
+}
+
+.color-preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* Container principal */
 .container { 
     max-width: 1400px; 
-    margin: auto; 
+    margin-top: 80px;
+    margin-bottom: 40px;
+    margin-left: auto;
+    margin-right: auto;
     padding: 25px; 
-    background-color: white; 
+    background-color: var(--bg-secondary); 
     border-radius: 10px; 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
-}
-h1 { 
-    color: #1e40af; 
-    border-bottom: 3px solid #1e40af; 
-    padding-bottom: 10px; 
-    margin-bottom: 25px; 
+    box-shadow: 0 4px 12px var(--shadow); 
 }
 h2 { 
-    color: #333; 
+    color: var(--text-primary); 
     margin-top: 30px; 
     margin-bottom: 15px; 
 }
@@ -29,7 +231,7 @@ h2 {
 .controls-and-filters {
     margin-bottom: 20px; 
     padding: 15px; 
-    background-color: #f1f5f9; 
+    background-color: var(--bg-tertiary); 
     border-radius: 8px; 
 }
 
@@ -67,8 +269,8 @@ h2 {
     transition: background-color 0.3s;
 }
 
-.btn-download { background-color: #4f46e5; color: white; } 
-.btn-download:hover { background-color: #4338ca; }
+.btn-download { background-color: var(--color-primary); color: white; } 
+.btn-download:hover { background-color: var(--color-primary-hover); }
 
 /* Estilo para Select y botones de Filtro/Ordenación */
 .chart-selector, .filter-btn, .fantasy-team-selector {
@@ -110,12 +312,12 @@ h2 {
     font-size: 0.9em; 
 }
 .player-table th, .player-table td { 
-    border: 1px solid #ddd; 
+    border: 1px solid var(--border-color); 
     padding: 8px; 
     text-align: center; 
 } 
 .player-table th { 
-    background-color: #1e40af; 
+    background-color: var(--color-primary); 
     color: white; 
     text-transform: uppercase; 
     cursor: pointer; 
@@ -125,7 +327,7 @@ h2 {
     cursor: default;
 }
 .player-table tr:nth-child(even) { 
-    background-color: #f4f7fd; 
+    background-color: var(--bg-row-even); 
 }
 /* Alineación a la izquierda para columnas de texto (headers Y datos) */
 .player-table th:nth-child(1), /* Nombre */
@@ -213,13 +415,13 @@ h2 {
 .info-section {
     margin-top: 40px;
     padding: 25px;
-    background-color: #f8fafc;
+    background-color: var(--bg-tertiary);
     border-radius: 8px;
-    border-left: 4px solid #1e40af;
+    border-left: 4px solid var(--color-primary);
 }
 
 .info-section h2 {
-    color: #1e40af;
+    color: var(--color-primary);
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 1.5em;
@@ -231,14 +433,14 @@ h2 {
 }
 
 .info-block {
-    background-color: white;
+    background-color: var(--bg-secondary);
     padding: 15px;
     border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--shadow);
 }
 
 .info-block h3 {
-    color: #334155;
+    color: var(--text-primary);
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 1.1em;
@@ -247,13 +449,13 @@ h2 {
 .info-block p {
     margin: 8px 0;
     line-height: 1.6;
-    color: #475569;
+    color: var(--text-primary);
 }
 
 .info-block ul {
     margin: 10px 0;
     padding-left: 25px;
-    color: #475569;
+    color: var(--text-primary);
 }
 
 .info-block li {
@@ -263,7 +465,7 @@ h2 {
 
 .info-note {
     font-size: 0.9em;
-    color: #64748b;
+    color: var(--text-secondary);
     font-style: italic;
     margin-top: 10px;
 }

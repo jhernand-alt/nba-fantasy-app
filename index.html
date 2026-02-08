@@ -14,7 +14,57 @@
     <main class="container"> 
         
         <header>
-            <h1>Liga Fantasy NBA "GO LAKERS!!!"</h1>
+            <div class="header-wrapper">
+                <h1>Liga Fantasy NBA "GO LAKERS!!!"</h1>
+                
+                <!-- Selector de tema en esquina superior derecha -->
+                <div class="theme-selector">
+                    <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()" aria-label="Cambiar tema">
+                        🎨
+                    </button>
+                    <div id="themeMenu" class="theme-menu hidden">
+                        <div class="theme-section-title">Modo</div>
+                        <div class="theme-option" onclick="changeTheme('auto')">
+                            <span class="theme-icon">💡</span>
+                            <span>Auto</span>
+                        </div>
+                        <div class="theme-option" onclick="changeTheme('light')">
+                            <span class="theme-icon">☀️</span>
+                            <span>Claro</span>
+                        </div>
+                        <div class="theme-option" onclick="changeTheme('dark')">
+                            <span class="theme-icon">🌙</span>
+                            <span>Oscuro</span>
+                        </div>
+                        
+                        <hr class="theme-divider">
+                        
+                        <div class="theme-section-title">Color</div>
+                        <div class="color-grid">
+                            <div class="color-option" onclick="changeColorScheme('blue')" title="Azul">
+                                <span class="color-preview" style="background: #dbeafe;"></span>
+                                <span class="color-preview" style="background: #1e40af;"></span>
+                            </div>
+                            <div class="color-option" onclick="changeColorScheme('green')" title="Verde">
+                                <span class="color-preview" style="background: #dcfce7;"></span>
+                                <span class="color-preview" style="background: #16a34a;"></span>
+                            </div>
+                            <div class="color-option" onclick="changeColorScheme('purple')" title="Púrpura">
+                                <span class="color-preview" style="background: #f3e8ff;"></span>
+                                <span class="color-preview" style="background: #9333ea;"></span>
+                            </div>
+                            <div class="color-option" onclick="changeColorScheme('orange')" title="Naranja">
+                                <span class="color-preview" style="background: #ffedd5;"></span>
+                                <span class="color-preview" style="background: #ea580c;"></span>
+                            </div>
+                            <div class="color-option" onclick="changeColorScheme('red')" title="Rojo">
+                                <span class="color-preview" style="background: #fee2e2;"></span>
+                                <span class="color-preview" style="background: #dc2626;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
                 <!-- FILA 1: Botones de carga de archivos CSV -->
@@ -64,7 +114,7 @@
                             <th onclick="sortTable('name', this)" class="sortable">Nombre ⇅</th>
                             <th onclick="sortTable('team', this)" class="sortable">Equipo NBA ⇅</th>
                             <th onclick="sortTable('fantasyTeam', this)" class="sortable">Equipo Fantasy ⇅</th> 
-                            <th>Posición(es)</th> 
+                            <th>Pos.</th> 
                             <th onclick="sortTable('totalPoints', this)" class="sortable">Puntos Totales ⇅</th>
                             <th onclick="sortTable('averagePoints', this)" class="sortable">Puntos Promedio ⇅</th>
                             <th onclick="sortTable('performance', this)" class="sortable">Rating ⇅</th>
@@ -115,8 +165,8 @@
                 <div class="info-block">
                     <h3>📈 Indicadores de Tendencia</h3>
                     <ul class="trend-list">
-                        <li><span class="trend-indicator trend-up">↑</span> <strong>Subiendo:</strong> El jugador está mejorando (últimas 3 semanas > 5% mejor que las 3 anteriores)</li>
-                        <li><span class="trend-indicator trend-down">↓</span> <strong>Bajando:</strong> El jugador está decayendo (últimas 3 semanas > 5% peor que las 3 anteriores)</li>
+                        <li><span class="trend-indicator trend-up">↑</span> <strong>Subiendo:</strong> El jugador está mejorando (últimas 4 semanas > 5% mejor que las 4 anteriores)</li>
+                        <li><span class="trend-indicator trend-down">↓</span> <strong>Bajando:</strong> El jugador está decayendo (últimas 4 semanas > 5% peor que las 4 anteriores)</li>
                         <li><span class="trend-indicator trend-stable">−</span> <strong>Estable:</strong> Rendimiento consistente sin cambios significativos</li>
                     </ul>
                 </div>
