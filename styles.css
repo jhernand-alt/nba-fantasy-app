@@ -82,6 +82,11 @@ header {
     padding: 25px 20px;
     color: white;
     box-shadow: 0 2px 8px var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
 }
 
 .header-wrapper {
@@ -212,7 +217,7 @@ header h1 {
 /* Container principal */
 .container { 
     max-width: 1400px; 
-    margin-top: 80px;
+    margin-top: 100px; /* Espacio para el header fijo */
     margin-bottom: 40px;
     margin-left: auto;
     margin-right: auto;
@@ -230,9 +235,10 @@ h2 {
 /* Contenedor Único para Controles y Filtros */
 .controls-and-filters {
     margin-bottom: 20px; 
-    padding: 15px; 
+    padding: 20px; 
     background-color: var(--bg-tertiary); 
     border-radius: 8px; 
+    box-shadow: 0 2px 6px var(--shadow);
 }
 
 /* Estilos de la fila de botones/controles (flex-wrap ya permite adaptación) */
@@ -483,6 +489,11 @@ h2 {
 
 /* MEDIA QUERY PARA MÓVILES */
 @media (max-width: 768px) {
+    /* Ajustar margen superior del container para header fijo */
+    .container {
+        margin-top: 110px;
+    }
+    
     .player-table { 
         font-size: 0.8em; 
         min-width: 900px; /* Mantener ancho mínimo para scroll horizontal */

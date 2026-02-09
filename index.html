@@ -11,62 +11,65 @@
 </head>
 <body>
 
-    <main class="container"> 
-        
-        <header>
-            <div class="header-wrapper">
-                <h1>Liga Fantasy NBA "GO LAKERS!!!"</h1>
-                
-                <!-- Selector de tema en esquina superior derecha -->
-                <div class="theme-selector">
-                    <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()" aria-label="Cambiar tema">
-                        🎨
-                    </button>
-                    <div id="themeMenu" class="theme-menu hidden">
-                        <div class="theme-section-title">Modo</div>
-                        <div class="theme-option" onclick="changeTheme('auto')">
-                            <span class="theme-icon">💡</span>
-                            <span>Auto</span>
+    <!-- Header con título y selector de tema -->
+    <header>
+        <div class="header-wrapper">
+            <h1>Liga Fantasy NBA "GO LAKERS!!!"</h1>
+            
+            <!-- Selector de tema en esquina superior derecha -->
+            <div class="theme-selector">
+                <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()" aria-label="Cambiar tema">
+                    🎨
+                </button>
+                <div id="themeMenu" class="theme-menu hidden">
+                    <div class="theme-section-title">Modo</div>
+                    <div class="theme-option" onclick="changeTheme('auto')">
+                        <span class="theme-icon">💡</span>
+                        <span>Auto</span>
+                    </div>
+                    <div class="theme-option" onclick="changeTheme('light')">
+                        <span class="theme-icon">☀️</span>
+                        <span>Claro</span>
+                    </div>
+                    <div class="theme-option" onclick="changeTheme('dark')">
+                        <span class="theme-icon">🌙</span>
+                        <span>Oscuro</span>
+                    </div>
+                    
+                    <hr class="theme-divider">
+                    
+                    <div class="theme-section-title">Color</div>
+                    <div class="color-grid">
+                        <div class="color-option" onclick="changeColorScheme('blue')" title="Azul">
+                            <span class="color-preview" style="background: #dbeafe;"></span>
+                            <span class="color-preview" style="background: #1e40af;"></span>
                         </div>
-                        <div class="theme-option" onclick="changeTheme('light')">
-                            <span class="theme-icon">☀️</span>
-                            <span>Claro</span>
+                        <div class="color-option" onclick="changeColorScheme('green')" title="Verde">
+                            <span class="color-preview" style="background: #dcfce7;"></span>
+                            <span class="color-preview" style="background: #16a34a;"></span>
                         </div>
-                        <div class="theme-option" onclick="changeTheme('dark')">
-                            <span class="theme-icon">🌙</span>
-                            <span>Oscuro</span>
+                        <div class="color-option" onclick="changeColorScheme('purple')" title="Púrpura">
+                            <span class="color-preview" style="background: #f3e8ff;"></span>
+                            <span class="color-preview" style="background: #9333ea;"></span>
                         </div>
-                        
-                        <hr class="theme-divider">
-                        
-                        <div class="theme-section-title">Color</div>
-                        <div class="color-grid">
-                            <div class="color-option" onclick="changeColorScheme('blue')" title="Azul">
-                                <span class="color-preview" style="background: #dbeafe;"></span>
-                                <span class="color-preview" style="background: #1e40af;"></span>
-                            </div>
-                            <div class="color-option" onclick="changeColorScheme('green')" title="Verde">
-                                <span class="color-preview" style="background: #dcfce7;"></span>
-                                <span class="color-preview" style="background: #16a34a;"></span>
-                            </div>
-                            <div class="color-option" onclick="changeColorScheme('purple')" title="Púrpura">
-                                <span class="color-preview" style="background: #f3e8ff;"></span>
-                                <span class="color-preview" style="background: #9333ea;"></span>
-                            </div>
-                            <div class="color-option" onclick="changeColorScheme('orange')" title="Naranja">
-                                <span class="color-preview" style="background: #ffedd5;"></span>
-                                <span class="color-preview" style="background: #ea580c;"></span>
-                            </div>
-                            <div class="color-option" onclick="changeColorScheme('red')" title="Rojo">
-                                <span class="color-preview" style="background: #fee2e2;"></span>
-                                <span class="color-preview" style="background: #dc2626;"></span>
-                            </div>
+                        <div class="color-option" onclick="changeColorScheme('orange')" title="Naranja">
+                            <span class="color-preview" style="background: #ffedd5;"></span>
+                            <span class="color-preview" style="background: #ea580c;"></span>
+                        </div>
+                        <div class="color-option" onclick="changeColorScheme('red')" title="Rojo">
+                            <span class="color-preview" style="background: #fee2e2;"></span>
+                            <span class="color-preview" style="background: #dc2626;"></span>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </header>
 
-            <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
+    <main class="container"> 
+        
+        <!-- Sección de controles y filtros -->
+        <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
                 <!-- FILA 1: Botones de carga de archivos CSV -->
                 <div id="fileControls" class="controls-row"> 
                     <label for="csvPlayers" class="btn-download">
@@ -103,7 +106,7 @@
                     </div>
                 </div>
             </div>
-        </header>
+        </div>
 
         <section aria-labelledby="tablaJugadoresHeader">
             <h2 id="tablaJugadoresHeader">Estadísticas Detalladas por Jugador</h2>
@@ -135,6 +138,11 @@
                         <option value="weekly">Puntos Semanales</option>
                         <option value="total">Puntos Totales</option>
                     </select>
+                    <select id="chartLimitSelector" class="chart-selector" onchange="updateChartDisplay()">
+                        <option value="10">Mostrar: Top 10</option>
+                        <option value="20" selected>Mostrar: Top 20</option>
+                        <option value="all">Mostrar: Todos</option>
+                    </select>
                     <button id="downloadChart" class="btn-download" disabled>Descargar Gráfico 🖼️</button>
                 </div>
                 <canvas id="pointsChart"></canvas>
@@ -152,12 +160,22 @@
                 </div>
                 
                 <div class="info-block">
-                    <h3>🎯 Cálculo del Rating (0-100)</h3>
-                    <p>El rating combina tres factores clave:</p>
+                    <h3>📈 Control del Gráfico</h3>
+                    <p>El selector <strong>"Mostrar: Top N"</strong> te permite controlar cuántos jugadores aparecen en el gráfico:</p>
                     <ul>
-                        <li><strong>Volumen (50%):</strong> Puntos totales acumulados</li>
-                        <li><strong>Regularidad (30%):</strong> Consistencia semana a semana (menor variación = mejor rating)</li>
-                        <li><strong>Actividad (20%):</strong> Porcentaje de semanas jugadas</li>
+                        <li><strong>Top 10:</strong> Muestra los 10 jugadores con más puntos totales (de los filtrados)</li>
+                        <li><strong>Top 20:</strong> Muestra los 20 jugadores con más puntos totales (opción por defecto)</li>
+                        <li><strong>Todos:</strong> Muestra todos los jugadores visibles según los filtros aplicados</li>
+                    </ul>
+                    <p class="info-note"><em>Nota: Si después de filtrar hay menos jugadores que el límite seleccionado, se muestran todos los disponibles. Por ejemplo, si filtras por un equipo con solo 8 jugadores y tienes "Top 20" seleccionado, se mostrarán los 8.</em></p>
+                </div>
+                
+                <div class="info-block">
+                    <h3>🎯 Cálculo del Rating (0-100)</h3>
+                    <p>El rating combina dos factores clave:</p>
+                    <ul>
+                        <li><strong>Volumen (60%):</strong> Puntos totales acumulados</li>
+                        <li><strong>Regularidad (40%):</strong> Consistencia semana a semana (menor variación = mejor rating)</li>
                     </ul>
                     <p class="info-note"><em>Nota: Puedes modificar estos porcentajes editando las variables RATING_WEIGHTS al inicio del archivo app.js</em></p>
                 </div>

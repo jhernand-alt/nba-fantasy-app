@@ -26,11 +26,11 @@ const COLUMN_DELIMITER = ';'; // Delimitador de columnas
 // CONFIGURACIÓN DE FÓRMULA DE RATING (EDITABLE)
 // ============================================================================
 // Puedes modificar estos valores para ajustar cómo se calcula el rating
-// IMPORTANTE: Los tres valores deben sumar 1.0 (100%)
+// IMPORTANTE: Los valores deben sumar 1.0 (100%)
 const RATING_WEIGHTS = {
-    volume: 0.50,      // 50% - Peso del volumen de puntos totales
-    regularity: 0.30,  // 30% - Peso de la regularidad (inversa del CV)
-    activity: 0.20     // 20% - Peso del porcentaje de semanas jugadas
+    volume: 0.60,      // 60% - Peso del volumen de puntos totales
+    regularity: 0.40,  // 40% - Peso de la regularidad (inversa del CV)
+    activity: 0.00     // 0% - No se usa (todos los jugadores tienen el mismo número de semanas)
 };
 // ============================================================================ en CSV
 
@@ -594,8 +594,8 @@ function applyFiltersAndSort() {
     // Renderizar tabla y gráfico con los datos filtrados
     renderTable(activePlayers);
     
-    const chartType = document.getElementById('chartTypeSelector').value;
-    renderChart(activePlayers, chartType);
+    // Usar updateChartDisplay para que aplique el límite del selector
+    updateChartDisplay();
 }
 
 // ============================================================================
@@ -949,8 +949,20 @@ function renderTable(players) {
  * Actualiza el tipo de gráfico mostrado (semanal o total)
  */
 window.updateChartDisplay = function() {
-    const chartType = document.getElementById('chartTypeSelector').value; 
-    renderChart(activePlayers, chartType);
+    const chartType = document.getElementById('chartTypeSelector').value;
+    const chartLimit = document.getElementById('chartLimitSelector').value;
+    
+    // Determinar qué jugadores mostrar según el límite seleccionado
+    let playersToChart = [...activePlayers];
+    
+    if (chartLimit !== 'all') {
+        const limit = parseInt(chartLimit);
+        // Ordenar por puntos totales (descendente) y tomar los top N
+        playersToChart.sort((a, b) => b.totalPoints - a.totalPoints);
+        playersToChart = playersToChart.slice(0, limit);
+    }
+    
+    renderChart(playersToChart, chartType);
 }
 
 /**
