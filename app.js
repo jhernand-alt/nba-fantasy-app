@@ -17,6 +17,8 @@ let sortDirection = 'desc'; // Dirección de ordenamiento ('asc' o 'desc')
 let currentPositionFilter = 'all'; // Filtro de posición activo
 let currentTeamFilter = 'all'; // Filtro de equipo fantasy activo
 let currentNBATeamFilter = 'all'; // Filtro de equipo NBA activo
+let playersFileDate = null; // Fecha de modificación del archivo de jugadores
+let statsFileDate = null; // Fecha de modificación del archivo de stats
 
 // Configuración de formato CSV
 const DECIMAL_SEPARATOR = ','; // Separador decimal en el CSV español
@@ -59,11 +61,22 @@ function handlePlayersUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Guardar la fecha de modificación del archivo
+    playersFileDate = new Date(file.lastModified);
+
     const reader = new FileReader();
     reader.onload = function(e) {
         const csvText = e.target.result;
         try {
             playersData = parsePlayersCSV(csvText);
+            // Mostrar nombre del archivo cargado
+            const statusElement = document.getElementById('playersFileStatus');
+            if (statusElement) {
+                statusElement.textContent = `✓ ${file.name}`;
+                statusElement.classList.add('loaded');
+            }
+            // Actualizar fecha en el pie de página
+            updateCreditDate();
             checkAndProcessData(); // Intenta combinar si ya están ambos archivos
         } catch (error) {
             alert("Error al procesar jugadores.csv: " + error.message);
@@ -81,11 +94,22 @@ function handleStatsUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Guardar la fecha de modificación del archivo
+    statsFileDate = new Date(file.lastModified);
+
     const reader = new FileReader();
     reader.onload = function(e) {
         const csvText = e.target.result;
         try {
             statsData = parseStatsCSV(csvText);
+            // Mostrar nombre del archivo cargado
+            const statusElement = document.getElementById('statsFileStatus');
+            if (statusElement) {
+                statusElement.textContent = `✓ ${file.name}`;
+                statusElement.classList.add('loaded');
+            }
+            // Actualizar fecha en el pie de página
+            updateCreditDate();
             checkAndProcessData(); // Intenta combinar si ya están ambos archivos
         } catch (error) {
             alert("Error al procesar stats_semanales.csv: " + error.message);
@@ -1188,6 +1212,23 @@ function resetDisplay() {
      statsData = [];
      allPlayerData = []; 
      activePlayers = []; 
+     playersFileDate = null;
+     statsFileDate = null;
+     
+     // Limpiar indicadores de archivos cargados
+     const playersStatus = document.getElementById('playersFileStatus');
+     const statsStatus = document.getElementById('statsFileStatus');
+     if (playersStatus) {
+         playersStatus.textContent = '';
+         playersStatus.classList.remove('loaded');
+     }
+     if (statsStatus) {
+         statsStatus.textContent = '';
+         statsStatus.classList.remove('loaded');
+     }
+     
+     // Actualizar mensaje de fecha
+     updateCreditDate();
      
      // Restaurar headers de tabla
      const headerRow = `<tr>
@@ -1248,16 +1289,39 @@ function resetDisplay() {
 
 /**
  * Actualiza la fecha en el pie de página
+ * Muestra la fecha de modificación más reciente de los archivos CSV cargados
  */
 function updateCreditDate() {
-    const now = new Date();
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const formattedDate = now.toLocaleDateString('es-ES', options);
-
     const dateElement = document.getElementById('currentDatePlaceholder');
-    if (dateElement) {
-        dateElement.textContent = formattedDate;
+    if (!dateElement) return;
+
+    // Si no hay archivos cargados, mostrar mensaje por defecto
+    if (!playersFileDate && !statsFileDate) {
+        dateElement.textContent = 'Datos no cargados';
+        return;
     }
+
+    // Determinar la fecha más reciente
+    let mostRecentDate = null;
+    if (playersFileDate && statsFileDate) {
+        mostRecentDate = playersFileDate > statsFileDate ? playersFileDate : statsFileDate;
+    } else if (playersFileDate) {
+        mostRecentDate = playersFileDate;
+    } else if (statsFileDate) {
+        mostRecentDate = statsFileDate;
+    }
+
+    // Formatear la fecha con día, mes, año, hora y minutos
+    const options = { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    const formattedDate = mostRecentDate.toLocaleDateString('es-ES', options);
+    
+    dateElement.textContent = formattedDate;
 }
 
 // ============================================================================

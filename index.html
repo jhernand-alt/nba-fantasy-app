@@ -73,13 +73,15 @@
                 <!-- FILA 1: Botones de carga de archivos CSV -->
                 <div id="fileControls" class="controls-row"> 
                     <label for="csvPlayers" class="btn-download">
-                        Cargar Jugadores CSV ⬆️
+                        Jugadores CSV ⬆️
                         <input type="file" id="csvPlayers" accept=".csv" style="display: none;">
                     </label>
+                    <span id="playersFileStatus" class="file-status"></span>
                     <label for="csvStats" class="btn-download">
-                        Cargar Stats Semanales CSV ⬆️
+                        Stats Semanales CSV ⬆️
                         <input type="file" id="csvStats" accept=".csv" style="display: none;">
                     </label>
+                    <span id="statsFileStatus" class="file-status"></span>
                 </div>
                 
                 <!-- FILA 2: Selectores de filtros -->
@@ -139,6 +141,7 @@
                         <option value="total">Puntos Totales</option>
                     </select>
                     <select id="chartLimitSelector" class="chart-selector" onchange="updateChartDisplay()">
+                        <option value="5">Mostrar: Top 5</option>
                         <option value="10">Mostrar: Top 10</option>
                         <option value="20" selected>Mostrar: Top 20</option>
                         <option value="all">Mostrar: Todos</option>
@@ -163,6 +166,7 @@
                     <h3>📈 Control del Gráfico</h3>
                     <p>El selector <strong>"Mostrar: Top N"</strong> te permite controlar cuántos jugadores aparecen en el gráfico:</p>
                     <ul>
+                        <li><strong>Top 5:</strong> Muestra los 5 jugadores con más puntos totales (de los filtrados)</li>
                         <li><strong>Top 10:</strong> Muestra los 10 jugadores con más puntos totales (de los filtrados)</li>
                         <li><strong>Top 20:</strong> Muestra los 20 jugadores con más puntos totales (opción por defecto)</li>
                         <li><strong>Todos:</strong> Muestra todos los jugadores visibles según los filtros aplicados</li>
@@ -209,7 +213,7 @@
         </section>
         
         <div class="credit-text-main">
-            Hecho por Julián Hernández (<span id="currentDatePlaceholder"></span>)
+            Hecho por Julián Hernández. Datos actualizados el <span id="currentDatePlaceholder"></span>
         </div>
 
     </main>

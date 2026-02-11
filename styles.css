@@ -278,6 +278,19 @@ h2 {
 .btn-download { background-color: var(--color-primary); color: white; } 
 .btn-download:hover { background-color: var(--color-primary-hover); }
 
+/* Indicador de archivo cargado */
+.file-status {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-left: 10px;
+}
+
+.file-status.loaded {
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
 /* Estilo para Select y botones de Filtro/Ordenación */
 .chart-selector, .filter-btn, .fantasy-team-selector {
     padding: 8px 15px; 
@@ -292,15 +305,15 @@ h2 {
 
 /* ESTILO PARA EL BOTÓN ACTIVO/PULSADO */
 .filter-btn.active { 
-    background-color: #1e40af; 
+    background-color: var(--color-primary); 
     color: white; 
-    border-color: #1e40af;
+    border-color: var(--color-primary);
 }
 /* ARIA Pressed para botones */
 .filter-btn[aria-pressed="true"] { 
-    background-color: #1e40af; 
+    background-color: var(--color-primary); 
     color: white; 
-    border-color: #1e40af;
+    border-color: var(--color-primary);
 }
 
 
