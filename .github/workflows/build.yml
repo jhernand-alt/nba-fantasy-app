@@ -1,0 +1,36 @@
+name: Build Portable EXE
+
+on:
+  push:
+    branches:
+      - main  # Se activa cuando subes algo a la rama main
+  workflow_dispatch: # Permite ejecutarlo manualmente desde la web
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Empaquetar Aplicación
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Subir ejecutable a GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ejecutable-Portable-Windows
+          path: dist/*.exe
+          if-no-files-found: error
