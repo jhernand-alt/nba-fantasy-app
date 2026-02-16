@@ -1,7 +1,6 @@
 {
-  "name": "nba-fantasy-app-portable",
+  "name": "nba-fantasy-app",
   "version": "1.0.0",
-  "description": "Mi aplicación web convertida a EXE",
   "main": "main.js",
   "scripts": {
     "build": "electron-builder --win --portable"
@@ -11,12 +10,17 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.jhernand-alt.nba-fantasy-app",
+    "appId": "com.nba.fantasy",
     "win": {
       "target": "portable"
     },
+    "files": [
+      "**/*"
+    ],
     "directories": {
       "output": "dist"
     }
   }
 }
+
+
