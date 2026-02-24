@@ -5,6 +5,172 @@
 // estadísticas, gráficos y permite filtrar por equipos y posiciones.
 // ============================================================================
 
+// Aplicar tema guardado ANTES del DOM para evitar parpadeo
+applyStoredTheme();
+
+// ============================================================================
+// INTERNACIONALIZACIÓN (i18n)
+// ============================================================================
+
+function getTranslations(lang) {
+    const code = lang || localStorage.getItem('language') || 'es';
+    const map  = { es: window.LANG_ES, eu: window.LANG_EU, en: window.LANG_EN };
+    return map[code] || window.LANG_ES;
+}
+
+function setLanguage(lang) {
+    const t = getTranslations(lang);
+    localStorage.setItem('language', lang);
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.dataset.langKey;
+        if (!t[key] || el.tagName === 'TITLE') return;
+        el.textContent = t[key];
+    });
+
+    if (t.document_title) document.title = t.document_title;
+
+    document.querySelectorAll('[data-lang-key-aria]').forEach(el => {
+        const key = el.dataset.langKeyAria;
+        if (t[key]) el.setAttribute('aria-label', t[key]);
+    });
+
+    updateLangButton(lang);
+    document.querySelectorAll('.lang-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.lang === lang);
+    });
+
+    // Re-render si hay datos cargados
+    if (typeof activePlayers !== 'undefined' && activePlayers.length > 0) {
+        renderPlayerTable(activePlayers);
+    }
+
+    // Actualizar encabezados de tabla siempre (estén o no cargados los datos)
+    const th = getTranslations(lang);
+    const headerEl = document.getElementById('playerTableHeader');
+    if (headerEl) {
+        headerEl.innerHTML = `<tr>
+            <th onclick="sortTable('name', this)" class="sortable">${th.col_name}</th>
+            <th onclick="sortTable('team', this)" class="sortable">${th.col_nba_team}</th>
+            <th onclick="sortTable('fantasyTeam', this)" class="sortable">${th.col_fantasy_team}</th>
+            <th>${th.col_position}</th>
+            <th onclick="sortTable('totalPoints', this)" class="sortable">${th.col_total_points}</th>
+            <th onclick="sortTable('averagePoints', this)" class="sortable">${th.col_avg_points}</th>
+            <th onclick="sortTable('performance', this)" class="sortable">${th.col_rating}</th>
+        </tr>`;
+    }
+
+    // Actualizar la primera opción de los selectores de equipo
+    const fSel = document.getElementById('fantasyTeamSelector');
+    if (fSel && fSel.options[0]) fSel.options[0].textContent = th.filter_all_fantasy;
+    const nSel = document.getElementById('nbaTeamSelector');
+    if (nSel && nSel.options[0]) nSel.options[0].textContent = th.filter_all_nba;
+
+    // Refrescar pie de página si no hay datos cargados
+    if (typeof playersFileDate === 'undefined' || (!playersFileDate && !statsFileDate)) {
+        const datePlaceholder = document.getElementById('currentDatePlaceholder');
+        if (datePlaceholder) datePlaceholder.textContent = th.credit_no_data;
+    }
+}
+
+function applyStoredLanguage() {
+    setLanguage(localStorage.getItem('language') || 'es');
+}
+
+// ── Selector de idioma (UI) ──
+
+const FLAG_SVGS = {
+    es: `<svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>`,
+    eu: `<svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#D8202C"/><rect x="24" y="0" width="12" height="40" fill="white"/><rect x="0" y="14" width="60" height="12" fill="white"/><rect x="26.5" y="0" width="7" height="40" fill="#007A3D"/><rect x="0" y="16.5" width="60" height="7" fill="#007A3D"/></svg>`,
+    en: `<svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#012169"/><line x1="0" y1="0" x2="60" y2="40" stroke="white" stroke-width="8"/><line x1="60" y1="0" x2="0" y2="40" stroke="white" stroke-width="8"/><line x1="0" y1="0" x2="60" y2="40" stroke="#C8102E" stroke-width="4.5"/><line x1="60" y1="0" x2="0" y2="40" stroke="#C8102E" stroke-width="4.5"/><rect x="24" y="0" width="12" height="40" fill="white"/><rect x="0" y="14" width="60" height="12" fill="white"/><rect x="26" y="0" width="8" height="40" fill="#C8102E"/><rect x="0" y="16" width="60" height="8" fill="#C8102E"/></svg>`
+};
+
+function updateLangButton(lang) {
+    const btn = document.getElementById('langButtonContent');
+    if (!btn) return;
+    const codes = { es: 'ES', eu: 'EU', en: 'EN' };
+    btn.innerHTML = `${FLAG_SVGS[lang] || ''}<span class="lang-code">${codes[lang] || lang.toUpperCase()}</span>`;
+}
+
+window.toggleLangMenu = function () {
+    const menu   = document.getElementById('langMenu');
+    const button = document.getElementById('langButton');
+    menu.classList.toggle('hidden');
+    const isOpen = !menu.classList.contains('hidden');
+    button.setAttribute('aria-expanded', isOpen);
+    if (isOpen) {
+        setTimeout(() => document.addEventListener('click', closeLangMenuOnClickOutside), 0);
+    }
+};
+
+function closeLangMenuOnClickOutside(e) {
+    const wrapper = document.getElementById('languageSelectorWrapper');
+    if (!wrapper.contains(e.target)) {
+        document.getElementById('langMenu').classList.add('hidden');
+        document.getElementById('langButton').setAttribute('aria-expanded', 'false');
+        document.removeEventListener('click', closeLangMenuOnClickOutside);
+    }
+}
+
+// ============================================================================
+// TEMA Y COLORES
+// ============================================================================
+
+window.toggleThemeMenu = function() {
+    const menu = document.getElementById('themeMenu');
+    menu.classList.toggle('hidden');
+    if (!menu.classList.contains('hidden')) {
+        setTimeout(() => document.addEventListener('click', closeThemeMenuOnClickOutside), 0);
+    }
+};
+
+function closeThemeMenuOnClickOutside(e) {
+    const menu   = document.getElementById('themeMenu');
+    const button = document.getElementById('themeButton');
+    if (!menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.add('hidden');
+        document.removeEventListener('click', closeThemeMenuOnClickOutside);
+    }
+}
+
+window.changeTheme = function(theme) {
+    const root = document.documentElement;
+    if (theme === 'auto') {
+        root.setAttribute('data-theme',
+            window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (localStorage.getItem('theme') === 'auto')
+                root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        });
+    } else {
+        root.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('theme', theme);
+    toggleThemeMenu();
+};
+
+window.changeColorScheme = function(scheme) {
+    document.documentElement.setAttribute('data-color-scheme', scheme);
+    localStorage.setItem('colorScheme', scheme);
+    toggleThemeMenu();
+};
+
+function applyStoredTheme() {
+    const t = localStorage.getItem('theme')       || 'auto';
+    const s = localStorage.getItem('colorScheme') || 'blue';
+    document.documentElement.setAttribute('data-theme',
+        t === 'auto'
+            ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            : t
+    );
+    document.documentElement.setAttribute('data-color-scheme', s);
+}
+
+// ============================================================================
+// FIN INFRAESTRUCTURA — LÓGICA DE LA APP
+// ============================================================================
+
 // --- VARIABLES GLOBALES DEL ESTADO DE LA APLICACIÓN ---
 let playersData = []; // Datos cargados de jugadores.csv
 let statsData = []; // Datos cargados de stats_semanales.csv
@@ -498,7 +664,7 @@ function initializeApplication(allData) {
     const fantasyTeamsSet = new Set(allData.map(p => p.fantasyTeam));
     const fantasyTeams = Array.from(fantasyTeamsSet).sort();
     const fantasySelector = document.getElementById('fantasyTeamSelector');
-    fantasySelector.innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
+    fantasySelector.innerHTML = `<option value="all">${getTranslations().filter_all_fantasy}</option>`;
     fantasyTeams.forEach(team => {
         const option = document.createElement('option');
         option.value = team;
@@ -512,7 +678,7 @@ function initializeApplication(allData) {
     const nbaTeamsSet = new Set(allData.map(p => p.team));
     const nbaTeams = Array.from(nbaTeamsSet).sort();
     const nbaSelector = document.getElementById('nbaTeamSelector');
-    nbaSelector.innerHTML = '<option value="all">TODOS LOS EQUIPOS NBA</option>';
+    nbaSelector.innerHTML = `<option value="all">${getTranslations().filter_all_nba}</option>`;
     nbaTeams.forEach(team => {
         const option = document.createElement('option');
         option.value = team;
@@ -1231,14 +1397,15 @@ function resetDisplay() {
      updateCreditDate();
      
      // Restaurar headers de tabla
+     const t = getTranslations();
      const headerRow = `<tr>
-        <th onclick="sortTable('name', this)" class="sortable">Nombre ⇅</th>
-        <th onclick="sortTable('team', this)" class="sortable">Equipo<br>NBA ⇅</th>
-        <th onclick="sortTable('fantasyTeam', this)" class="sortable">Equipo<br>Fantasy ⇅</th>
-        <th>Pos.</th>
-        <th onclick="sortTable('totalPoints', this)" class="sortable" aria-sort="descending">Puntos<br>Totales ⇅</th>
-        <th onclick="sortTable('averagePoints', this)" class="sortable" aria-sort="none">Puntos<br>Promedio ⇅</th>
-        <th onclick="sortTable('performance', this)" class="sortable" aria-sort="none">Rating ⇅</th>
+        <th onclick="sortTable('name', this)" class="sortable">${t.col_name}</th>
+        <th onclick="sortTable('team', this)" class="sortable">${t.col_nba_team}</th>
+        <th onclick="sortTable('fantasyTeam', this)" class="sortable">${t.col_fantasy_team}</th>
+        <th>${t.col_position}</th>
+        <th onclick="sortTable('totalPoints', this)" class="sortable" aria-sort="descending">${t.col_total_points}</th>
+        <th onclick="sortTable('averagePoints', this)" class="sortable" aria-sort="none">${t.col_avg_points}</th>
+        <th onclick="sortTable('performance', this)" class="sortable" aria-sort="none">${t.col_rating}</th>
      </tr>`;
      document.getElementById('playerTableHeader').innerHTML = headerRow;
 
@@ -1252,10 +1419,10 @@ function resetDisplay() {
      
      // Deshabilitar controles
      document.getElementById('downloadChart').disabled = true; 
+     document.getElementById('fantasyTeamSelector').innerHTML = `<option value="all">${t.filter_all_fantasy}</option>`;
      document.getElementById('fantasyTeamSelector').disabled = true;
-     document.getElementById('fantasyTeamSelector').innerHTML = '<option value="all">TODOS LOS EQUIPOS FANTASY</option>';
      document.getElementById('nbaTeamSelector').disabled = true;
-     document.getElementById('nbaTeamSelector').innerHTML = '<option value="all">TODOS LOS EQUIPOS NBA</option>';
+     document.getElementById('nbaTeamSelector').innerHTML = `<option value="all">${t.filter_all_nba}</option>`;
 
      // Resetear filtros de posición
      document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1297,7 +1464,7 @@ function updateCreditDate() {
 
     // Si no hay archivos cargados, mostrar mensaje por defecto
     if (!playersFileDate && !statsFileDate) {
-        dateElement.textContent = 'Datos no cargados';
+        dateElement.textContent = getTranslations().credit_no_data;
         return;
     }
 
@@ -1329,104 +1496,13 @@ function updateCreditDate() {
 // ============================================================================
 
 window.onload = function() {
-    // 1. Inicializa la fecha dinámica en el pie de página
-    updateCreditDate(); 
-    
-    // 2. Restablece el estado de la aplicación
+    // 1. Aplicar idioma y tema guardados
+    applyStoredLanguage();
+    // 2. Inicializa la fecha dinámica en el pie de página
+    updateCreditDate();
+    // 3. Restablece el estado de la aplicación
     resetDisplay();
-    renderChart([], 'weekly'); 
-    
-    // 3. Asigna event listener para descarga de gráfico
+    renderChart([], 'weekly');
+    // 4. Asigna event listener para descarga de gráfico
     document.getElementById('downloadChart').addEventListener('click', downloadChartImage);
 };
-
-// ============================================================================
-// SELECTOR DE TEMAS Y COLORES
-// ============================================================================
-
-/**
- * Alterna la visibilidad del menú de temas
- */
-window.toggleThemeMenu = function() {
-    const menu = document.getElementById('themeMenu');
-    menu.classList.toggle('hidden');
-    
-    // Cerrar al hacer clic fuera
-    if (!menu.classList.contains('hidden')) {
-        setTimeout(() => {
-            document.addEventListener('click', closeThemeMenuOnClickOutside);
-        }, 0);
-    }
-}
-
-/**
- * Cierra el menú de temas al hacer clic fuera
- */
-function closeThemeMenuOnClickOutside(e) {
-    const menu = document.getElementById('themeMenu');
-    const button = document.getElementById('themeButton');
-    
-    if (!menu.contains(e.target) && !button.contains(e.target)) {
-        menu.classList.add('hidden');
-        document.removeEventListener('click', closeThemeMenuOnClickOutside);
-    }
-}
-
-/**
- * Cambia el tema (claro/oscuro/automático)
- * @param {string} theme - 'light', 'dark', o 'auto'
- */
-window.changeTheme = function(theme) {
-    const root = document.documentElement;
-    
-    if (theme === 'auto') {
-        // Usar preferencia del sistema
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-        localStorage.setItem('theme', 'auto');
-        
-        // Escuchar cambios en la preferencia del sistema
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (localStorage.getItem('theme') === 'auto') {
-                root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-            }
-        });
-    } else {
-        root.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }
-    
-    toggleThemeMenu(); // Cerrar menú
-}
-
-/**
- * Cambia el esquema de colores
- * @param {string} scheme - 'blue', 'green', 'purple', 'orange', 'red'
- */
-window.changeColorScheme = function(scheme) {
-    document.documentElement.setAttribute('data-color-scheme', scheme);
-    localStorage.setItem('colorScheme', scheme);
-    toggleThemeMenu(); // Cerrar menú
-}
-
-/**
- * Aplica tema y esquema guardados al cargar la página
- */
-function applyStoredTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'auto';
-    const savedScheme = localStorage.getItem('colorScheme') || 'blue';
-    
-    // Aplicar tema
-    if (savedTheme === 'auto') {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-    } else {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-    
-    // Aplicar esquema de colores
-    document.documentElement.setAttribute('data-color-scheme', savedScheme);
-}
-
-// Aplicar tema guardado antes de que se cargue la página
-applyStoredTheme();

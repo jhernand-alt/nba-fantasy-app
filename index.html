@@ -2,222 +2,226 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>GO LAKERS!!!</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="document_title">Liga Fantasy NBA "GO LAKERS!!!"</title>
+
+    <!-- Archivos de traducción (deben cargarse ANTES que app.js) -->
+    <script src="lang/es.js"></script>
+    <script src="lang/eu.js"></script>
+    <script src="lang/en.js"></script>
+
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    
 </head>
 <body>
 
-    <!-- Header con título y selector de tema -->
     <header>
         <div class="header-wrapper">
-            <h1>Liga Fantasy NBA "GO LAKERS!!!"</h1>
-            
-            <!-- Selector de tema en esquina superior derecha -->
-            <div class="theme-selector">
-                <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()" aria-label="Cambiar tema">
-                    🎨
-                </button>
-                <div id="themeMenu" class="theme-menu hidden">
-                    <div class="theme-section-title">Modo</div>
-                    <div class="theme-option" onclick="changeTheme('auto')">
-                        <span class="theme-icon">💡</span>
-                        <span>Auto</span>
-                    </div>
-                    <div class="theme-option" onclick="changeTheme('light')">
-                        <span class="theme-icon">☀️</span>
-                        <span>Claro</span>
-                    </div>
-                    <div class="theme-option" onclick="changeTheme('dark')">
-                        <span class="theme-icon">🌙</span>
-                        <span>Oscuro</span>
-                    </div>
-                    
-                    <hr class="theme-divider">
-                    
-                    <div class="theme-section-title">Color</div>
-                    <div class="color-grid">
-                        <div class="color-option" onclick="changeColorScheme('blue')" title="Azul">
-                            <span class="color-preview" style="background: #dbeafe;"></span>
-                            <span class="color-preview" style="background: #1e40af;"></span>
+            <h1 data-lang-key="app_title">Liga Fantasy NBA "GO LAKERS!!!"</h1>
+
+            <div class="header-controls">
+
+                <!-- Selector de idioma -->
+                <div class="language-selector" id="languageSelectorWrapper">
+                    <button id="langButton" class="lang-button" onclick="toggleLangMenu()"
+                            aria-haspopup="true" aria-expanded="false"
+                            aria-label="Seleccionar idioma / Hizkuntza hautatu / Select language">
+                        <span id="langButtonContent" class="lang-option-inner">
+                            <svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="60" height="40" fill="#AA151B"/>
+                                <rect y="10" width="60" height="20" fill="#F1BF00"/>
+                            </svg>
+                            <span class="lang-code">ES</span>
+                        </span>
+                        <span class="lang-chevron">▾</span>
+                    </button>
+
+                    <div id="langMenu" class="lang-menu hidden" role="menu">
+                        <div class="lang-option" role="menuitem" onclick="setLanguage('es'); toggleLangMenu()" data-lang="es">
+                            <span class="lang-option-inner">
+                                <svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="60" height="40" fill="#AA151B"/>
+                                    <rect y="10" width="60" height="20" fill="#F1BF00"/>
+                                </svg>
+                                <span class="lang-code">ES</span>
+                            </span>
+                            <span class="lang-name">Español</span>
                         </div>
-                        <div class="color-option" onclick="changeColorScheme('green')" title="Verde">
-                            <span class="color-preview" style="background: #dcfce7;"></span>
-                            <span class="color-preview" style="background: #16a34a;"></span>
+                        <div class="lang-option" role="menuitem" onclick="setLanguage('eu'); toggleLangMenu()" data-lang="eu">
+                            <span class="lang-option-inner">
+                                <svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="60" height="40" fill="#D8202C"/>
+                                    <rect x="24" y="0" width="12" height="40" fill="white"/>
+                                    <rect x="0" y="14" width="60" height="12" fill="white"/>
+                                    <rect x="26.5" y="0" width="7" height="40" fill="#007A3D"/>
+                                    <rect x="0" y="16.5" width="60" height="7" fill="#007A3D"/>
+                                </svg>
+                                <span class="lang-code">EU</span>
+                            </span>
+                            <span class="lang-name">Euskera</span>
                         </div>
-                        <div class="color-option" onclick="changeColorScheme('purple')" title="Púrpura">
-                            <span class="color-preview" style="background: #f3e8ff;"></span>
-                            <span class="color-preview" style="background: #9333ea;"></span>
-                        </div>
-                        <div class="color-option" onclick="changeColorScheme('orange')" title="Naranja">
-                            <span class="color-preview" style="background: #ffedd5;"></span>
-                            <span class="color-preview" style="background: #ea580c;"></span>
-                        </div>
-                        <div class="color-option" onclick="changeColorScheme('red')" title="Rojo">
-                            <span class="color-preview" style="background: #fee2e2;"></span>
-                            <span class="color-preview" style="background: #dc2626;"></span>
+                        <div class="lang-option" role="menuitem" onclick="setLanguage('en'); toggleLangMenu()" data-lang="en">
+                            <span class="lang-option-inner">
+                                <svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="60" height="40" fill="#012169"/>
+                                    <line x1="0" y1="0"  x2="60" y2="40" stroke="white"   stroke-width="8"/>
+                                    <line x1="60" y1="0" x2="0"  y2="40" stroke="white"   stroke-width="8"/>
+                                    <line x1="0" y1="0"  x2="60" y2="40" stroke="#C8102E" stroke-width="4.5"/>
+                                    <line x1="60" y1="0" x2="0"  y2="40" stroke="#C8102E" stroke-width="4.5"/>
+                                    <rect x="24" y="0"  width="12" height="40" fill="white"/>
+                                    <rect x="0"  y="14" width="60" height="12" fill="white"/>
+                                    <rect x="26" y="0"  width="8"  height="40" fill="#C8102E"/>
+                                    <rect x="0"  y="16" width="60" height="8"  fill="#C8102E"/>
+                                </svg>
+                                <span class="lang-code">EN</span>
+                            </span>
+                            <span class="lang-name">English</span>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+
+                <!-- Selector de tema/color -->
+                <div class="theme-selector">
+                    <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()"
+                            aria-haspopup="true" aria-expanded="false"
+                            data-lang-key-aria="theme_btn_label">
+                        🎨
+                    </button>
+                    <div id="themeMenu" class="theme-menu hidden" role="menu">
+                        <div class="theme-section-title" data-lang-key="theme_section_mode">Modo</div>
+                        <div class="theme-option" role="menuitem" onclick="changeTheme('auto')">
+                            <span class="theme-icon">💡</span>
+                            <span data-lang-key="theme_auto">Auto (sistema)</span>
+                        </div>
+                        <div class="theme-option" role="menuitem" onclick="changeTheme('light')">
+                            <span class="theme-icon">☀️</span>
+                            <span data-lang-key="theme_light">Claro</span>
+                        </div>
+                        <div class="theme-option" role="menuitem" onclick="changeTheme('dark')">
+                            <span class="theme-icon">🌙</span>
+                            <span data-lang-key="theme_dark">Oscuro</span>
+                        </div>
+                        <hr class="theme-divider">
+                        <div class="theme-section-title" data-lang-key="theme_section_color">Color</div>
+                        <div class="color-grid">
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('blue')"   title="Azul">
+                                <span class="color-preview" style="background:#dbeafe;"></span>
+                                <span class="color-preview" style="background:#1e40af;"></span>
+                            </div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('green')"  title="Verde">
+                                <span class="color-preview" style="background:#dcfce7;"></span>
+                                <span class="color-preview" style="background:#16a34a;"></span>
+                            </div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('purple')" title="Púrpura">
+                                <span class="color-preview" style="background:#f3e8ff;"></span>
+                                <span class="color-preview" style="background:#9333ea;"></span>
+                            </div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('orange')" title="Naranja">
+                                <span class="color-preview" style="background:#ffedd5;"></span>
+                                <span class="color-preview" style="background:#ea580c;"></span>
+                            </div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('red')"    title="Rojo">
+                                <span class="color-preview" style="background:#fee2e2;"></span>
+                                <span class="color-preview" style="background:#dc2626;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /header-controls -->
+        </div><!-- /header-wrapper -->
     </header>
 
-    <main class="container"> 
-        
-        <!-- Sección de controles y filtros -->
+    <main class="container">
+
         <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
-                <!-- FILA 1: Botones de carga de archivos CSV -->
-                <div id="fileControls" class="controls-row"> 
-                    <label for="csvPlayers" class="btn-download">
-                        Jugadores CSV ⬆️
-                        <input type="file" id="csvPlayers" accept=".csv" style="display: none;">
-                    </label>
-                    <span id="playersFileStatus" class="file-status"></span>
-                    <label for="csvStats" class="btn-download">
-                        Stats Semanales CSV ⬆️
-                        <input type="file" id="csvStats" accept=".csv" style="display: none;">
-                    </label>
-                    <span id="statsFileStatus" class="file-status"></span>
-                </div>
-                
-                <!-- FILA 2: Selectores de filtros -->
-                <div id="filterControls" class="controls-row"> 
-                    <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
-                        <option value="all">TODOS LOS EQUIPOS FANTASY</option>
-                        <!-- Opciones cargadas por JS -->
-                    </select>
-                    
-                    <select id="nbaTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByNBATeam(this.value)" disabled>
-                        <option value="all">TODOS LOS EQUIPOS NBA</option>
-                        <!-- Opciones cargadas por JS -->
-                    </select>
-                    
-                    <div id="positionFilters" role="group" aria-label="Filtros por Posición de Jugador">
-                        <button onclick="filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true">TODOS</button>
-                        <button onclick="filterPlayersByPosition('PG', this)" class="filter-btn" aria-pressed="false">PG</button>
-                        <button onclick="filterPlayersByPosition('SG', this)" class="filter-btn" aria-pressed="false">SG</button>
-                        <button onclick="filterPlayersByPosition('SF', this)" class="filter-btn" aria-pressed="false">SF</button>
-                        <button onclick="filterPlayersByPosition('PF', this)" class="filter-btn" aria-pressed="false">PF</button>
-                        <button onclick="filterPlayersByPosition('C', this)" class="filter-btn" aria-pressed="false">C</button>
-                        <button onclick="filterPlayersByPosition('G', this)" class="filter-btn" aria-pressed="false">G</button>
-                        <button onclick="filterPlayersByPosition('F', this)" class="filter-btn" aria-pressed="false">F</button>
-                    </div>
+            <div id="fileControls" class="controls-row">
+                <label for="csvPlayers" class="btn-download">
+                    <span data-lang-key="btn_load_players">Jugadores CSV ⬆️</span>
+                    <input type="file" id="csvPlayers" accept=".csv" style="display: none;">
+                </label>
+                <span id="playersFileStatus" class="file-status"></span>
+                <label for="csvStats" class="btn-download">
+                    <span data-lang-key="btn_load_stats">Stats Semanales CSV ⬆️</span>
+                    <input type="file" id="csvStats" accept=".csv" style="display: none;">
+                </label>
+                <span id="statsFileStatus" class="file-status"></span>
+            </div>
+
+            <div id="filterControls" class="controls-row">
+                <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
+                    <option value="all" data-lang-key="filter_all_fantasy">TODOS LOS EQUIPOS FANTASY</option>
+                </select>
+
+                <select id="nbaTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByNBATeam(this.value)" disabled>
+                    <option value="all" data-lang-key="filter_all_nba">TODOS LOS EQUIPOS NBA</option>
+                </select>
+
+                <div id="positionFilters" role="group" aria-label="Filtros por Posición de Jugador">
+                    <button onclick="filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true" data-lang-key="filter_all_pos">TODOS</button>
+                    <button onclick="filterPlayersByPosition('PG', this)"  class="filter-btn" aria-pressed="false">PG</button>
+                    <button onclick="filterPlayersByPosition('SG', this)"  class="filter-btn" aria-pressed="false">SG</button>
+                    <button onclick="filterPlayersByPosition('SF', this)"  class="filter-btn" aria-pressed="false">SF</button>
+                    <button onclick="filterPlayersByPosition('PF', this)"  class="filter-btn" aria-pressed="false">PF</button>
+                    <button onclick="filterPlayersByPosition('C', this)"   class="filter-btn" aria-pressed="false">C</button>
+                    <button onclick="filterPlayersByPosition('G', this)"   class="filter-btn" aria-pressed="false">G</button>
+                    <button onclick="filterPlayersByPosition('F', this)"   class="filter-btn" aria-pressed="false">F</button>
                 </div>
             </div>
         </div>
 
         <section aria-labelledby="tablaJugadoresHeader">
-            <h2 id="tablaJugadoresHeader">Estadísticas Detalladas por Jugador</h2>
+            <h2 id="tablaJugadoresHeader" data-lang-key="section_table_title">Estadísticas Detalladas por Jugador</h2>
             <div class="table-wrapper">
-                <table class="player-table" role="grid" aria-label="Tabla de datos de jugadores, ordenable y seleccionable">
+                <table class="player-table" role="grid">
                     <thead id="playerTableHeader">
                         <tr>
-                            <th onclick="sortTable('name', this)" class="sortable">Nombre ⇅</th>
-                            <th onclick="sortTable('team', this)" class="sortable">Equipo NBA ⇅</th>
-                            <th onclick="sortTable('fantasyTeam', this)" class="sortable">Equipo Fantasy ⇅</th> 
-                            <th>Pos.</th> 
-                            <th onclick="sortTable('totalPoints', this)" class="sortable">Puntos Totales ⇅</th>
-                            <th onclick="sortTable('averagePoints', this)" class="sortable">Puntos Promedio ⇅</th>
-                            <th onclick="sortTable('performance', this)" class="sortable">Rating ⇅</th>
+                            <th onclick="sortTable('name', this)"          class="sortable" data-lang-key="col_name">Nombre ⇅</th>
+                            <th onclick="sortTable('team', this)"          class="sortable" data-lang-key="col_nba_team">Equipo NBA ⇅</th>
+                            <th onclick="sortTable('fantasyTeam', this)"   class="sortable" data-lang-key="col_fantasy_team">Equipo Fantasy ⇅</th>
+                            <th data-lang-key="col_position">Pos.</th>
+                            <th onclick="sortTable('totalPoints', this)"   class="sortable" data-lang-key="col_total_points">Puntos Totales ⇅</th>
+                            <th onclick="sortTable('averagePoints', this)"  class="sortable" data-lang-key="col_avg_points">Puntos Promedio ⇅</th>
+                            <th onclick="sortTable('performance', this)"   class="sortable" data-lang-key="col_rating">Rating ⇅</th>
                         </tr>
                     </thead>
                     <tbody id="playerTableBody">
-                        <tr><td colspan="7">Cargue los archivos CSV para ver los datos.</td></tr> 
+                        <tr><td colspan="7" data-lang-key="table_empty_initial">Cargue los archivos CSV para ver los datos.</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
         <section aria-labelledby="graficoHeader">
-            <h2 id="graficoHeader">Visualización de Puntos Semanales/Totales</h2>
-            <figure class="chart-container" role="img" aria-label="Gráfico de línea comparando los puntos de los jugadores filtrados">
+            <h2 id="graficoHeader" data-lang-key="section_chart_title">Visualización de Puntos Semanales/Totales</h2>
+            <figure class="chart-container" role="img">
                 <div class="chart-controls">
                     <select id="chartTypeSelector" class="chart-selector" onchange="updateChartDisplay()">
-                        <option value="weekly">Puntos Semanales</option>
-                        <option value="total">Puntos Totales</option>
+                        <option value="weekly" data-lang-key="chart_weekly">Puntos Semanales</option>
+                        <option value="total"  data-lang-key="chart_total">Puntos Totales</option>
                     </select>
                     <select id="chartLimitSelector" class="chart-selector" onchange="updateChartDisplay()">
-                        <option value="5">Mostrar: Top 5</option>
-                        <option value="10">Mostrar: Top 10</option>
-                        <option value="20" selected>Mostrar: Top 20</option>
-                        <option value="all">Mostrar: Todos</option>
+                        <option value="5"   data-lang-key="chart_top5">Mostrar: Top 5</option>
+                        <option value="10"  data-lang-key="chart_top10">Mostrar: Top 10</option>
+                        <option value="20"  data-lang-key="chart_top20" selected>Mostrar: Top 20</option>
+                        <option value="all" data-lang-key="chart_all">Mostrar: Todos</option>
                     </select>
-                    <button id="downloadChart" class="btn-download" disabled>Descargar Gráfico 🖼️</button>
+                    <button id="downloadChart" class="btn-download" disabled>
+                        <span data-lang-key="btn_download_chart">Descargar Gráfico 🖼️</span>
+                    </button>
                 </div>
                 <canvas id="pointsChart"></canvas>
             </figure>
         </section>
-        
-        <!-- Sección explicativa -->
-        <section class="info-section" aria-labelledby="infoHeader">
-            <h2 id="infoHeader">ℹ️ Información de la Aplicación</h2>
-            
-            <div class="info-content">
-                <div class="info-block">
-                    <h3>📊 ¿Qué hace esta aplicación?</h3>
-                    <p>Esta aplicación te permite analizar y visualizar el rendimiento de jugadores NBA en tu liga fantasy. Carga dos archivos CSV con datos de jugadores y sus estadísticas semanales para obtener análisis detallados, gráficos comparativos y ratings de rendimiento.</p>
-                </div>
-                
-                <div class="info-block">
-                    <h3>📈 Control del Gráfico</h3>
-                    <p>El selector <strong>"Mostrar: Top N"</strong> te permite controlar cuántos jugadores aparecen en el gráfico:</p>
-                    <ul>
-                        <li><strong>Top 5:</strong> Muestra los 5 jugadores con más puntos totales (de los filtrados)</li>
-                        <li><strong>Top 10:</strong> Muestra los 10 jugadores con más puntos totales (de los filtrados)</li>
-                        <li><strong>Top 20:</strong> Muestra los 20 jugadores con más puntos totales (opción por defecto)</li>
-                        <li><strong>Todos:</strong> Muestra todos los jugadores visibles según los filtros aplicados</li>
-                    </ul>
-                    <p class="info-note"><em>Nota: Si después de filtrar hay menos jugadores que el límite seleccionado, se muestran todos los disponibles. Por ejemplo, si filtras por un equipo con solo 8 jugadores y tienes "Top 20" seleccionado, se mostrarán los 8.</em></p>
-                </div>
-                
-                <div class="info-block">
-                    <h3>🎯 Cálculo del Rating (0-100)</h3>
-                    <p>El rating combina dos factores clave:</p>
-                    <ul>
-                        <li><strong>Volumen (60%):</strong> Puntos totales acumulados</li>
-                        <li><strong>Regularidad (40%):</strong> Consistencia semana a semana (menor variación = mejor rating)</li>
-                    </ul>
-                    <p class="info-note"><em>Nota: Puedes modificar estos porcentajes editando las variables RATING_WEIGHTS al inicio del archivo app.js</em></p>
-                </div>
-                
-                <div class="info-block">
-                    <h3>📈 Indicadores de Tendencia</h3>
-                    <ul class="trend-list">
-                        <li><span class="trend-indicator trend-up">↑</span> <strong>Subiendo:</strong> El jugador está mejorando (últimas 4 semanas > 5% mejor que las 4 anteriores)</li>
-                        <li><span class="trend-indicator trend-down">↓</span> <strong>Bajando:</strong> El jugador está decayendo (últimas 4 semanas > 5% peor que las 4 anteriores)</li>
-                        <li><span class="trend-indicator trend-stable">−</span> <strong>Estable:</strong> Rendimiento consistente sin cambios significativos</li>
-                    </ul>
-                </div>
-                
-                <div class="info-block">
-                    <h3>🔧 Cómo usar los filtros</h3>
-                    <ul>
-                        <li><strong>Equipos Fantasy:</strong> Filtra jugadores por su equipo en tu liga</li>
-                        <li><strong>Equipos NBA:</strong> Filtra jugadores por su equipo real de la NBA</li>
-                        <li><strong>Posiciones:</strong> Filtra por posición en la cancha (PG, SG, SF, PF, C, G, F)</li>
-                        <li><strong>Ordenación:</strong> Haz clic en cualquier columna con ⇅ para ordenar ascendente/descendente</li>
-                    </ul>
-                </div>
-                
-                <div class="info-block">
-                    <h3>📁 Formato de archivos CSV</h3>
-                    <p><strong>jugadores.csv:</strong> Código-Nombre; Nombre; Código-Equipo Fantasy; Código-Equipo NBA; Posición; Enlace ESPN</p>
-                    <p><strong>stats_semanales.csv:</strong> ID_NBA; Semana; Puntos_Fantasy</p>
-                    <p class="info-note"><em>Importante: Guarda los archivos como CSV UTF-8 para que los caracteres especiales (ñ, á, etc.) se muestren correctamente</em></p>
-                </div>
-            </div>
-        </section>
-        
+
         <div class="credit-text-main">
-            Hecho por Julián Hernández. Datos actualizados el <span id="currentDatePlaceholder"></span>
+            <span data-lang-key="credit_author">Hecho por Julián Hernández. Datos actualizados el</span>
+            <span id="currentDatePlaceholder"></span>
+            <span class="app-version">v1.1.0</span>
         </div>
 
     </main>
-    
+
     <script src="app.js"></script>
 </body>
 </html>

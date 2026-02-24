@@ -107,12 +107,91 @@ header h1 {
     padding: 0;
 }
 
-/* Selector de Temas */
-.theme-selector {
+/* Contenedor que agrupa selector de idioma + botón de tema */
+.header-controls {
     position: absolute;
     right: 0;
     top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Selector de idioma ── */
+.language-selector {
+    position: relative;
+}
+
+.lang-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.lang-button:hover { background: rgba(255,255,255,0.3); }
+
+.lang-chevron { font-size: 0.8em; opacity: 0.8; }
+
+.lang-option-inner { display: flex; align-items: center; gap: 6px; }
+
+.flag-svg {
+    width: 28px;
+    height: 19px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+    display: block;
+}
+
+.lang-code { font-weight: 700; letter-spacing: 0.5px; }
+
+.lang-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow);
+    padding: 6px;
+    min-width: 160px;
+    z-index: 1000;
+}
+
+.lang-menu.hidden { display: none; }
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background 0.15s;
+}
+
+.lang-option:hover, .lang-option.active { background: var(--bg-tertiary); }
+.lang-option.active { font-weight: 600; }
+
+.lang-name { color: var(--text-secondary); font-size: 0.88em; flex: 1; text-align: right; }
+.lang-option .flag-svg { border-color: var(--border-color); }
+
+/* ── Selector de tema (ahora dentro de header-controls) ── */
+.theme-selector {
+    position: relative;
 }
 
 .theme-button {
@@ -428,6 +507,18 @@ h2 {
     margin-top: 30px; 
     padding-top: 10px;
     border-top: 1px dashed #ddd; 
+}
+
+.app-version {
+    margin-left: 12px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.85em;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    opacity: 0.75;
 }
 
 /* SECCIÓN INFORMATIVA */
