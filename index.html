@@ -5,154 +5,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-lang-key="document_title">Liga Fantasy NBA "GO LAKERS!!!"</title>
 
-    <!-- Archivos de traducción (deben cargarse ANTES que app.js) -->
     <script src="lang/es.js"></script>
     <script src="lang/eu.js"></script>
     <script src="lang/en.js"></script>
 
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
+    <style>
+    /* ── Controles del gráfico ─────────────────────────────── */
+    .chart-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .chart-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .chart-tab {
+        padding: 6px 14px;
+        border: 2px solid var(--color-primary);
+        border-radius: 20px;
+        background: transparent;
+        color: var(--color-primary);
+        cursor: pointer;
+        font-size: 0.88em;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s;
+        white-space: nowrap;
+    }
+    .chart-tab:hover  { background: var(--color-primary); color: white; }
+    .chart-tab.active { background: var(--color-primary); color: white; }
+
+    .chart-options {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+    .chart-selector {
+        padding: 5px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.9em;
+        cursor: pointer;
+    }
+    .btn-clear-chart {
+        padding: 5px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: background 0.2s;
+    }
+    .btn-clear-chart:hover { background: #fee2e2; color: #dc2626; border-color: #dc2626; }
+
+    /* Buscador */
+    .search-input {
+        padding: 6px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.9em;
+        min-width: 180px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    }
+
+    /* Columnas numéricas: texto en una línea y ancho mínimo */
+    .player-table td:nth-child(n+6),
+    .player-table th:nth-child(n+6) {
+        white-space: nowrap;
+        text-align: right;
+    }
+    /* Rank Pos: columna estrecha */
+    .player-table td:nth-child(6),
+    .player-table th:nth-child(6) {
+        width: 56px;
+        min-width: 56px;
+        text-align: center;
+    }
+
+    /* Columna checkbox estrecha */
+    .col-check { width: 36px; text-align: center; }
+    .col-check input { cursor: pointer; }
+    </style>
 </head>
 <body>
 
     <header>
         <div class="header-wrapper">
             <h1 data-lang-key="app_title">Liga Fantasy NBA "GO LAKERS!!!"</h1>
-
             <div class="header-controls">
 
-                <!-- Selector de idioma -->
                 <div class="language-selector" id="languageSelectorWrapper">
-                    <button id="langButton" class="lang-button" onclick="toggleLangMenu()"
-                            aria-haspopup="true" aria-expanded="false"
-                            aria-label="Seleccionar idioma / Hizkuntza hautatu / Select language">
+                    <button id="langButton" class="lang-button" onclick="toggleLangMenu()" aria-haspopup="true" aria-expanded="false">
                         <span id="langButtonContent" class="lang-option-inner">
-                            <svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="60" height="40" fill="#AA151B"/>
-                                <rect y="10" width="60" height="20" fill="#F1BF00"/>
-                            </svg>
+                            <svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
                             <span class="lang-code">ES</span>
                         </span>
                         <span class="lang-chevron">▾</span>
                     </button>
-
                     <div id="langMenu" class="lang-menu hidden" role="menu">
                         <div class="lang-option" role="menuitem" onclick="setLanguage('es'); toggleLangMenu()" data-lang="es">
-                            <span class="lang-option-inner">
-                                <svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
-                                    <rect width="60" height="40" fill="#AA151B"/>
-                                    <rect y="10" width="60" height="20" fill="#F1BF00"/>
-                                </svg>
-                                <span class="lang-code">ES</span>
-                            </span>
+                            <span class="lang-option-inner"><svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg><span class="lang-code">ES</span></span>
                             <span class="lang-name">Español</span>
                         </div>
                         <div class="lang-option" role="menuitem" onclick="setLanguage('eu'); toggleLangMenu()" data-lang="eu">
-                            <span class="lang-option-inner">
-                                <svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#D8202C"/><line x1="0" y1="0" x2="60" y2="40" stroke="#007A3D" stroke-width="10"/><line x1="60" y1="0" x2="0" y2="40" stroke="#007A3D" stroke-width="10"/><rect x="25" y="0" width="10" height="40" fill="white"/><rect x="0" y="15" width="60" height="10" fill="white"/></svg>
-                                <span class="lang-code">EU</span>
-                            </span>
+                            <span class="lang-option-inner"><svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#D8202C"/><line x1="0" y1="0" x2="60" y2="40" stroke="#007A3D" stroke-width="10"/><line x1="60" y1="0" x2="0" y2="40" stroke="#007A3D" stroke-width="10"/><rect x="25" y="0" width="10" height="40" fill="white"/><rect x="0" y="15" width="60" height="10" fill="white"/></svg><span class="lang-code">EU</span></span>
                             <span class="lang-name">Euskera</span>
                         </div>
                         <div class="lang-option" role="menuitem" onclick="setLanguage('en'); toggleLangMenu()" data-lang="en">
-                            <span class="lang-option-inner">
-                                <svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
-                                    <rect width="60" height="40" fill="#012169"/>
-                                    <line x1="0" y1="0"  x2="60" y2="40" stroke="white"   stroke-width="8"/>
-                                    <line x1="60" y1="0" x2="0"  y2="40" stroke="white"   stroke-width="8"/>
-                                    <line x1="0" y1="0"  x2="60" y2="40" stroke="#C8102E" stroke-width="4.5"/>
-                                    <line x1="60" y1="0" x2="0"  y2="40" stroke="#C8102E" stroke-width="4.5"/>
-                                    <rect x="24" y="0"  width="12" height="40" fill="white"/>
-                                    <rect x="0"  y="14" width="60" height="12" fill="white"/>
-                                    <rect x="26" y="0"  width="8"  height="40" fill="#C8102E"/>
-                                    <rect x="0"  y="16" width="60" height="8"  fill="#C8102E"/>
-                                </svg>
-                                <span class="lang-code">EN</span>
-                            </span>
+                            <span class="lang-option-inner"><svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#012169"/><line x1="0" y1="0" x2="60" y2="40" stroke="white" stroke-width="8"/><line x1="60" y1="0" x2="0" y2="40" stroke="white" stroke-width="8"/><line x1="0" y1="0" x2="60" y2="40" stroke="#C8102E" stroke-width="4.5"/><line x1="60" y1="0" x2="0" y2="40" stroke="#C8102E" stroke-width="4.5"/><rect x="24" y="0" width="12" height="40" fill="white"/><rect x="0" y="14" width="60" height="12" fill="white"/><rect x="26" y="0" width="8" height="40" fill="#C8102E"/><rect x="0" y="16" width="60" height="8" fill="#C8102E"/></svg><span class="lang-code">EN</span></span>
                             <span class="lang-name">English</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Selector de tema/color -->
                 <div class="theme-selector">
-                    <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()"
-                            aria-haspopup="true" aria-expanded="false"
-                            data-lang-key-aria="theme_btn_label">
-                        🎨
-                    </button>
+                    <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()" aria-haspopup="true" aria-expanded="false" data-lang-key-aria="theme_btn_label">🎨</button>
                     <div id="themeMenu" class="theme-menu hidden" role="menu">
                         <div class="theme-section-title" data-lang-key="theme_section_mode">Modo</div>
-                        <div class="theme-option" role="menuitem" onclick="changeTheme('auto')">
-                            <span class="theme-icon">💡</span>
-                            <span data-lang-key="theme_auto">Auto (sistema)</span>
-                        </div>
-                        <div class="theme-option" role="menuitem" onclick="changeTheme('light')">
-                            <span class="theme-icon">☀️</span>
-                            <span data-lang-key="theme_light">Claro</span>
-                        </div>
-                        <div class="theme-option" role="menuitem" onclick="changeTheme('dark')">
-                            <span class="theme-icon">🌙</span>
-                            <span data-lang-key="theme_dark">Oscuro</span>
-                        </div>
+                        <div class="theme-option" role="menuitem" onclick="changeTheme('auto')"><span class="theme-icon">💡</span><span data-lang-key="theme_auto">Auto</span></div>
+                        <div class="theme-option" role="menuitem" onclick="changeTheme('light')"><span class="theme-icon">☀️</span><span data-lang-key="theme_light">Claro</span></div>
+                        <div class="theme-option" role="menuitem" onclick="changeTheme('dark')"><span class="theme-icon">🌙</span><span data-lang-key="theme_dark">Oscuro</span></div>
                         <hr class="theme-divider">
                         <div class="theme-section-title" data-lang-key="theme_section_color">Color</div>
                         <div class="color-grid">
-                            <div class="color-option" role="menuitem" onclick="changeColorScheme('blue')"   title="Azul">
-                                <span class="color-preview" style="background:#dbeafe;"></span>
-                                <span class="color-preview" style="background:#1e40af;"></span>
-                            </div>
-                            <div class="color-option" role="menuitem" onclick="changeColorScheme('green')"  title="Verde">
-                                <span class="color-preview" style="background:#dcfce7;"></span>
-                                <span class="color-preview" style="background:#16a34a;"></span>
-                            </div>
-                            <div class="color-option" role="menuitem" onclick="changeColorScheme('purple')" title="Púrpura">
-                                <span class="color-preview" style="background:#f3e8ff;"></span>
-                                <span class="color-preview" style="background:#9333ea;"></span>
-                            </div>
-                            <div class="color-option" role="menuitem" onclick="changeColorScheme('orange')" title="Naranja">
-                                <span class="color-preview" style="background:#ffedd5;"></span>
-                                <span class="color-preview" style="background:#ea580c;"></span>
-                            </div>
-                            <div class="color-option" role="menuitem" onclick="changeColorScheme('red')"    title="Rojo">
-                                <span class="color-preview" style="background:#fee2e2;"></span>
-                                <span class="color-preview" style="background:#dc2626;"></span>
-                            </div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('blue')"   title="Azul"><span class="color-preview" style="background:#dbeafe;"></span><span class="color-preview" style="background:#1e40af;"></span></div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('green')"  title="Verde"><span class="color-preview" style="background:#dcfce7;"></span><span class="color-preview" style="background:#16a34a;"></span></div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('purple')" title="Púrpura"><span class="color-preview" style="background:#f3e8ff;"></span><span class="color-preview" style="background:#9333ea;"></span></div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('orange')" title="Naranja"><span class="color-preview" style="background:#ffedd5;"></span><span class="color-preview" style="background:#ea580c;"></span></div>
+                            <div class="color-option" role="menuitem" onclick="changeColorScheme('red')"    title="Rojo"><span class="color-preview" style="background:#fee2e2;"></span><span class="color-preview" style="background:#dc2626;"></span></div>
                         </div>
                     </div>
                 </div>
 
-            </div><!-- /header-controls -->
-        </div><!-- /header-wrapper -->
+            </div>
+        </div>
     </header>
 
     <main class="container">
 
-        <div class="controls-and-filters" role="region" aria-label="Filtros y Controles de Datos">
+        <!-- Carga -->
+        <div class="controls-and-filters" role="region">
             <div id="fileControls" class="controls-row">
                 <label for="csvPlayers" class="btn-download">
-                    <span data-lang-key="btn_load_players">Jugadores CSV ⬆️</span>
-                    <input type="file" id="csvPlayers" accept=".csv" style="display: none;">
+                    <span data-lang-key="btn_load_players">Identificadores CSV ⬆️</span>
+                    <input type="file" id="csvPlayers" accept=".csv" style="display:none;">
                 </label>
                 <span id="playersFileStatus" class="file-status"></span>
                 <label for="csvStats" class="btn-download">
-                    <span data-lang-key="btn_load_stats">Stats Semanales CSV ⬆️</span>
-                    <input type="file" id="csvStats" accept=".csv" style="display: none;">
+                    <span data-lang-key="btn_load_stats">Estadísticas CSV ⬆️</span>
+                    <input type="file" id="csvStats" accept=".csv" style="display:none;">
                 </label>
                 <span id="statsFileStatus" class="file-status"></span>
             </div>
 
+            <!-- Filtros -->
             <div id="filterControls" class="controls-row">
-                <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
-                    <option value="all" data-lang-key="filter_all_fantasy">TODOS LOS EQUIPOS FANTASY</option>
-                </select>
-
+                <input type="text" id="searchInput"
+                       data-lang-key-placeholder="search_placeholder"
+                       placeholder="Buscar..."
+                       oninput="filterBySearch(this.value)"
+                       class="search-input">
                 <select id="nbaTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByNBATeam(this.value)" disabled>
                     <option value="all" data-lang-key="filter_all_nba">TODOS LOS EQUIPOS NBA</option>
                 </select>
-
-                <div id="positionFilters" role="group" aria-label="Filtros por Posición de Jugador">
-                    <button onclick="filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true" data-lang-key="filter_all_pos">TODOS</button>
+                <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="filterPlayersByFantasyTeam(this.value)" disabled>
+                    <option value="all" data-lang-key="filter_all_fantasy">TODOS LOS EQUIPOS FANTASY</option>
+                </select>
+                <div id="positionFilters" role="group">
+                    <button onclick="filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true"  data-lang-key="filter_all_pos">TODOS</button>
                     <button onclick="filterPlayersByPosition('PG', this)"  class="filter-btn" aria-pressed="false">PG</button>
                     <button onclick="filterPlayersByPosition('SG', this)"  class="filter-btn" aria-pressed="false">SG</button>
                     <button onclick="filterPlayersByPosition('SF', this)"  class="filter-btn" aria-pressed="false">SF</button>
@@ -164,46 +200,67 @@
             </div>
         </div>
 
-        <section aria-labelledby="tablaJugadoresHeader">
-            <h2 id="tablaJugadoresHeader" data-lang-key="section_table_title">Estadísticas Detalladas por Jugador</h2>
+        <!-- Tabla -->
+        <section aria-labelledby="tablaHeader">
+            <h2 id="tablaHeader" data-lang-key="section_table_title">Estadísticas por Jugador</h2>
             <div class="table-wrapper">
                 <table class="player-table" role="grid">
                     <thead id="playerTableHeader">
                         <tr>
-                            <th onclick="sortTable('name', this)"          class="sortable" data-lang-key="col_name">Nombre ⇅</th>
-                            <th onclick="sortTable('team', this)"          class="sortable" data-lang-key="col_nba_team">Equipo NBA ⇅</th>
-                            <th onclick="sortTable('fantasyTeam', this)"   class="sortable" data-lang-key="col_fantasy_team">Equipo Fantasy ⇅</th>
-                            <th data-lang-key="col_position">Pos.</th>
-                            <th onclick="sortTable('totalPoints', this)"   class="sortable" data-lang-key="col_total_points">Puntos Totales ⇅</th>
-                            <th onclick="sortTable('averagePoints', this)"  class="sortable" data-lang-key="col_avg_points">Puntos Promedio ⇅</th>
-                            <th onclick="sortTable('performance', this)"   class="sortable" data-lang-key="col_rating">Rating ⇅</th>
+                            <th class="col-check"><input type="checkbox" id="checkAll" title="Seleccionar todos"></th>
+                            <th onclick="sortTable('name', this)"        class="sortable" data-lang-key="col_name">Nombre ⇅</th>
+                            <th onclick="sortTable('team', this)"        class="sortable" data-lang-key="col_nba_team">Equipo NBA ⇅</th>
+                            <th onclick="sortTable('fantasyTeam', this)" class="sortable" data-lang-key="col_fantasy_team">Equipo Fantasy ⇅</th>
+                            <th                                                           data-lang-key="col_position">Pos.</th>
+                            <th onclick="sortTable('rankPos', this)"     class="sortable" data-lang-key="col_rank_pos">Rank ⇅</th>
+                            <th onclick="sortTable('ptsTotal', this)"    class="sortable" data-lang-key="col_pts_total">Pts Total ⇅</th>
+                            <th onclick="sortTable('ptsAvg', this)"      class="sortable" data-lang-key="col_pts_avg">Pts Avg ⇅</th>
+                            <th onclick="sortTable('partidos', this)"    class="sortable" data-lang-key="col_gp">GP ⇅</th>
+                            <th onclick="sortTable('ptsSemana', this)"   class="sortable" data-lang-key="col_pts_week">Sem ⇅</th>
+                            <th onclick="sortTable('pts2Semanas', this)" class="sortable" data-lang-key="col_pts_2weeks">2 Sem ⇅</th>
+                            <th onclick="sortTable('ptsMes', this)"      class="sortable" data-lang-key="col_pts_month">Mes ⇅</th>
+                            <th                                                            data-lang-key="col_trend">Tend.</th>
+                            <th                                                            data-lang-key="col_today">Hoy</th>
                         </tr>
                     </thead>
                     <tbody id="playerTableBody">
-                        <tr><td colspan="7" data-lang-key="table_empty_initial">Cargue los archivos CSV para ver los datos.</td></tr>
+                        <tr><td colspan="14" data-lang-key="table_empty_initial">Cargue los archivos CSV para ver los datos.</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section aria-labelledby="graficoHeader">
-            <h2 id="graficoHeader" data-lang-key="section_chart_title">Visualización de Puntos Semanales/Totales</h2>
-            <figure class="chart-container" role="img">
-                <div class="chart-controls">
-                    <select id="chartTypeSelector" class="chart-selector" onchange="updateChartDisplay()">
-                        <option value="weekly" data-lang-key="chart_weekly">Puntos Semanales</option>
-                        <option value="total"  data-lang-key="chart_total">Puntos Totales</option>
+        <!-- Gráficos -->
+        <section aria-labelledby="graficosHeader">
+            <h2 id="graficosHeader" data-lang-key="section_charts_title">Gráficos</h2>
+
+            <div class="chart-controls">
+                <!-- Fila 1: pestañas de tipo de gráfico -->
+                <div class="chart-tabs">
+                    <button class="chart-tab active" onclick="switchChart('topTotal', this)"       data-lang-key="tab_top_total">Top Pts Total</button>
+                    <button class="chart-tab"         onclick="switchChart('topAvg', this)"         data-lang-key="tab_top_avg">Top Pts Avg</button>
+                    <button class="chart-tab"         onclick="switchChart('byFantasyTotal', this)" data-lang-key="tab_by_fantasy_total">Por Equipo Fantasy (Total)</button>
+                    <button class="chart-tab"         onclick="switchChart('byFantasyAvg', this)"   data-lang-key="tab_by_fantasy_avg">Por Equipo Fantasy (Avg)</button>
+                    <button class="chart-tab"         onclick="switchChart('byNBATotal', this)"     data-lang-key="tab_by_nba_total">Por Equipo NBA (Total)</button>
+                    <button class="chart-tab"         onclick="switchChart('byNBAAvg', this)"       data-lang-key="tab_by_nba_avg">Por Equipo NBA (Avg)</button>
+                    <button class="chart-tab"         onclick="switchChart('compare', this)"        data-lang-key="tab_compare">Comparar</button>
+                </div>
+
+                <!-- Fila 2: opciones -->
+                <div class="chart-options">
+                    <select id="chartLimitSelector" class="chart-selector" onchange="updateCurrentChart()">
+                        <option value="4"  selected data-lang-key="chart_top4">Top 4</option>
+                        <option value="8"           data-lang-key="chart_top8">Top 8</option>
+                        <option value="16"          data-lang-key="chart_top16">Top 16</option>
                     </select>
-                    <select id="chartLimitSelector" class="chart-selector" onchange="updateChartDisplay()">
-                        <option value="5"   data-lang-key="chart_top5">Mostrar: Top 5</option>
-                        <option value="10"  data-lang-key="chart_top10">Mostrar: Top 10</option>
-                        <option value="20"  data-lang-key="chart_top20" selected>Mostrar: Top 20</option>
-                        <option value="all" data-lang-key="chart_all">Mostrar: Todos</option>
-                    </select>
+                    <button onclick="clearChartBtn()" class="btn-clear-chart" data-lang-key="btn_clear_chart">Borrar ✕</button>
                     <button id="downloadChart" class="btn-download" disabled>
-                        <span data-lang-key="btn_download_chart">Descargar Gráfico 🖼️</span>
+                        <span data-lang-key="btn_download_chart">Descargar 🖼️</span>
                     </button>
                 </div>
+            </div>
+
+            <figure class="chart-container" role="img">
                 <canvas id="pointsChart"></canvas>
             </figure>
         </section>
@@ -211,7 +268,7 @@
         <div class="credit-text-main">
             <span data-lang-key="credit_author">Hecho por Julián Hernández. Datos actualizados el</span>
             <span id="currentDatePlaceholder"></span>
-            <span class="app-version">v1.1.0</span>
+            <span class="app-version">v3.2.0</span>
         </div>
 
     </main>

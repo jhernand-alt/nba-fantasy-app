@@ -1,149 +1,231 @@
-# Liga Fantasy NBA "GO LAKERS!!!" 🏀 — v1.1.0
+# Liga Fantasy NBA — GO LAKERS!!!
 
-Aplicación web para analizar y visualizar el rendimiento de jugadores NBA en tu liga fantasy. Permite cargar dos archivos CSV con datos de jugadores y estadísticas semanales para obtener análisis detallados, gráficos comparativos y ratings de rendimiento.
-
----
-
-## 🚀 Cómo usar
-
-1. Abre `index.html` en tu navegador (no necesita servidor).
-2. Carga los dos archivos CSV mediante los botones de la parte superior.
-3. Explora la tabla, aplica filtros y analiza el gráfico.
+Web estática para visualizar estadísticas de una liga fantasy de baloncesto NBA en ESPN.
+Muestra datos de jugadores y equipos fantasy con tabla ordenable, filtros y gráficos.
 
 ---
 
-## 📁 Formato de los archivos CSV
-
-### `jugadores.csv`
-| Columna | Descripción |
-|---|---|
-| ID_NBA | Código identificador único del jugador |
-| Nombre | Nombre completo del jugador |
-| Código-Equipo Fantasy | Abreviatura de tu equipo fantasy |
-| Código-Equipo NBA | Abreviatura del equipo NBA real |
-| Posición | PG, SG, SF, PF, C, G o F |
-| Enlace ESPN | URL del perfil ESPN (opcional) |
-
-**Ejemplo:**
-```
-ID_NBA;Nombre;Equipo_Fantasy;Equipo_NBA;Posicion;Enlace_Web_ESPN
-LAL01;LeBron James;GLAL;LAL;SF;https://www.espn.com/nba/player/_/id/...
-```
-
-### `stats_semanales.csv`
-| Columna | Descripción |
-|---|---|
-| ID_NBA | Código del jugador (debe coincidir con jugadores.csv) |
-| Semana | Número de semana (entero, empieza en 1) |
-| Puntos_Fantasy | Puntos obtenidos esa semana (puede estar vacío para semanas futuras) |
-
-**Ejemplo:**
-```
-ID_NBA;Semana;Puntos_Fantasy
-LAL01;1;45,5
-LAL01;2;38,0
-LAL01;3;
-```
-
-> **Importante:** Guarda los archivos como **CSV UTF-8** para que los caracteres especiales (ñ, á, etc.) se muestren correctamente. El separador de columnas es `;` y el decimal es `,`.
-
----
-
-## 🎯 Cálculo del Rating (0–100)
-
-El rating combina dos factores ponderados:
-
-| Factor | Peso | Descripción |
-|---|---|---|
-| **Volumen** | 60% | Puntos totales acumulados durante la temporada |
-| **Regularidad** | 40% | Consistencia semana a semana (menor variación = mejor rating) |
-
-Puedes modificar estos porcentajes editando las variables `RATING_WEIGHTS` al inicio de `app.js`:
-
-```js
-const RATING_WEIGHTS = {
-    volume:     0.60,   // 60% — puntos totales
-    regularity: 0.40,   // 40% — consistencia
-    activity:   0.00    // sin uso actualmente
-};
-// IMPORTANTE: Los valores deben sumar 1.0
-```
-
----
-
-## 📈 Indicadores de tendencia
-
-| Indicador | Significado |
-|---|---|
-| ↑ **Subiendo** | Las últimas 4 semanas superan en más de un 5% las 4 anteriores |
-| ↓ **Bajando** | Las últimas 4 semanas son más de un 5% peores que las 4 anteriores |
-| − **Estable** | Rendimiento consistente sin cambios significativos |
-
----
-
-## 🔧 Filtros disponibles
-
-- **Equipos Fantasy** — filtra jugadores por su equipo en la liga.
-- **Equipos NBA** — filtra por el equipo real de la NBA.
-- **Posiciones** — PG · SG · SF · PF · C · G · F (o todos).
-- **Ordenación** — haz clic en cualquier columna marcada con ⇅.
-
----
-
-## 📊 Control del gráfico
-
-El selector **"Mostrar: Top N"** controla cuántos jugadores aparecen en el gráfico:
-
-| Opción | Descripción |
-|---|---|
-| Top 5 | 5 jugadores con más puntos totales (de los filtrados) |
-| Top 10 | 10 jugadores con más puntos totales |
-| Top 20 | 20 jugadores (opción por defecto) |
-| Todos | Todos los jugadores visibles según los filtros activos |
-
-> Si tras filtrar hay menos jugadores que el límite, se muestran todos los disponibles. Por ejemplo, si filtras un equipo con 8 jugadores y tienes "Top 20" seleccionado, verás los 8.
-
----
-
-## 🌐 Idiomas y temas
-
-La aplicación soporta **3 idiomas** (ES · EU · EN) y permite cambiar entre ellos en cualquier momento desde el selector de banderas del encabezado. La preferencia se guarda automáticamente.
-
-El selector de tema 🎨 permite elegir entre modo claro, oscuro o automático (sigue la preferencia del sistema), así como 5 esquemas de color: azul, verde, púrpura, naranja y rojo. Las preferencias persisten entre sesiones.
-
----
-
-## 🗂️ Estructura de archivos
+## Estructura del proyecto
 
 ```
 nba-fantasy-app/
-├── index.html          # Interfaz principal
-├── app.js              # Lógica de la aplicación
-├── styles.css          # Estilos (tema, colores, layout)
-├── README.md           # Este archivo
+│
+├── index.html              # Página principal
+├── app.js                  # Lógica de la aplicación
+├── styles.css              # Estilos (no modificar)
+│
 ├── lang/
-│   ├── es.js           # Traducciones español
-│   ├── eu.js           # Traducciones euskera
-│   └── en.js           # Traducciones inglés
-└── assets/
-    ├── team-icons/     # Logos de equipos NBA (.png)
-    └── fantasy-icons/  # Logos de equipos fantasy (.svg)
+│   ├── es.js               # Textos en español
+│   ├── eu.js               # Textos en euskera
+│   └── en.js               # Textos en inglés
+│
+├── assets/
+│   ├── team-icons/         # Iconos de equipos NBA (.png)
+│   └── fantasy-icons/      # Iconos de equipos fantasy (.svg)
+│
+├── csv/                    # CSVs de datos (ver sección siguiente)
+│   ├── JUGADOR ids.csv          ← estático, editar manualmente
+│   ├── ENTRENADOR ids.csv       ← estático, editar manualmente
+│   ├── JUGADOR ids FECHA HORA.csv       ← generado por el script
+│   ├── JUGADOR stats FECHA HORA.csv     ← generado por el script
+│   └── ENTRENADOR stats FECHA HORA.csv  ← generado por el script
+│
+└── espn_stats.py           # Script Python para descargar datos de ESPN
 ```
 
 ---
 
-*Hecho por Julián Hernández.*
+## Archivos CSV
+
+### Archivos estáticos (mantener manualmente)
+
+**`JUGADOR ids.csv`**
+Lista de todos los jugadores NBA a seguir. La columna `Equipo_Fantasy` se deja vacía —
+el script la rellena automáticamente.
+
+```
+ID;Nombre;Equipo_Fantasy;Equipo_NBA;Posicion;Enlace_Web_ESPN
+4066457;Austin Reaves;;LAL - LA Lakers;SG/PG/SF;https://www.espn.com/...
+```
+
+**`ENTRENADOR ids.csv`**
+Lista de entrenadores/managers de la liga fantasy. Las columnas `Equipo_NBA` y `Posicion`
+se dejan vacías. Solo hay que editarlo si cambia un manager.
+
+```
+ID;Nombre;Equipo_Fantasy;Equipo_NBA;Posicion;Enlace_Web_ESPN
+101965-18;Ibon Muñoz;5ATQ - 5 EN ATAQUE;;;https://fantasy.espn.com/...
+```
+
+El ID tiene el formato `LEAGUE_ID-TEAM_ID` (ej. `101965-18`).
+
+Los nombres de equipo usan el formato `ABBR - Nombre completo` (ej. `5ATQ - 5 EN ATAQUE`).
+El código ABBR se usa para buscar el icono en `assets/fantasy-icons/`.
+
+### Archivos generados por el script
+
+**`JUGADOR ids FECHA HORA.csv`**
+Igual que `JUGADOR ids.csv` pero con la columna `Equipo_Fantasy` rellenada desde ESPN.
+Este es el archivo que se carga en la web para ver jugadores.
+
+**`JUGADOR stats FECHA HORA.csv`**
+Estadísticas de cada jugador. 13 columnas:
+
+```
+ID;Equipo_Fantasy;Pts_Total;Pts_Avg;Partidos;
+Rank_Pos;Rank_Total;
+Pts_Semana;Rank_Semana;Pts_2Semanas;Rank_2Semanas;Pts_Mes;Rank_Mes
+```
+
+- `Pts_Total` / `Pts_Avg` / `Partidos` → temporada completa
+- `Rank_Pos` → ranking dentro de la posición del jugador (ESPN global)
+- `Rank_Total` → ranking global entre todos los jugadores (ESPN global)
+- `Pts_Semana` / `Rank_Semana` → enfrentamiento actual
+- `Pts_2Semanas` / `Rank_2Semanas` → últimas ~2 semanas
+- `Pts_Mes` / `Rank_Mes` → último mes (~30 días)
+
+Los rankings los calcula ESPN con su propio algoritmo (pondera consistencia,
+proyección, valor por posición, etc.). Un jugador con más puntos puede tener
+peor ranking que otro si ESPN lo valora diferente.
+
+**`ENTRENADOR stats FECHA HORA.csv`**
+Estadísticas de cada equipo fantasy. 9 columnas (sin rankings por período):
+
+```
+ID;Equipo_Fantasy;Pts_Total;Pts_Avg;Partidos;Rank_Total;Pts_Semana;Pts_2Semanas;Pts_Mes
+```
+
+- `Partidos` → enfrentamientos jugados (liga regular + playoffs)
+- `Pts_Total` → suma de puntos de todos los enfrentamientos (incluyendo playoffs)
+- `Pts_Avg` → `Pts_Total / Partidos`
+- `Rank_Total` → posición en la clasificación de liga regular (`playoffSeed` de ESPN)
+- `Pts_Semana` → puntos del enfrentamiento actual
+- `Pts_2Semanas` → suma de los 2 últimos enfrentamientos
+- `Pts_Mes` → suma de los 4 últimos enfrentamientos
 
 ---
 
-## 📋 Historial de versiones
+## Script Python
 
-### v1.1.0
-- Selector de idioma integrado (ES · EU · EN) con banderas SVG
-- Selector de tema mejorado con soporte para modo claro/oscuro/automático y 5 esquemas de color
-- Traducción completa: filtros de equipo, encabezados de tabla y pie de página
-- Pie de página con versión visible y "Datos no cargados" traducido al idioma activo
-- Sección informativa eliminada de la pantalla y movida a este README
+### Requisitos
 
-### v1.0.0
-- Versión inicial con carga de CSV, tabla de jugadores, gráfico y selector de tema
+```bash
+pip install requests
+```
+
+### Configuración
+
+Editar las constantes al inicio de `espn_stats.py`:
+
+```python
+LEAGUE_ID      = 101965          # ID de tu liga ESPN
+ESPN_S2        = "..."           # Cookie espn_s2 (ver más abajo)
+SWID           = "{...}"         # Cookie SWID (ver más abajo)
+SEASON         = 2026            # Temporada actual
+JUGADOR_IDS    = "JUGADOR ids.csv"
+ENTRENADOR_IDS = "ENTRENADOR ids.csv"
+CARPETA_SALIDA = ""              # Dejar vacío para guardar junto al script
+                                 # O poner ruta completa: r"C:\Users\...\csv"
+```
+
+### Obtener las cookies de ESPN
+
+1. Abrir [fantasy.espn.com](https://fantasy.espn.com) con sesión iniciada
+2. Abrir DevTools → Application → Cookies → `fantasy.espn.com`
+3. Copiar los valores de `espn_s2` y `SWID`
+
+Las cookies caducan periódicamente — si el script devuelve error 401, hay que renovarlas.
+
+### Uso
+
+```bash
+python espn_stats.py
+```
+
+Genera tres archivos en `CARPETA_SALIDA` (o junto al script si está vacío):
+
+```
+JUGADOR ids   20260409 1430.csv
+JUGADOR stats 20260409 1430.csv
+ENTRENADOR stats 20260409 1430.csv
+```
+
+Copiar los tres a la carpeta `csv/` de la web.
+
+---
+
+## Web
+
+La web es completamente estática — no necesita servidor, se abre directamente con el navegador
+(o se puede servir con cualquier servidor HTTP simple).
+
+### Cargar datos
+
+1. Pulsar **"Identificadores CSV"** y seleccionar:
+   - `JUGADOR ids FECHA HORA.csv` para ver jugadores
+   - `ENTRENADOR ids.csv` para ver equipos fantasy
+2. Pulsar **"Estadísticas CSV"** y seleccionar:
+   - `JUGADOR stats FECHA HORA.csv` (si cargaste jugadores)
+   - `ENTRENADOR stats FECHA HORA.csv` (si cargaste entrenadores)
+
+Al cargar un nuevo archivo se hace reset automático de filtros y búsqueda.
+
+### Tabla
+
+Columnas: Nombre · Equipo NBA · Equipo Fantasy · Pos. · Rank (pos.) · Pts Total (rank) · Pts Avg · PJ · Sem (rank) · 2 Sem (rank) · Mes (rank)
+
+- Click en cualquier cabecera para ordenar. Los rankings ordenan ascendente por defecto (menor rank = mejor).
+- Los valores nulos aparecen siempre al final, independientemente de la dirección.
+- El rank entre paréntesis en Pts Total, Sem, 2 Sem y Mes es el ranking ESPN global de ese período.
+
+### Filtros
+
+- **Buscador**: filtra por nombre, equipo NBA o equipo fantasy
+- **Equipo NBA / Equipo Fantasy**: selectores desplegables
+- **Posición**: botones PG / SG / SF / PF / C / G / F (G = guards, F = forwards)
+
+### Gráficos
+
+| Pestaña | Descripción |
+|---|---|
+| Top Pts Total | Barras horizontales, top N jugadores por puntos totales |
+| Top Pts Avg | Barras horizontales, top N jugadores por average |
+| Por Equipo Fantasy (Total) | Suma de puntos por equipo fantasy |
+| Por Equipo Fantasy (Avg) | Media de puntos por equipo fantasy (total/partidos) |
+| Por Equipo NBA (Total) | Suma de puntos por equipo NBA |
+| Por Equipo NBA (Avg) | Media de puntos por equipo NBA |
+| Comparar | Compara los jugadores marcados con checkbox (Avg, Sem, 2Sem, Mes) |
+
+- El selector **Top 4 / Top 8 / Top 16** aplica a todas las pestañas excepto Comparar.
+- Los gráficos de grupo excluyen automáticamente "Waivers" y "Free Agent".
+- En la pestaña Comparar, el gráfico se actualiza en tiempo real al marcar/desmarcar checkboxes.
+- Botón **Borrar**: elimina el gráfico actual.
+- Botón **Descargar**: guarda el gráfico como PNG con fondo blanco.
+
+### Tema e idioma
+
+- **Idioma**: español / euskera / inglés (selector de banderas, esquina superior derecha)
+- **Tema**: claro / oscuro / auto (sigue el sistema), con 5 esquemas de color
+- Las preferencias se guardan en `localStorage` y se restauran al recargar
+
+---
+
+## Temporada 2026-27
+
+Al inicio de la nueva temporada hay que actualizar:
+
+1. `SEASON = 2027` en `espn_stats.py`
+2. Las cookies `ESPN_S2` y `SWID` si han caducado
+3. `JUGADOR ids.csv` — añadir/quitar jugadores según el draft
+4. `ENTRENADOR ids.csv` — solo si cambia algún manager
+
+---
+
+## Notas técnicas
+
+- Los decimales usan **coma** como separador (formato europeo): `1.234,56`
+- El separador de columnas en los CSVs es **punto y coma** (`;`)
+- La codificación es **UTF-8 con BOM** (`utf-8-sig`) para compatibilidad con Excel en Windows
+- Los rankings ESPN son globales entre todas las ligas, no solo la tuya
+- `Pts_2Semanas` y `Pts_Mes` pueden coincidir si el jugador no ha jugado recientemente
+  (ESPN devuelve el mismo bloque cuando no hay suficientes datos recientes)
