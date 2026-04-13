@@ -1,61 +1,65 @@
 window.LANG_EU = {
 
-    // ── Dokumentua eta goiburua ──────────────────────────────────────────────
-    document_title:     'Fantasy NBA Liga "GO LAKERS!!!"',
-    app_title:          'Fantasy NBA Liga "GO LAKERS!!!"',
+    // ── Dokumentua ───────────────────────────────────────────
+    document_title:       'Fantasy NBA Liga "GO LAKERS!!!"',
+    app_title:            'Fantasy NBA Liga "GO LAKERS!!!"',
 
-    // ── Hizkuntza-hautatzailea ───────────────────────────────────────────────
-    language_label:     'Hizkuntza',
+    // ── Hizkuntza ────────────────────────────────────────────
+    language_label:       'Hizkuntza',
 
-    // ── Gai-hautatzailea ─────────────────────────────────────────────────────
-    theme_btn_label:    'Gaia edo kolore-eskema aldatu',
-    theme_section_mode: 'Modua',
-    theme_auto:         'Automatikoa (sistema)',
-    theme_light:        'Argia',
-    theme_dark:         'Iluna',
-    theme_section_color:'Kolorea',
-    theme_blue:         'Urdina',
-    theme_green:        'Berdea',
-    theme_purple:       'Morea',
-    theme_orange:       'Laranja',
-    theme_red:          'Gorria',
+    // ── Gaia ─────────────────────────────────────────────────
+    theme_btn_label:      'Gaia edo kolore-eskema aldatu',
+    theme_section_mode:   'Modua',
+    theme_auto:           'Automatikoa (sistema)',
+    theme_light:          'Argia',
+    theme_dark:           'Iluna',
+    theme_section_color:  'Kolorea',
 
-    // ── Karga-kontrolak ──────────────────────────────────────────────────────
-    btn_load_players:   'Jokalariak CSV ⬆️',
-    btn_load_stats:     'Asteko Estatistikak CSV ⬆️',
+    // ── Fitxategiak kargatu ──────────────────────────────────
+    btn_load_players:     'Identifikatzaileak CSV ⬆️',
+    btn_load_stats:       'Estatistikak CSV ⬆️',
 
-    // ── Iragazkiak ───────────────────────────────────────────────────────────
-    filter_all_fantasy: 'FANTASY TALDE GUZTIAK',
-    filter_all_nba:     'NBA TALDE GUZTIAK',
-    filter_all_pos:     'GUZTIAK',
+    // ── Iragazkiak ───────────────────────────────────────────
+    search_placeholder:   'Bilatu...',
+    filter_all_nba:       'NBA TALDE GUZTIAK',
+    filter_all_fantasy:   'FANTASY TALDE GUZTIAK',
+    filter_all_pos:       'GUZTIAK',
 
-    // ── Taula ────────────────────────────────────────────────────────────────
-    section_table_title:   'Jokalariaren Estatistika Zehatzak',
-    col_name:              'Izena ⇅',
-    col_nba_team:          'NBA Taldea ⇅',
-    col_fantasy_team:      'Fantasy Taldea ⇅',
-    col_position:          'Pos.',
-    col_total_points:      'Puntu Guztiak ⇅',
-    col_avg_points:        'Batez Besteko Puntuak ⇅',
-    col_rating:            'Balorazioa ⇅',
-    table_empty_initial:   'Kargatu CSV fitxategiak datuak ikusteko.',
-    table_no_results:      'Ez dago emaitzarik uneko iragazkiekin.',
+    // ── Taula ────────────────────────────────────────────────
+    section_table_title:  'Jokalariaren Estatistikak',
+    col_name:             'Izena ⇅',
+    col_nba_team:         'NBA Taldea ⇅',
+    col_fantasy_team:     'Fantasy Taldea ⇅',
+    col_position:         'Pos.',
+    col_rank_pos:          'Rank ⇅',
+    col_pts_total:        'Puntu Guztiak ⇅',
+    col_pts_avg:          'Puntu Batez Beste ⇅',
+    col_gp:               'PJ ⇅',
+    col_rank_total:       'Rank ⇅',
+    col_pts_week:         'Aste ⇅',
+    col_pts_2weeks:       '2 Aste ⇅',
+    col_pts_month:        'Hilabete ⇅',
+    table_empty_initial:  'Kargatu CSV fitxategiak datuak ikusteko.',
+    table_no_results:     'Ez dago emaitzarik uneko iragazkiekin.',
 
-    // ── Grafikoa ─────────────────────────────────────────────────────────────
-    section_chart_title:   'Asteko/Guztizko Puntuen Bistakapena',
-    chart_weekly:          'Asteko Puntuak',
-    chart_total:           'Puntu Guztiak',
-    chart_top5:            'Erakutsi: Top 5',
-    chart_top10:           'Erakutsi: Top 10',
-    chart_top20:           'Erakutsi: Top 20',
-    chart_all:             'Erakutsi: Guztiak',
-    btn_download_chart:    'Deskargatu Grafikoa 🖼️',
+    // ── Grafikoak ────────────────────────────────────────────
+    section_charts_title: 'Grafikoak',
+    tab_top_total:        'Top Puntu Guztiak',
+    tab_top_avg:          'Top Batez Beste',
+    tab_by_fantasy_total: 'Fantasy Taldeka (Guztira)',
+    tab_by_fantasy_avg:   'Fantasy Taldeka (Batez beste)',
+    tab_by_nba_total:     'NBA Taldeka (Guztira)',
+    tab_by_nba_avg:       'NBA Taldeka (Batez beste)',
+    tab_compare:          'Aukeraketa alderatu',
+    chart_top4:           'Top 4',
+    chart_top8:           'Top 8',
+    chart_top16:          'Top 16',
+    btn_clear_chart:      'Garbitu ✕',
+    btn_download_chart:   'Deskargatu 🖼️',
 
-    // ── Oinorria ─────────────────────────────────────────────────────────────
-    credit_author:         'Julián Hernándezek egina. Datuak eguneratuta:',
-    credit_no_data:        'Daturik ez kargatu',
-
-    // ── Erroreak ─────────────────────────────────────────────────────────────
-    error_players_csv:     'Errorea jokalariak.csv prozesatzerakoan: ',
-    error_stats_csv:       'Errorea stats_semanales.csv prozesatzerakoan: ',
+    // ── Oinorria ─────────────────────────────────────────────
+    col_trend:            'Joera',
+    col_today:            'Gaur',
+    credit_author:        'Julián Hernándezek egina. Datuak eguneratuta:',
+    credit_no_data:       'Daturik ez kargatu',
 };
