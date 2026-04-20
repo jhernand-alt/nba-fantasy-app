@@ -1,8 +1,9 @@
 window.LANG_ES = {
 
     // ── Documento ────────────────────────────────────────────
-    document_title:       'Liga Fantasy NBA "GO LAKERS!!!"',
-    app_title:            'Liga Fantasy NBA "GO LAKERS!!!"',
+    document_title:       'NBA Hub',
+    app_title:            'NBA Hub',
+    liga_title:           'Liga Fantasy NBA "GO LAKERS!!!"',
 
     // ── Idioma ───────────────────────────────────────────────
     language_label:       'Idioma',
@@ -62,4 +63,22 @@ window.LANG_ES = {
     col_today:            'Hoy',
     credit_author:        'Hecho por Julián Hernández. Datos actualizados el',
     credit_no_data:       'Datos no cargados',
+
+    // ── Navegación de módulos ────────────────────────────────
+    nav_liga:             '🏆 Liga Fantasy',
+    nav_historico:        '📈 Histórico NBA',
+
+    // ── Módulo Histórico ─────────────────────────────────────
+    hist_btn_load:        'Cargar CSV Histórico ⬆️',
+    hist_section_table:   'Histórico por Jugador',
+    hist_section_charts:  'Comparar Jugadores',
+    hist_select_hint:     'Selecciona jugadores en la tabla (checkbox) para compararlos en las gráficas.',
+    hist_btn_add_chart:   'Añadir selección al gráfico ↓',
+    hist_btn_clear_selection: 'Limpiar selección ✕',
+    hist_tab_total:       'Puntos Totales',
+    hist_tab_avg:         'Promedio por Partido',
+    hist_metric_total:       'Puntos Totales',
+    hist_metric_pj:          'Partidos Jugados',
+    hist_metric_avg:         'Promedio',
+    hist_credit:          'Datos: nba_fantasy_historico.csv generado con nba_resumen.py + nba_fusionar.py',
 };

@@ -1,8 +1,9 @@
 window.LANG_EN = {
 
     // ── Document ─────────────────────────────────────────────
-    document_title:       'Fantasy NBA League "GO LAKERS!!!"',
-    app_title:            'Fantasy NBA League "GO LAKERS!!!"',
+    document_title:       'NBA Hub',
+    app_title:            'NBA Hub',
+    liga_title:           'NBA Fantasy League \"GO LAKERS!!!\"',
 
     // ── Language ─────────────────────────────────────────────
     language_label:       'Language',
@@ -61,5 +62,23 @@ window.LANG_EN = {
     col_trend:            'Trend',
     col_today:            'Today',
     credit_author:        'Made by Julián Hernández. Data updated on',
-    credit_no_data:       'No data loaded',
+    credit_no_data:       'Data not loaded',
+
+    // ── Module navigation ────────────────────────────────────
+    nav_liga:             '🏆 Fantasy League',
+    nav_historico:        '📈 NBA Historical',
+
+    // ── Historical module ─────────────────────────────────────
+    hist_btn_load:        'Load Historical CSV ⬆️',
+    hist_section_table:   'Historical by Player',
+    hist_section_charts:  'Compare Players',
+    hist_select_hint:     'Select players in the table (checkbox) to compare them in the charts.',
+    hist_btn_add_chart:   'Add selection to chart ↓',
+    hist_btn_clear_selection: 'Clear selection ✕',
+    hist_tab_total:       'Total Points',
+    hist_tab_avg:         'Average per Game',
+    hist_metric_total:       'Total Points',
+    hist_metric_pj:          'Games Played',
+    hist_metric_avg:         'Average',
+    hist_credit:          'Data: nba_fantasy_historico.csv generated with nba_resumen.py + nba_fusionar.py',
 };

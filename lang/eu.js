@@ -1,8 +1,9 @@
 window.LANG_EU = {
 
     // ── Dokumentua ───────────────────────────────────────────
-    document_title:       'Fantasy NBA Liga "GO LAKERS!!!"',
-    app_title:            'Fantasy NBA Liga "GO LAKERS!!!"',
+    document_title:       'NBA Hub',
+    app_title:            'NBA Hub',
+    liga_title:           'Liga Fantasy NBA \"GO LAKERS!!!\"',
 
     // ── Hizkuntza ────────────────────────────────────────────
     language_label:       'Hizkuntza',
@@ -61,5 +62,23 @@ window.LANG_EU = {
     col_trend:            'Joera',
     col_today:            'Gaur',
     credit_author:        'Julián Hernándezek egina. Datuak eguneratuta:',
-    credit_no_data:       'Daturik ez kargatu',
+    credit_no_data:       'Datuak kargatu gabe',
+
+    // ── Modulu-nabigazioa ────────────────────────────────────
+    nav_liga:             '🏆 Fantasy Liga',
+    nav_historico:        '📈 NBA Historia',
+
+    // ── Historia modulua ─────────────────────────────────────
+    hist_btn_load:        'CSV Historikoa kargatu ⬆️',
+    hist_section_table:   'Jokalari historikoa',
+    hist_section_charts:  'Jokalariak alderatu',
+    hist_select_hint:     'Hautatu jokalariak taulan (checkbox) grafikoan alderatzeko.',
+    hist_btn_add_chart:   'Hautaketa grafikoan gehitu ↓',
+    hist_btn_clear_selection: 'Hautaketa garbitu ✕',
+    hist_tab_total:       'Puntu Totalak',
+    hist_tab_avg:         'Partida Batez bestekoa',
+    hist_metric_total:       'Puntu Totalak',
+    hist_metric_pj:          'Jokatutako Partidak',
+    hist_metric_avg:         'Batez bestekoa',
+    hist_credit:          'Datuak: nba_fantasy_historico.csv - nba_resumen.py + nba_fusionar.py',
 };
