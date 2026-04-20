@@ -1,0 +1,19 @@
+/* ============================================================================
+   Módulo Histórico NBA — estilos específicos
+   ============================================================================ */
+
+#histTable th { white-space: nowrap; }
+#histTable td { white-space: nowrap; }
+
+/* Columna checkbox */
+#histTable .col-check { width: 36px; text-align: center; }
+
+/* Celdas de año con dato cero: apagadas */
+#histTable td[style*="color: var(--text-secondary)"] { font-style: italic; }
+
+/* Anchuras de columnas en tabla histórico */
+#histTable { table-layout: fixed; min-width: unset; width: 100%; }
+
+#histTable th:nth-child(1) { width: 36px; }   /* checkbox */
+#histTable th:nth-child(2) { width: 220px; }  /* jugador */
+#histTable th:nth-child(n+3) { width: 80px; } /* columnas de datos */

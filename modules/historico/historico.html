@@ -1,1 +1,89 @@
+<!-- ============================================================
+     Módulo: Histórico NBA
+     Fragmento HTML inyectado por core.js en #module-historico
+     ============================================================ -->
 
+<!-- Carga del CSV histórico -->
+<div class="controls-and-filters" role="region">
+    <div class="controls-row">
+        <label for="csvHistorico" class="btn-download">
+            <span data-lang-key="hist_btn_load">Cargar CSV Histórico ⬆️</span>
+            <input type="file" id="csvHistorico" accept=".csv" style="display:none;">
+        </label>
+        <span id="historicoFileStatus" class="file-status"></span>
+    </div>
+
+    <!-- Filtro de búsqueda (visible tras cargar datos) -->
+    <div class="controls-row" id="histFilterRow" style="display:none;">
+        <input type="text" id="histSearchInput"
+               data-lang-key-placeholder="search_placeholder"
+               placeholder="Buscar jugador..."
+               oninput="Historico.filterBySearch(this.value)"
+               class="search-input">
+        <span id="histPlayerCount" class="file-status"></span>
+    </div>
+</div>
+
+<!-- Tabla -->
+<!-- Selector de métrica -->
+<div id="histMetricSelector" class="chart-controls" style="display:none; margin-bottom: 0;">
+    <div class="chart-tabs">
+        <button class="chart-tab hist-metric-btn active" onclick="Historico.switchMetrica('PTSTOT', this)" data-lang-key="hist_metric_total">Puntos Totales</button>
+        <button class="chart-tab hist-metric-btn"        onclick="Historico.switchMetrica('PJ', this)"    data-lang-key="hist_metric_pj">Partidos Jugados</button>
+        <button class="chart-tab hist-metric-btn"        onclick="Historico.switchMetrica('PTSAVG', this)" data-lang-key="hist_metric_avg">Promedio</button>
+    </div>
+</div>
+
+<section aria-labelledby="histTablaHeader" id="histTableSection" style="display:none;">
+    <h2 id="histTablaHeader" data-lang-key="hist_section_table">Histórico por Jugador</h2>
+    <div class="table-wrapper">
+        <table class="player-table" id="histTable" role="grid">
+            <thead id="histTableHeader"><tr></tr></thead>
+            <tbody id="histTableBody">
+                <tr><td data-lang-key="table_empty_initial">Cargue el CSV histórico para ver los datos.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Selección para gráficas -->
+<section aria-labelledby="histChartHeader" id="histChartSection" style="display:none;">
+    <h2 id="histChartHeader" data-lang-key="hist_section_charts">Comparar Jugadores</h2>
+
+    <div class="controls-and-filters">
+        <p style="margin:0 0 10px; font-size:0.9em; color:var(--text-secondary);" data-lang-key="hist_select_hint">
+            Selecciona jugadores en la tabla (checkbox) para compararlos en las gráficas.
+        </p>
+        <div class="controls-row">
+            <button class="btn-download" onclick="Historico.addSelectedToChart()" data-lang-key="hist_btn_add_chart">
+                Añadir selección al gráfico ↓
+            </button>
+            <button class="btn-clear-chart" onclick="Historico.clearChartSelection()" data-lang-key="hist_btn_clear_selection">
+                Limpiar selección ✕
+            </button>
+            <span id="histSelectedCount" class="file-status"></span>
+        </div>
+    </div>
+
+    <!-- Gráfico Total -->
+    <div class="chart-controls">
+        <div class="chart-tabs">
+            <button class="chart-tab active" id="histTabTotal"   onclick="Historico.switchChart('total', this)"   data-lang-key="hist_tab_total">Puntos Totales</button>
+            <button class="chart-tab"         id="histTabAvg"     onclick="Historico.switchChart('avg', this)"     data-lang-key="hist_tab_avg">Promedio por Partido</button>
+        </div>
+        <div class="chart-options">
+            <button id="histDownloadChart" class="btn-download" onclick="Historico.downloadChart()" disabled data-lang-key="btn_download_chart">
+                Descargar 🖼️
+            </button>
+        </div>
+    </div>
+
+    <figure class="chart-container" role="img">
+        <canvas id="histChart"></canvas>
+    </figure>
+</section>
+
+<div class="credit-text-main" id="histCredit" style="display:none;">
+    <span data-lang-key="hist_credit">Datos: nba_fantasy_historico.csv generado con nba_resumen.py + nba_fusionar.py</span>
+    <span class="app-version">v1.0.0</span>
+</div>
