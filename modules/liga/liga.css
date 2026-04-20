@@ -1,0 +1,28 @@
+/* ============================================================================
+   Módulo Liga Fantasy — estilos específicos
+   ============================================================================ */
+
+/* Checkbox columna */
+.col-check { width: 36px; text-align: center; }
+.col-check input { cursor: pointer; }
+
+/* Columnas numéricas */
+.player-table td:nth-child(n+6),
+.player-table th:nth-child(n+6) { white-space: nowrap; text-align: right; }
+
+.player-table td:nth-child(6),
+.player-table th:nth-child(6) { width: 56px; min-width: 56px; text-align: center; }
+
+/* Enlace ESPN */
+.espn-link { margin-left: 6px; font-size: 0.85em; text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
+.espn-link:hover { opacity: 1; }
+
+/* Alineación izquierda para celdas de texto */
+.player-table td:nth-child(2),
+.player-table th:nth-child(2),
+.player-table td:nth-child(3),
+.player-table th:nth-child(3),
+.player-table td:nth-child(4),
+.player-table th:nth-child(4) {
+    text-align: left;
+}

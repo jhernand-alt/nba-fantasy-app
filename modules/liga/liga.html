@@ -1,1 +1,112 @@
+<!-- ============================================================
+     Módulo: Liga Fantasy
+     Fragmento HTML inyectado por core.js en #module-liga
+     ============================================================ -->
 
+<!-- Carga de archivos y filtros -->
+<div class="controls-and-filters" role="region">
+    <div id="fileControls" class="controls-row">
+        <label for="csvPlayers" class="btn-download">
+            <span data-lang-key="btn_load_players">Identificadores CSV ⬆️</span>
+            <input type="file" id="csvPlayers" accept=".csv" style="display:none;">
+        </label>
+        <span id="playersFileStatus" class="file-status"></span>
+        <label for="csvStats" class="btn-download">
+            <span data-lang-key="btn_load_stats">Estadísticas CSV ⬆️</span>
+            <input type="file" id="csvStats" accept=".csv" style="display:none;">
+        </label>
+        <span id="statsFileStatus" class="file-status"></span>
+    </div>
+
+    <div id="filterControls" class="controls-row">
+        <input type="text" id="searchInput"
+               data-lang-key-placeholder="search_placeholder"
+               placeholder="Buscar..."
+               oninput="Liga.filterBySearch(this.value)"
+               class="search-input">
+        <select id="nbaTeamSelector" class="fantasy-team-selector" onchange="Liga.filterPlayersByNBATeam(this.value)" disabled>
+            <option value="all" data-lang-key="filter_all_nba">TODOS LOS EQUIPOS NBA</option>
+        </select>
+        <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="Liga.filterPlayersByFantasyTeam(this.value)" disabled>
+            <option value="all" data-lang-key="filter_all_fantasy">TODOS LOS EQUIPOS FANTASY</option>
+        </select>
+        <div id="positionFilters" role="group">
+            <button onclick="Liga.filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true"  data-lang-key="filter_all_pos">TODOS</button>
+            <button onclick="Liga.filterPlayersByPosition('PG', this)"  class="filter-btn" aria-pressed="false">PG</button>
+            <button onclick="Liga.filterPlayersByPosition('SG', this)"  class="filter-btn" aria-pressed="false">SG</button>
+            <button onclick="Liga.filterPlayersByPosition('SF', this)"  class="filter-btn" aria-pressed="false">SF</button>
+            <button onclick="Liga.filterPlayersByPosition('PF', this)"  class="filter-btn" aria-pressed="false">PF</button>
+            <button onclick="Liga.filterPlayersByPosition('C', this)"   class="filter-btn" aria-pressed="false">C</button>
+            <button onclick="Liga.filterPlayersByPosition('G', this)"   class="filter-btn" aria-pressed="false">G</button>
+            <button onclick="Liga.filterPlayersByPosition('F', this)"   class="filter-btn" aria-pressed="false">F</button>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla -->
+<section aria-labelledby="ligaTablaHeader">
+    <h2 id="ligaTablaHeader" data-lang-key="section_table_title">Estadísticas por Jugador</h2>
+    <div class="table-wrapper">
+        <table class="player-table" role="grid">
+            <thead id="playerTableHeader">
+                <tr>
+                    <th class="col-check"><input type="checkbox" id="checkAll" title="Seleccionar todos"></th>
+                    <th onclick="Liga.sortTable('name', this)"        class="sortable" data-lang-key="col_name">Nombre ⇅</th>
+                    <th onclick="Liga.sortTable('team', this)"        class="sortable" data-lang-key="col_nba_team">Equipo NBA ⇅</th>
+                    <th onclick="Liga.sortTable('fantasyTeam', this)" class="sortable" data-lang-key="col_fantasy_team">Equipo Fantasy ⇅</th>
+                    <th data-lang-key="col_position">Pos.</th>
+                    <th onclick="Liga.sortTable('rankPos', this)"     class="sortable" data-lang-key="col_rank_pos">Rank ⇅</th>
+                    <th onclick="Liga.sortTable('ptsTotal', this)"    class="sortable" data-lang-key="col_pts_total">Pts Total ⇅</th>
+                    <th onclick="Liga.sortTable('ptsAvg', this)"      class="sortable" data-lang-key="col_pts_avg">Pts Avg ⇅</th>
+                    <th onclick="Liga.sortTable('partidos', this)"    class="sortable" data-lang-key="col_gp">GP ⇅</th>
+                    <th onclick="Liga.sortTable('rankSemana', this)"   class="sortable" data-lang-key="col_pts_week">Sem ⇅</th>
+                    <th onclick="Liga.sortTable('rank2Semanas', this)" class="sortable" data-lang-key="col_pts_2weeks">2 Sem ⇅</th>
+                    <th onclick="Liga.sortTable('rankMes', this)"      class="sortable" data-lang-key="col_pts_month">Mes ⇅</th>
+                    <th data-lang-key="col_trend">Tend.</th>
+                    <th data-lang-key="col_today">Hoy</th>
+                </tr>
+            </thead>
+            <tbody id="playerTableBody">
+                <tr><td colspan="14" data-lang-key="table_empty_initial">Cargue los archivos CSV para ver los datos.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Gráficos -->
+<section aria-labelledby="ligaGraficosHeader">
+    <h2 id="ligaGraficosHeader" data-lang-key="section_charts_title">Gráficos</h2>
+
+    <div class="chart-controls">
+        <div class="chart-tabs">
+            <button class="chart-tab active" onclick="Liga.switchChart('topTotal', this)"       data-lang-key="tab_top_total">Top Pts Total</button>
+            <button class="chart-tab"         onclick="Liga.switchChart('topAvg', this)"         data-lang-key="tab_top_avg">Top Pts Avg</button>
+            <button class="chart-tab"         onclick="Liga.switchChart('byFantasyTotal', this)" data-lang-key="tab_by_fantasy_total">Por Equipo Fantasy (Total)</button>
+            <button class="chart-tab"         onclick="Liga.switchChart('byFantasyAvg', this)"   data-lang-key="tab_by_fantasy_avg">Por Equipo Fantasy (Avg)</button>
+            <button class="chart-tab"         onclick="Liga.switchChart('byNBATotal', this)"     data-lang-key="tab_by_nba_total">Por Equipo NBA (Total)</button>
+            <button class="chart-tab"         onclick="Liga.switchChart('byNBAAvg', this)"       data-lang-key="tab_by_nba_avg">Por Equipo NBA (Avg)</button>
+            <button class="chart-tab"         onclick="Liga.switchChart('compare', this)"        data-lang-key="tab_compare">Comparar</button>
+        </div>
+        <div class="chart-options">
+            <select id="chartLimitSelector" class="chart-selector" onchange="Liga.updateCurrentChart()">
+                <option value="4"  selected data-lang-key="chart_top4">Top 4</option>
+                <option value="8"           data-lang-key="chart_top8">Top 8</option>
+                <option value="16"          data-lang-key="chart_top16">Top 16</option>
+            </select>
+            <button onclick="Liga.clearChartBtn()" class="btn-clear-chart" data-lang-key="btn_clear_chart">Borrar ✕</button>
+            <button id="downloadChart" class="btn-download" onclick="Liga.downloadChartImage()" disabled>
+                <span data-lang-key="btn_download_chart">Descargar 🖼️</span>
+            </button>
+        </div>
+    </div>
+
+    <figure class="chart-container" role="img">
+        <canvas id="ligaPointsChart"></canvas>
+    </figure>
+</section>
+
+<div class="credit-text-main">
+    <span data-lang-key="credit_author">Hecho por Julián Hernández. Datos actualizados el</span>
+    <span id="currentDatePlaceholder"></span>
+    <span class="app-version">v3.2.0</span>
+</div>
