@@ -80,5 +80,6 @@ window.LANG_EU = {
     hist_metric_total:       'Puntu Totalak',
     hist_metric_pj:          'Jokatutako Partidak',
     hist_metric_avg:         'Batez bestekoa',
+    hist_desde:          'Honetatik:',
     hist_credit:          'Datuak: nba_fantasy_historico.csv - nba_resumen.py + nba_fusionar.py',
 };

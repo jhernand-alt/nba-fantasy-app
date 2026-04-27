@@ -80,5 +80,6 @@ window.LANG_ES = {
     hist_metric_total:       'Puntos Totales',
     hist_metric_pj:          'Partidos Jugados',
     hist_metric_avg:         'Promedio',
+    hist_desde:          'Desde:',
     hist_credit:          'Datos: nba_fantasy_historico.csv generado con nba_resumen.py + nba_fusionar.py',
 };
