@@ -60,7 +60,7 @@ nba-hub-app/
     └── team-icons/          # Iconos de equipos NBA (.png)
 ```
 
-> **Nota sobre estilos alternativos:** para usar `styles-nba.css` o `styles-espn.css`, renombrarlo a `styles.css` y añadir la fuente correspondiente en el `<head>` de `index.html` (ver comentario al inicio de cada fichero CSS).
+> **Nota sobre estilos alternativos:** para usar `styles-clasico.css` o `styles-espn.css`, renombrarlo a `styles.css` y añadir la fuente correspondiente en el `<head>` de `index.html` (ver comentario al inicio de cada fichero CSS).
 
 ---
 
