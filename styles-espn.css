@@ -1,0 +1,510 @@
+/* ============================================================================
+   styles-espn.css — Estilo inspirado en ESPN Deportes
+   Claro y denso, header negro con acento rojo, tipografía compacta
+   Fuente: Roboto Condensed (títulos) + Roboto (texto)
+   Para usar: renombrar a styles.css y añadir en index.html:
+   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+   ============================================================================ */
+
+/* ── Variables ─────────────────────────────────────────────────────────────── */
+
+:root {
+    --bg-primary:    #f2f2f2;
+    --bg-secondary:  #ffffff;
+    --bg-tertiary:   #e8e8e8;
+    --bg-row-even:   #f8f8f8;
+    --text-primary:  #1a1a1a;
+    --text-secondary:#666666;
+    --border-color:  #d8d8d8;
+    --shadow:        rgba(0,0,0,0.08);
+
+    --color-primary:       #cc0000;   /* rojo ESPN */
+    --color-primary-hover: #aa0000;
+    --color-primary-light: #ee3333;
+
+    --header-height: 108px;
+}
+
+[data-theme="dark"] {
+    --bg-primary:    #1a1a1a;
+    --bg-secondary:  #242424;
+    --bg-tertiary:   #2e2e2e;
+    --bg-row-even:   #282828;
+    --text-primary:  #eeeeee;
+    --text-secondary:#999999;
+    --border-color:  #3a3a3a;
+    --shadow:        rgba(0,0,0,0.3);
+}
+
+[data-color-scheme="blue"]   { --color-primary:#1e40af; --color-primary-hover:#1e3a8a; --color-primary-light:#3b82f6; }
+[data-color-scheme="green"]  { --color-primary:#16a34a; --color-primary-hover:#15803d; --color-primary-light:#22c55e; }
+[data-color-scheme="purple"] { --color-primary:#9333ea; --color-primary-hover:#7e22ce; --color-primary-light:#a855f7; }
+[data-color-scheme="orange"] { --color-primary:#ea580c; --color-primary-hover:#c2410c; --color-primary-light:#f97316; }
+[data-color-scheme="red"]    { --color-primary:#cc0000; --color-primary-hover:#aa0000; --color-primary-light:#ee3333; }
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+
+header {
+    background: #111111;
+    color: white;
+    border-bottom: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+}
+
+.header-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-bottom: 3px solid var(--color-primary);
+}
+
+header h1 {
+    margin: 0;
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-size: 1.8em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: white;
+}
+
+/* La "E" inicial de ESPN en rojo — aquí aplicado al primer carácter del título */
+header h1::first-letter {
+    color: var(--color-primary);
+}
+
+.header-controls {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Navegación de módulos ──────────────────────────────────────────────────── */
+
+.module-nav {
+    background: #1e1e1e;
+    border-top: none;
+}
+
+.module-nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    gap: 0;
+}
+
+.module-tab {
+    padding: 10px 20px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid transparent;
+    background: transparent;
+    color: #aaaaaa;
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-size: 0.9em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    white-space: nowrap;
+}
+
+.module-tab:hover {
+    color: white;
+    background: rgba(255,255,255,0.05);
+}
+
+.module-tab.active {
+    color: white;
+    border-bottom-color: var(--color-primary);
+    background: rgba(255,255,255,0.07);
+}
+
+/* ── Contenedor de módulos ─────────────────────────────────────────────────── */
+
+.module-container {
+    max-width: 1400px;
+    margin: calc(var(--header-height) + 16px) auto 32px;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 2px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 4px var(--shadow);
+}
+
+/* ── Idioma ─────────────────────────────────────────────────────────────────── */
+
+.language-selector { position: relative; }
+
+.lang-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 0.82em;
+    font-weight: 700;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+.lang-button:hover { background: rgba(255,255,255,0.2); color: white; }
+.lang-chevron { font-size: 0.75em; opacity: 0.7; }
+.lang-option-inner { display: flex; align-items: center; gap: 6px; }
+
+.flag-svg {
+    width: 26px; height: 17px;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.2);
+    flex-shrink: 0;
+    display: block;
+}
+.lang-code { font-weight: 700; letter-spacing: 0.5px; }
+
+.lang-menu {
+    position: absolute;
+    right: 0; top: calc(100% + 6px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    box-shadow: 0 4px 12px var(--shadow);
+    padding: 4px;
+    min-width: 150px;
+    z-index: 1000;
+}
+.lang-menu.hidden { display: none; }
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background 0.15s;
+}
+.lang-option:hover, .lang-option.active { background: var(--bg-tertiary); }
+.lang-option.active { font-weight: 700; }
+.lang-name { color: var(--text-secondary); font-size: 0.85em; flex: 1; text-align: right; }
+
+/* ── Tema ───────────────────────────────────────────────────────────────────── */
+
+.theme-selector { position: relative; }
+
+.theme-button {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 3px;
+    padding: 7px 11px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.theme-button:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+
+.theme-menu {
+    position: absolute;
+    right: 0; top: calc(100% + 6px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    box-shadow: 0 4px 12px var(--shadow);
+    padding: 6px;
+    min-width: 175px;
+    z-index: 1000;
+}
+.theme-menu.hidden { display: none; }
+
+.theme-section-title {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    padding: 5px 8px 3px;
+    letter-spacing: 0.8px;
+}
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    color: var(--text-primary);
+    transition: background 0.15s;
+    font-size: 0.9em;
+}
+.theme-option:hover { background: var(--bg-tertiary); }
+.theme-icon { font-size: 1.1em; }
+.theme-divider { margin: 6px 0; border: none; border-top: 1px solid var(--border-color); }
+
+.color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 4px; }
+.color-option {
+    display: flex;
+    gap: 4px;
+    padding: 7px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid transparent;
+}
+.color-option:hover { background: var(--bg-tertiary); transform: scale(1.04); }
+.color-option.active { border-color: var(--color-primary); }
+.color-preview { width: 18px; height: 18px; border-radius: 3px; border: 1px solid var(--border-color); }
+
+/* ── Componentes compartidos ────────────────────────────────────────────────── */
+
+h2 {
+    color: var(--text-primary);
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 1.25em;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.controls-and-filters {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    background: var(--bg-tertiary);
+    border-radius: 2px;
+    border: 1px solid var(--border-color);
+}
+
+.controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.controls-row:last-child { margin-bottom: 0; }
+
+.btn-download {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 0.9em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--color-primary);
+    color: white;
+    transition: background-color 0.2s;
+}
+.btn-download:hover { background: var(--color-primary-hover); }
+.btn-download:disabled { opacity: 0.45; cursor: default; }
+
+.file-status {
+    font-size: 0.83em;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+.file-status.loaded { color: var(--color-primary); font-weight: 600; font-style: normal; }
+
+.filter-btn, .fantasy-team-selector, .chart-selector {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    cursor: pointer;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.83em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+}
+.filter-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.filter-btn.active,
+.filter-btn[aria-pressed="true"] {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.search-input {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.88em;
+    min-width: 180px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--color-primary); }
+
+/* Tabla — estilo ESPN: densa, sin bordes verticales, cabecera oscura */
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 14px;
+    -webkit-overflow-scrolling: touch;
+    transform: rotateX(180deg);
+}
+.table-wrapper > table { transform: rotateX(180deg); }
+
+.player-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+    font-size: 0.83em;
+}
+.player-table th, .player-table td {
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 7px 8px;
+    text-align: center;
+}
+.player-table th {
+    background: #1a1a1a;
+    color: #aaaaaa;
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-size: 0.85em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--color-primary);
+    cursor: pointer;
+}
+.player-table th:not([onclick]) { cursor: default; }
+.player-table tr:nth-child(even) { background: var(--bg-row-even); }
+.player-table tr:hover { background: #fff3f3; }
+[data-theme="dark"] .player-table tr:hover { background: #2a1515; }
+
+/* Gráfico */
+.chart-container {
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    background: var(--bg-secondary);
+    height: 400px;
+    position: relative;
+}
+.chart-container canvas { width: 100% !important; height: 100% !important; }
+
+.chart-controls { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.chart-tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+.chart-tab {
+    padding: 5px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.chart-tab:hover { background: var(--bg-tertiary); color: var(--text-primary); border-color: #aaa; }
+.chart-tab.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+
+.chart-options { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.btn-clear-chart {
+    padding: 5px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.82em;
+    transition: all 0.15s;
+}
+.btn-clear-chart:hover { background: #fff0f0; color: #cc0000; border-color: #cc0000; }
+[data-theme="dark"] .btn-clear-chart:hover { background: #2a1010; }
+
+/* Pie */
+.credit-text-main {
+    text-align: right;
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    margin-top: 24px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+}
+.app-version {
+    margin-left: 10px;
+    padding: 1px 6px;
+    border-radius: 2px;
+    background: var(--color-primary);
+    color: white;
+    font-size: 0.82em;
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+/* Tendencias */
+.trend-indicator { font-size: 1.2em; font-weight: bold; margin-left: 4px; display: inline-block; }
+.trend-up    { color: #16a34a; }
+.trend-down  { color: #cc0000; }
+.trend-stable { color: #999; }
+
+/* Título de módulo */
+.module-title {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-size: 1.5em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    border-left: 4px solid var(--color-primary);
+    padding-left: 12px;
+    border-bottom: none;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    :root { --header-height: 126px; }
+    header h1 { font-size: 1.3em; }
+    .module-container { margin-top: calc(var(--header-height) + 10px); padding: 14px; }
+    .controls-row { flex-direction: column; align-items: flex-start; }
+    .controls-row > * { width: 100%; margin-top: 5px; }
+    .chart-controls { flex-direction: column; align-items: flex-start; }
+    .player-table { font-size: 0.76em; }
+}
