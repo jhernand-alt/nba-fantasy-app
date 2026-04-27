@@ -15,6 +15,10 @@
 
     <!-- Filtro de búsqueda (visible tras cargar datos) -->
     <div class="controls-row" id="histFilterRow" style="display:none;">
+        <label id="histDesdeLabel" style="display:none; font-size:0.9em; color:var(--text-secondary); align-items:center; gap:6px; display:none;">
+            <span data-lang-key="hist_desde">Desde:</span>
+            <select id="histDesdeSelector" class="chart-selector" style="display:none;"></select>
+        </label>
         <input type="text" id="histSearchInput"
                data-lang-key-placeholder="search_placeholder"
                placeholder="Buscar jugador..."
